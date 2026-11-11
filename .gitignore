@@ -18,3 +18,4 @@ work/pz*/run/
 work/pz*/**/checkpoint*/
 work/pz*/**/*.parquet/
 work/pz*/results/**/*.parquet
+__pycache__/
