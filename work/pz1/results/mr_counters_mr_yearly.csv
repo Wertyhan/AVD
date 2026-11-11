@@ -1,0 +1,10 @@
+counter,value
+Combine input records,7816537
+Combine output records,17
+Launched map tasks,3
+Launched reduce tasks,1
+Map input records,7816538
+Map output records,7816537
+Reduce input groups,15
+Reduce input records,17
+Reduce output records,15

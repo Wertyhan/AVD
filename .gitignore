@@ -14,3 +14,7 @@ work/test_shot.png
 work/hadoop_runtime/
 work/pz*/results/model/
 work/pz*/checkpoints/
+work/pz*/run/
+work/pz*/**/checkpoint*/
+work/pz*/**/*.parquet/
+work/pz*/results/**/*.parquet

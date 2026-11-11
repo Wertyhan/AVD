@@ -1,0 +1,6 @@
+parameter,value
+fs.defaultFS,hdfs://localhost:9000
+dfs.replication,1
+dfs.blocksize_bytes,134217728
+live_datanodes,1
+configured_capacity_bytes,270553174016
