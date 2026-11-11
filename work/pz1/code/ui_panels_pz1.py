@@ -30,20 +30,23 @@ HIDE_YARN = """
 const keep=['ID','Name','Application Type','State','FinalStatus','Elapsed Time'];
 const th=[...document.querySelectorAll('#apps thead th')]; const idx=th.map((t,i)=>keep.includes(t.innerText.trim())?-1:i).filter(i=>i>=0);
 const css=idx.map(i=>`#apps thead th:nth-child(${i+1}),#apps tbody td:nth-child(${i+1}),#apps tfoot th:nth-child(${i+1})`).join(',');
-const s=document.createElement('style'); s.textContent=css+'{display:none !important} #apps td{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}'; document.head.appendChild(s);"""
-KEEP_CNT = ['Launched map tasks','Data-local map tasks','Map input records','Map output records','Reduce input groups','Shuffled Maps','Spilled Records','HDFS: Number of bytes read']
-HIDE_CNT = """(keep)=>{document.querySelectorAll('table.counters table tbody tr').forEach(r=>{const t=r.cells[0]?r.cells[0].innerText.trim():'';
+const s=document.createElement('style'); s.textContent=css+'{display:none !important} #apps td{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} #apps,#apps_wrapper,#apps_wrapper table{width:715px !important;table-layout:fixed} #apps td,#apps th{font-size:11px !important;padding:3px 3px !important} #apps td:nth-child(1){font-size:10px !important}'; document.head.appendChild(s);
+const W={'ID':175,'Name':235,'Application Type':95,'State':75,'FinalStatus':105}; th.forEach(t=>{const k=t.innerText.trim(); if(W[k]) t.style.width=W[k]+'px';});"""
+CNT_CSS = '#counters{width:670px !important} #counters>tbody>tr>td:first-child{width:90px !important} #counters table,.dt-counters,.dataTables_wrapper{width:100% !important;table-layout:fixed} .dt-counters th:nth-child(1){width:46% !important} #counters{table-layout:fixed} #counters td,#counters th{font-size:13px}'
+KEEP_CNT = ['Launched map tasks','Data-local map tasks','Map input records','Map output records','Reduce input groups','Shuffled Maps','Spilled Records']
+HIDE_CNT = """(keep)=>{document.querySelectorAll('#counters table.dt-counters tbody tr').forEach(r=>{const t=r.cells[0]?r.cells[0].innerText.trim():'';
  if(!keep.includes(t)) r.style.display='none';});
- document.querySelectorAll('table.counters > tbody > tr').forEach(r=>{const inner=r.querySelectorAll('table tbody tr');const vis=[...inner].some(x=>x.style.display!=='none'); if(!vis) r.style.display='none';});}"""
+ document.querySelectorAll('#counters > tbody > tr').forEach(r=>{const inner=r.querySelectorAll('table tbody tr');const vis=[...inner].some(x=>x.style.display!=='none'); if(!vis) r.style.display='none';});
+ document.querySelectorAll('#counters > tbody > tr').forEach(r=>{const g=r.cells[0].innerText.trim(); if(['Shuffle Errors','File Input Format Counters','File Output Format Counters'].includes(g)) r.style.display='none';});}"""
 
 with sync_playwright() as p:
     b = p.chromium.launch(executable_path='/opt/pw-browsers/chromium-1243/chrome-linux64/chrome', args=['--no-sandbox'])
     t1 = snap(b, f'{nn}/dfshealth.html#tab-overview', 'nn_summary', '#tab-overview table:nth-of-type(2)', js=HIDE_SUM)
     t2 = snap(b, f'{nn}/dfshealth.html#tab-datanode', 'nn_datanodes', '#tab-datanode table:last-of-type')
     t3 = snap(b, f'{nn}/explorer.html#/user/root/btc/raw', 'nn_browse_raw', '#table-explorer')
-    t4 = snap(b, f'{rm}/cluster/apps', 'yarn_apps', '#apps', js=HIDE_YARN)
+    t4 = snap(b, f'{rm}/cluster/apps', 'yarn_apps', '#apps', js=HIDE_YARN, css='#apps_wrapper{width:715px !important;overflow:hidden}')
     pg_js = "(" + HIDE_CNT + ")(" + json.dumps(KEEP_CNT) + ")"
-    t5 = snap(b, f'{jh}/jobhistory/jobcounters/{JOB}', 'jh_counters', 'table.counters', js=pg_js)
+    t5 = snap(b, f'{jh}/jobhistory/jobcounters/{JOB}', 'jh_counters', 'table#counters', js=pg_js, css=CNT_CSS)
     b.close()
 print(t1); print(t3); print(t5)
 # значення -> csv (DOM + REST)

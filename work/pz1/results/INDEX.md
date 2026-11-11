@@ -21,3 +21,11 @@
 Вимірювався повний настінний час від команди до результату (Streaming/Hive – з запуском JVM/контейнерів YARN; Pandas/Spark – з читанням CSV; Spark – з toPandas; створення SparkSession 14,52 с окремо). Hive-запит `yearly` виконується двома MR-стадіями. Під час вимірювань на тій самій 4-ядерній машині працювали сторонні процеси (loadavg 1 хв = 4,06 на старті, див. `timing_conditions.csv`; поруч виконувався Spark-сеанс іншого завдання), тому абсолютні значення, особливо Pandas/Spark, мають похибку; розкид наведено в min/max. Перший запуск PySpark yearly (23,9 с) містить холодний прогрів JVM.
 
 Примітка (рендер для друку): термінальні PNG перерендерено спільним рендером tools_report/term_png.py (code/rerender_pz1.py); 26 – реальна команда python3 code/pandas_yearly.py; 06 – поточний стан HDFS; UI 35_ui_yarn_cluster.png видалено як дублікат 36_ui_yarn_applications.png (вміст однаковий). Веб-UI 31-34, 37, 39-40, 42-43, 45-47 перезняті з clip (code/ui_recapture_pz1.py); 36, 38, 41, 44 – обрізані (crop) попередні реальні знімки RM, бо після перезапуску ResourceManager втратив список застосунків.
+
+## Доповнення після рецензії (див. `CHANGES_hive_fix.md`)
+- C1: `skip.header.line.count` у `hive_01_create_table.hql`; Hive-кроки перезапущено; `SELECT ... LIMIT 5` без рядка NULL; `hive_count_check.csv` (COUNT по `candles` і `candles_v` = 7 816 537); csv Hive побайтно збігаються зі старими (`_old_before_hive_fix/`), звірки Hive vs MR = True. Скріншоти 19-25 перезняті.
+- M4: `code/hive_07_load_data.hql` (керована таблиця + LOAD DATA INPATH), скріншоти 51, 52; `code/hive_01b_describe.hql` для скріншота 19.
+- M1: скріншоти 48 (ls -R -h), 49 (du -h, cat | head), 50 (WordCount part-r-00000 | head).
+- M2/C2: `figures/ui_hdfs_panel.png`, `figures/ui_yarn_panel.png` (джерела в `screenshots/ui_panel_src/`, код `code/ui_panels_pz1.py`), `ui_values.csv` (378.47 MB, Shuffled Maps = 3, DFS Used тощо).
+- Застосунки Hive у YARN: `hive_yarn_applications.csv`, `hive_yarn_app_count.csv` (12).
+- Код: `code/rerun_hive_fix.py` (повторний запуск Hive-кроків і звірка Hive vs MR), `code/rerender_pz1.py` (записи 19, 48-52).

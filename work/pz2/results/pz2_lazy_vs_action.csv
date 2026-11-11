@@ -1,0 +1,10 @@
+action,run,seconds,plan_contains_Window
+count,1,11.873,False
+agg_sum_vol60_logret,1,31.76,True
+noop_write,1,33.707,True
+agg_sum_vol60_logret,2,25.258,True
+noop_write,2,28.561,True
+count,2,8.383,False
+noop_write,3,27.8,True
+count,3,7.438,False
+agg_sum_vol60_logret,3,23.44,True

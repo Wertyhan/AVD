@@ -1,0 +1,467 @@
+{
+ "sink_win15m": {
+  "id": "e5dd8543-9377-4e09-bc1b-a1a8fbded850",
+  "runId": "951713f8-1b23-4582-8c5c-e8cf2f23bb8c",
+  "name": "sink_win15m",
+  "timestamp": "2026-11-11T23:18:30.001Z",
+  "batchId": 35,
+  "batchDuration": 1643,
+  "durationMs": {
+   "addBatch": 1209,
+   "commitOffsets": 85,
+   "getBatch": 0,
+   "latestOffset": 13,
+   "queryPlanning": 142,
+   "triggerExecution": 1643,
+   "walCommit": 194
+  },
+  "eventTime": {
+   "watermark": "2022-11-12T23:49:00.000Z"
+  },
+  "stateOperators": [
+   {
+    "operatorName": "stateStoreSave",
+    "numRowsTotal": 1,
+    "numRowsUpdated": 0,
+    "numRowsRemoved": 1,
+    "allUpdatesTimeMs": 0,
+    "allRemovalsTimeMs": 11,
+    "commitTimeMs": 284,
+    "memoryUsedBytes": 3808,
+    "numRowsDroppedByWatermark": 0,
+    "numShufflePartitions": 4,
+    "numStateStoreInstances": 4,
+    "customMetrics": {
+     "SnapshotLastUploaded.partition_0_default": 25,
+     "SnapshotLastUploaded.partition_1_default": 25,
+     "SnapshotLastUploaded.partition_2_default": 24,
+     "SnapshotLastUploaded.partition_3_default": 25,
+     "forceSnapshotCount": 0,
+     "loadedMapCacheHitCount": 280,
+     "loadedMapCacheMissCount": 0,
+     "numSnapshotsAutoRepaired": 0,
+     "stateOnCurrentVersionSizeBytes": 880
+    }
+   }
+  ],
+  "sources": [
+   {
+    "description": "KafkaV2[Subscribe[bigdata-topic]]",
+    "startOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "endOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "latestOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "numInputRows": 0,
+    "inputRowsPerSecond": 0.0,
+    "processedRowsPerSecond": 0.0,
+    "metrics": {
+     "avgOffsetsBehindLatest": "0.0",
+     "maxOffsetsBehindLatest": "0",
+     "minOffsetsBehindLatest": "0"
+    }
+   }
+  ],
+  "sink": {
+   "description": "FileSink[file:/home/user/AVD/work/pz3/results/stream/parquet/win15m]",
+   "numOutputRows": -1,
+   "metrics": {}
+  },
+  "numInputRows": 0,
+  "inputRowsPerSecond": 0.0,
+  "processedRowsPerSecond": 0.0,
+  "observedMetrics": {}
+ },
+ "sink_win1h": {
+  "id": "180b26de-2043-4fa5-816e-9141a652d0b1",
+  "runId": "a6ba51e4-899c-4bd6-b5df-beea13362a13",
+  "name": "sink_win1h",
+  "timestamp": "2026-11-11T23:18:30.000Z",
+  "batchId": 35,
+  "batchDuration": 1436,
+  "durationMs": {
+   "addBatch": 1066,
+   "commitOffsets": 64,
+   "getBatch": 0,
+   "latestOffset": 10,
+   "queryPlanning": 59,
+   "triggerExecution": 1436,
+   "walCommit": 235
+  },
+  "eventTime": {
+   "watermark": "2022-11-12T23:49:00.000Z"
+  },
+  "stateOperators": [
+   {
+    "operatorName": "stateStoreSave",
+    "numRowsTotal": 1,
+    "numRowsUpdated": 0,
+    "numRowsRemoved": 0,
+    "allUpdatesTimeMs": 0,
+    "allRemovalsTimeMs": 0,
+    "commitTimeMs": 262,
+    "memoryUsedBytes": 2544,
+    "numRowsDroppedByWatermark": 0,
+    "numShufflePartitions": 4,
+    "numStateStoreInstances": 4,
+    "customMetrics": {
+     "SnapshotLastUploaded.partition_0_default": 24,
+     "SnapshotLastUploaded.partition_1_default": 24,
+     "SnapshotLastUploaded.partition_2_default": 24,
+     "SnapshotLastUploaded.partition_3_default": 25,
+     "forceSnapshotCount": 0,
+     "loadedMapCacheHitCount": 280,
+     "loadedMapCacheMissCount": 0,
+     "numSnapshotsAutoRepaired": 0,
+     "stateOnCurrentVersionSizeBytes": 880
+    }
+   }
+  ],
+  "sources": [
+   {
+    "description": "KafkaV2[Subscribe[bigdata-topic]]",
+    "startOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "endOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "latestOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "numInputRows": 0,
+    "inputRowsPerSecond": 0.0,
+    "processedRowsPerSecond": 0.0,
+    "metrics": {
+     "avgOffsetsBehindLatest": "0.0",
+     "maxOffsetsBehindLatest": "0",
+     "minOffsetsBehindLatest": "0"
+    }
+   }
+  ],
+  "sink": {
+   "description": "FileSink[file:/home/user/AVD/work/pz3/results/stream/parquet/win1h]",
+   "numOutputRows": -1,
+   "metrics": {}
+  },
+  "numInputRows": 0,
+  "inputRowsPerSecond": 0.0,
+  "processedRowsPerSecond": 0.0,
+  "observedMetrics": {}
+ },
+ "mem_win15m": {
+  "id": "3d63affe-6705-496e-8eab-77b6fe5846aa",
+  "runId": "37a40f79-caef-490c-bdf1-c639a3d03cf2",
+  "name": "win15m_mem",
+  "timestamp": "2026-11-11T23:18:30.000Z",
+  "batchId": 35,
+  "batchDuration": 1801,
+  "durationMs": {
+   "addBatch": 1406,
+   "commitOffsets": 67,
+   "getBatch": 0,
+   "latestOffset": 14,
+   "queryPlanning": 113,
+   "triggerExecution": 1801,
+   "walCommit": 201
+  },
+  "eventTime": {
+   "watermark": "2022-11-12T23:49:00.000Z"
+  },
+  "stateOperators": [
+   {
+    "operatorName": "stateStoreSave",
+    "numRowsTotal": 1,
+    "numRowsUpdated": 0,
+    "numRowsRemoved": 1,
+    "allUpdatesTimeMs": 0,
+    "allRemovalsTimeMs": 14,
+    "commitTimeMs": 300,
+    "memoryUsedBytes": 3808,
+    "numRowsDroppedByWatermark": 0,
+    "numShufflePartitions": 4,
+    "numStateStoreInstances": 4,
+    "customMetrics": {
+     "SnapshotLastUploaded.partition_0_default": 24,
+     "SnapshotLastUploaded.partition_1_default": 24,
+     "SnapshotLastUploaded.partition_2_default": 24,
+     "SnapshotLastUploaded.partition_3_default": 24,
+     "forceSnapshotCount": 0,
+     "loadedMapCacheHitCount": 280,
+     "loadedMapCacheMissCount": 0,
+     "numSnapshotsAutoRepaired": 0,
+     "stateOnCurrentVersionSizeBytes": 880
+    }
+   }
+  ],
+  "sources": [
+   {
+    "description": "KafkaV2[Subscribe[bigdata-topic]]",
+    "startOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "endOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "latestOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "numInputRows": 0,
+    "inputRowsPerSecond": 0.0,
+    "processedRowsPerSecond": 0.0,
+    "metrics": {
+     "avgOffsetsBehindLatest": "0.0",
+     "maxOffsetsBehindLatest": "0",
+     "minOffsetsBehindLatest": "0"
+    }
+   }
+  ],
+  "sink": {
+   "description": "MemorySink",
+   "numOutputRows": 0,
+   "metrics": {}
+  },
+  "numInputRows": 0,
+  "inputRowsPerSecond": 0.0,
+  "processedRowsPerSecond": 0.0,
+  "observedMetrics": {}
+ },
+ "mem_win1h": {
+  "id": "3560344e-c359-448a-a29d-3b04d6d535f8",
+  "runId": "303bed2d-8855-4260-87af-59955f6d758c",
+  "name": "win1h_mem",
+  "timestamp": "2026-11-11T23:18:30.001Z",
+  "batchId": 35,
+  "batchDuration": 1152,
+  "durationMs": {
+   "addBatch": 928,
+   "commitOffsets": 48,
+   "getBatch": 0,
+   "latestOffset": 11,
+   "queryPlanning": 69,
+   "triggerExecution": 1151,
+   "walCommit": 90
+  },
+  "eventTime": {
+   "watermark": "2022-11-12T23:49:00.000Z"
+  },
+  "stateOperators": [
+   {
+    "operatorName": "stateStoreSave",
+    "numRowsTotal": 1,
+    "numRowsUpdated": 0,
+    "numRowsRemoved": 0,
+    "allUpdatesTimeMs": 0,
+    "allRemovalsTimeMs": 0,
+    "commitTimeMs": 219,
+    "memoryUsedBytes": 2544,
+    "numRowsDroppedByWatermark": 0,
+    "numShufflePartitions": 4,
+    "numStateStoreInstances": 4,
+    "customMetrics": {
+     "SnapshotLastUploaded.partition_0_default": 24,
+     "SnapshotLastUploaded.partition_1_default": 24,
+     "SnapshotLastUploaded.partition_2_default": 24,
+     "SnapshotLastUploaded.partition_3_default": 24,
+     "forceSnapshotCount": 0,
+     "loadedMapCacheHitCount": 280,
+     "loadedMapCacheMissCount": 0,
+     "numSnapshotsAutoRepaired": 0,
+     "stateOnCurrentVersionSizeBytes": 880
+    }
+   }
+  ],
+  "sources": [
+   {
+    "description": "KafkaV2[Subscribe[bigdata-topic]]",
+    "startOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "endOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "latestOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "numInputRows": 0,
+    "inputRowsPerSecond": 0.0,
+    "processedRowsPerSecond": 0.0,
+    "metrics": {
+     "avgOffsetsBehindLatest": "0.0",
+     "maxOffsetsBehindLatest": "0",
+     "minOffsetsBehindLatest": "0"
+    }
+   }
+  ],
+  "sink": {
+   "description": "MemorySink",
+   "numOutputRows": 0,
+   "metrics": {}
+  },
+  "numInputRows": 0,
+  "inputRowsPerSecond": 0.0,
+  "processedRowsPerSecond": 0.0,
+  "observedMetrics": {}
+ },
+ "mem_daily": {
+  "id": "03c19be2-4c09-468e-a28d-b4d5bfb7ec1e",
+  "runId": "6a8f3d55-6a57-4046-8a73-fdb6f8844adb",
+  "name": "daily_mem",
+  "timestamp": "2026-11-11T23:18:30.000Z",
+  "batchId": 35,
+  "batchDuration": 1034,
+  "durationMs": {
+   "addBatch": 824,
+   "commitOffsets": 77,
+   "getBatch": 0,
+   "latestOffset": 12,
+   "queryPlanning": 24,
+   "triggerExecution": 1034,
+   "walCommit": 97
+  },
+  "eventTime": {
+   "watermark": "2022-11-12T23:49:00.000Z"
+  },
+  "stateOperators": [
+   {
+    "operatorName": "stateStoreSave",
+    "numRowsTotal": 1,
+    "numRowsUpdated": 0,
+    "numRowsRemoved": 0,
+    "allUpdatesTimeMs": 53,
+    "allRemovalsTimeMs": 0,
+    "commitTimeMs": 281,
+    "memoryUsedBytes": 2232,
+    "numRowsDroppedByWatermark": 0,
+    "numShufflePartitions": 4,
+    "numStateStoreInstances": 4,
+    "customMetrics": {
+     "SnapshotLastUploaded.partition_0_default": 24,
+     "SnapshotLastUploaded.partition_1_default": 25,
+     "SnapshotLastUploaded.partition_2_default": 25,
+     "SnapshotLastUploaded.partition_3_default": 24,
+     "forceSnapshotCount": 0,
+     "loadedMapCacheHitCount": 280,
+     "loadedMapCacheMissCount": 0,
+     "numSnapshotsAutoRepaired": 0,
+     "stateOnCurrentVersionSizeBytes": 856
+    }
+   }
+  ],
+  "sources": [
+   {
+    "description": "KafkaV2[Subscribe[bigdata-topic]]",
+    "startOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "endOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "latestOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "numInputRows": 0,
+    "inputRowsPerSecond": 0.0,
+    "processedRowsPerSecond": 0.0,
+    "metrics": {
+     "avgOffsetsBehindLatest": "0.0",
+     "maxOffsetsBehindLatest": "0",
+     "minOffsetsBehindLatest": "0"
+    }
+   }
+  ],
+  "sink": {
+   "description": "MemorySink",
+   "numOutputRows": 0,
+   "metrics": {}
+  },
+  "numInputRows": 0,
+  "inputRowsPerSecond": 0.0,
+  "processedRowsPerSecond": 0.0,
+  "observedMetrics": {}
+ },
+ "console_1h": {
+  "id": "5c292d8b-c472-40c7-9015-4cf7d839ff64",
+  "runId": "88e7ca9c-33d1-4843-948b-798414b94dd9",
+  "name": "console_1h",
+  "timestamp": "2026-11-11T23:18:30.000Z",
+  "batchId": 35,
+  "batchDuration": 860,
+  "durationMs": {
+   "addBatch": 529,
+   "commitOffsets": 65,
+   "getBatch": 0,
+   "latestOffset": 16,
+   "queryPlanning": 22,
+   "triggerExecution": 860,
+   "walCommit": 227
+  },
+  "eventTime": {
+   "watermark": "2022-11-12T23:49:00.000Z"
+  },
+  "stateOperators": [
+   {
+    "operatorName": "stateStoreSave",
+    "numRowsTotal": 1,
+    "numRowsUpdated": 0,
+    "numRowsRemoved": 0,
+    "allUpdatesTimeMs": 0,
+    "allRemovalsTimeMs": 8,
+    "commitTimeMs": 333,
+    "memoryUsedBytes": 2544,
+    "numRowsDroppedByWatermark": 0,
+    "numShufflePartitions": 4,
+    "numStateStoreInstances": 4,
+    "customMetrics": {
+     "SnapshotLastUploaded.partition_0_default": 25,
+     "SnapshotLastUploaded.partition_1_default": 25,
+     "SnapshotLastUploaded.partition_2_default": 24,
+     "SnapshotLastUploaded.partition_3_default": 24,
+     "forceSnapshotCount": 0,
+     "loadedMapCacheHitCount": 280,
+     "loadedMapCacheMissCount": 0,
+     "numSnapshotsAutoRepaired": 0,
+     "stateOnCurrentVersionSizeBytes": 880
+    }
+   }
+  ],
+  "sources": [
+   {
+    "description": "KafkaV2[Subscribe[bigdata-topic]]",
+    "startOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "endOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "latestOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "numInputRows": 0,
+    "inputRowsPerSecond": 0.0,
+    "processedRowsPerSecond": 0.0,
+    "metrics": {
+     "avgOffsetsBehindLatest": "0.0",
+     "maxOffsetsBehindLatest": "0",
+     "minOffsetsBehindLatest": "0"
+    }
+   }
+  ],
+  "sink": {
+   "description": "org.apache.spark.sql.execution.streaming.ConsoleTable$@b9d88e1",
+   "numOutputRows": 0,
+   "metrics": {}
+  },
+  "numInputRows": 0,
+  "inputRowsPerSecond": 0.0,
+  "processedRowsPerSecond": 0.0,
+  "observedMetrics": {}
+ },
+ "anomaly": {
+  "id": "7e8757bb-5b46-4706-b730-aec903071f79",
+  "runId": "ff48e8fa-39b9-4081-b5db-8c27d327012e",
+  "name": "anomaly",
+  "timestamp": "2026-11-11T23:18:40.000Z",
+  "batchId": 35,
+  "batchDuration": 24,
+  "durationMs": {
+   "latestOffset": 24,
+   "triggerExecution": 24
+  },
+  "eventTime": {},
+  "stateOperators": [],
+  "sources": [
+   {
+    "description": "KafkaV2[Subscribe[bigdata-topic]]",
+    "startOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "endOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "latestOffset": "{\"bigdata-topic\": {\"0\": 10080, \"1\": 20160, \"2\": 0}}",
+    "numInputRows": 0,
+    "inputRowsPerSecond": 0.0,
+    "processedRowsPerSecond": 0.0,
+    "metrics": {
+     "avgOffsetsBehindLatest": "0.0",
+     "maxOffsetsBehindLatest": "0",
+     "minOffsetsBehindLatest": "0"
+    }
+   }
+  ],
+  "sink": {
+   "description": "ForeachBatchSink",
+   "numOutputRows": -1,
+   "metrics": {}
+  },
+  "numInputRows": 0,
+  "inputRowsPerSecond": 0.0,
+  "processedRowsPerSecond": 0.0,
+  "observedMetrics": {}
+ }
+}

@@ -1,0 +1,21 @@
+{
+ "status": "ok",
+ "expected_messages": 30240,
+ "input_totals": {
+  "sink_win15m": 30240,
+  "sink_win1h": 30240,
+  "mem_win15m": 30240,
+  "mem_win1h": 30240,
+  "mem_daily": 30240,
+  "console_1h": 30240,
+  "anomaly": 30240
+ },
+ "seconds": 369.9,
+ "win15m_all_rows": 2048,
+ "win1h_all_rows": 536,
+ "daily_stats_rows": 54,
+ "scored_rows": 30240,
+ "anomalies_rows": 272,
+ "k": 9,
+ "window": 10080
+}

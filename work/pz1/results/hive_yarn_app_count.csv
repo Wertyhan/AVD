@@ -1,0 +1,2 @@
+source,hive_applications,hive_steps,note,finished_succeeded
+http://localhost:8088/ws/v1/cluster/apps (RM started after restart; only Hive queries ran since),12,01_create..07_load_data,11 applications for hive_02..hive_06 + 1 for hive_07 (COUNT(*) on candles_managed),12

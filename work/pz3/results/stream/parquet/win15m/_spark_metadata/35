@@ -1,0 +1,3 @@
+v1
+{"path":"file:///home/user/AVD/work/pz3/results/stream/parquet/win15m/part-00000-bac3e585-77d7-45a0-bb99-0f632d380758-c000.snappy.parquet","size":869,"isDir":false,"modificationTime":1794439111390,"blockReplication":1,"blockSize":33554432,"action":"add"}
+{"path":"file:///home/user/AVD/work/pz3/results/stream/parquet/win15m/part-00002-1bf77d9f-26aa-4821-93b5-c22425fd75d2-c000.snappy.parquet","size":2339,"isDir":false,"modificationTime":1794439111490,"blockReplication":1,"blockSize":33554432,"action":"add"}

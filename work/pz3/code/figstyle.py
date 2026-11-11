@@ -11,7 +11,7 @@ try:
     import plotstyle  # noqa: F401  (спільний хелпер координатора, якщо вже доданий)
 except Exception:
     pass
-plt.rcParams.update({"font.size": 10, "axes.titlesize": 11, "axes.labelsize": 10, "xtick.labelsize": 9, "ytick.labelsize": 9, "legend.fontsize": 9,
+plt.rcParams.update({"font.size": 10, "axes.titlesize": 11, "axes.labelsize": 10, "xtick.labelsize": 9, "ytick.labelsize": 9, "legend.fontsize": 10,
                      "axes.grid": True, "grid.alpha": .3, "axes.spines.top": False, "axes.spines.right": False, "savefig.dpi": 200, "figure.dpi": 100,
                      "axes.unicode_minus": False})
 W, H1, H2 = 6.3, 3.4, 4.7

@@ -1,0 +1,2 @@
+samples,duration_s,load1_mean,load1_min,load1_max,load5_mean,load15_last,java_procs_mean,java_procs_max,vcpu
+93,463,8.31,5.11,13.16,8.2,5.74,9.02,12,4

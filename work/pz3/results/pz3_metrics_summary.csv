@@ -1,0 +1,16 @@
+metric,value
+producer_messages,30240.0
+producer_seconds,322.093
+producer_msg_per_s,93.886
+producer_delay_ms,10.0
+producer_delivery_errors,0.0
+foreachbatch_batches,34.0
+foreachbatch_s_mean,0.716
+foreachbatch_s_median,0.595
+foreachbatch_s_p95,1.631
+foreachbatch_s_max,2.085
+foreachbatch_rows_per_batch_min,11.0
+foreachbatch_rows_per_batch_median,948.5
+foreachbatch_rows_per_batch_max,976.0
+anomalies_total,272.0
+invalid_rows,0.0

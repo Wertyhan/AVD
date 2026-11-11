@@ -1,0 +1,14 @@
+source,name,value
+NameNode UI Summary,Configured Capacity:,251.97 GB
+NameNode UI Summary,DFS Used:,837.54 MB (0.32%)
+NameNode UI Summary,DFS Remaining:,14.54 GB (5.77%)
+NameNode UI Summary,Live Nodes,"1 (Decommissioned: 0, In Maintenance: 0)"
+NameNode UI Summary,Dead Nodes,"0 (Decommissioned: 0, In Maintenance: 0)"
+NameNode UI Summary,Number of Under-Replicated Blocks,4
+NameNode UI Browse /user/root/btc/raw,row,-rw-r--r-- | root | supergroup | 378.47 MB | Nov 11 17:35 | 1 | 128 MB | btcusd_1-min_data.csv
+JobHistory REST job_1794418481996_0003 (mr_daily_ohlc),TOTAL_LAUNCHED_MAPS,3
+JobHistory REST job_1794418481996_0003 (mr_daily_ohlc),DATA_LOCAL_MAPS,3
+JobHistory REST job_1794418481996_0003 (mr_daily_ohlc),MAP_INPUT_RECORDS,7816538
+JobHistory REST job_1794418481996_0003 (mr_daily_ohlc),REDUCE_INPUT_GROUPS,5429
+JobHistory REST job_1794418481996_0003 (mr_daily_ohlc),SHUFFLED_MAPS,3
+JobHistory UI counters job_1794418481996_0003,Shuffled Maps (UI text),['Shuffled Maps\t0\t3\t3']
