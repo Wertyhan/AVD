@@ -5,3 +5,5 @@ work/mongo_data/
 work/format/
 *.zip
 !work/data/facts.csv
+*.whl
+work/pz*/results/*.parquet
