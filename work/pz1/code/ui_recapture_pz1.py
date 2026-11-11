@@ -47,7 +47,7 @@ with sync_playwright() as p:
     for k, (n1, n2, n3) in {'word': (38, 39, 40), 'mr_daily_ohlc': (41, 42, 43), 'mr_yearly': (44, 45, 46)}.items():
         i = APP[k]
         if not ONLY_JH: shot(b, f'{rm}/cluster/app/application_{i}', f'{n1}_ui_yarn_app_{k}', 'table#info', 'table#attempts')
-        shot(b, f'{jh}/jobhistory/job/job_{i}', f'{n2}_ui_jobhistory_{k}', 'table#info', 'table#job', nth_last=True)
-        shot(b, f'{jh}/jobhistory/jobcounters/job_{i}', f'{n3}_ui_jobhistory_counters_{k}', 'table#counters')
+        shot(b, f'{jh}/jobhistory/job/job_{i}', f'{n2}_ui_jobhistory_{k}', 'table.info', 'table.job', nth_last=True)
+        shot(b, f'{jh}/jobhistory/jobcounters/job_{i}', f'{n3}_ui_jobhistory_counters_{k}', 'table#counters', 'table[id$="mapreduce.TaskCounter"]')
     shot(b, f'{jh}/jobhistory', '47_ui_jobhistory_list', 'table#jobs')
     b.close()
