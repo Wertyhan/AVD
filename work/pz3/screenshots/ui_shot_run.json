@@ -1,0 +1,42 @@
+{
+ "ui_streaming_tab": {
+  "x": 30.5,
+  "y": 203.890625,
+  "width": 1247,
+  "height": 417
+ },
+ "queries": [
+  "anomaly",
+  "console_1h",
+  "daily_mem",
+  "win1h_mem",
+  "win15m_mem",
+  "sink_win1h",
+  "sink_win15m"
+ ],
+ "ui_query_anomaly": {
+  "x": 0,
+  "y": 64,
+  "width": 1280,
+  "height": 1228.390625
+ },
+ "ui_query_sink_win1h": {
+  "x": 0,
+  "y": 64,
+  "width": 1280,
+  "height": 2230.390625
+ },
+ "ui_jobs": {
+  "x": 0,
+  "y": 64,
+  "width": 1280,
+  "height": 1500
+ },
+ "ui_executors": {
+  "x": 0,
+  "y": 64,
+  "width": 1479,
+  "height": 560
+ },
+ "executors_viewport_width": 1479
+}

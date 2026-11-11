@@ -1,0 +1,13 @@
+id,name,type,state,final_status,elapsed_s
+application_1794437748275_0001,"SELECT trade_date, ts, open, high, low,...10 (Stage-1)",MAPREDUCE,FINISHED,SUCCEEDED,34.6
+application_1794437748275_0002,SELECT COUNT(*) AS raw_rows FROM candles (Stage-1),MAPREDUCE,FINISHED,SUCCEEDED,23.9
+application_1794437748275_0003,SELECT COUNT(*) AS total_candles...candles_v (Stage-1),MAPREDUCE,FINISHED,SUCCEEDED,27.8
+application_1794437748275_0004,"SELECT year(trade_date)  AS yr,",MAPREDUCE,FINISHED,SUCCEEDED,30.9
+application_1794437748275_0005,"SELECT year(trade_date)  AS yr,",MAPREDUCE,FINISHED,SUCCEEDED,22.1
+application_1794437748275_0006,"SELECT year(trade_date)  AS yr,",MAPREDUCE,FINISHED,SUCCEEDED,28.8
+application_1794437748275_0007,"SELECT year(trade_date)  AS yr,",MAPREDUCE,FINISHED,SUCCEEDED,21.9
+application_1794437748275_0008,CREATE TABLE daily_ohlc STORED ...trade_date (Stage-1),MAPREDUCE,FINISHED,SUCCEEDED,40.2
+application_1794437748275_0009,SELECT * FROM daily_ohlc ORDER BY trade_...5 (Stage-1),MAPREDUCE,FINISHED,SUCCEEDED,32.4
+application_1794437748275_0010,"SELECT trade_date, open, high, low, clo...10 (Stage-1)",MAPREDUCE,FINISHED,SUCCEEDED,32.3
+application_1794437748275_0011,"SELECT trade_date, high, low, price_ran...10 (Stage-1)",MAPREDUCE,FINISHED,SUCCEEDED,27.4
+application_1794437748275_0012,SELECT COUNT(*) AS managed...candles_managed (Stage-1),MAPREDUCE,FINISHED,SUCCEEDED,30.5

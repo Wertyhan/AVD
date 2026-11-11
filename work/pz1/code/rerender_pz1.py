@@ -45,7 +45,7 @@ J = [
  ('16_mr_yearly_result', 'hdfs dfs -cat /user/root/btc/out/mr_yearly/part-*', 'LIVE:hdfs dfs -cat /user/root/btc/out/mr_yearly/part-*', None),
  ('17_mr_daily_ohlc_job_output', 'hadoop jar hadoop-streaming-3.3.6.jar -D mapreduce.job.name=mr_daily_ohlc -files mapper_ohlc.py,reducer_ohlc.py -mapper \'python3 mapper_ohlc.py\' -reducer \'python3 reducer_ohlc.py\' -input /user/root/btc/raw -output /user/root/btc/out/mr_daily_ohlc', ('06_mr_daily_ohlc.log', 'hadoop jar'), 'початок і кінець журналу задачі'),
  ('18_mr_daily_ohlc_result', 'hdfs dfs -cat /user/root/btc/out/mr_daily_ohlc/part-* | head -n 12', 'LIVE:hdfs dfs -cat /user/root/btc/out/mr_daily_ohlc/part-* | head -n 12', None),
- ('19_hive_create_table', HQL('hive_01_create_table.hql'), ('08_hive_create_table.log', 'hive -S'), None),
+ ('19_hive_create_table', "hive -f hive_01b_describe.hql | sed '/^# Storage Information/,$d'", ('08_hive_describe.log', 'hive -S'), 'DESCRIBE FORMATTED candles (без Storage Information)'),
  ('20_hive_select', HQL('hive_02_select.hql'), ('08_hive_select.log', 'hive -S'), None),
  ('21_hive_yearly', HQL('hive_03a_yearly.hql'), ('08_hive_yearly.log', 'hive -S'), None),
  ('22_hive_monthly', HQL('hive_03b_monthly.hql'), ('08_hive_monthly.log', 'hive -S'), 'початок і кінець результату (усього 179 місяців)'),
@@ -57,6 +57,12 @@ J = [
  ('28_jps_final', 'jps', 'LIVE:jps', None),
  ('29_hdfs_ls_outputs', 'hdfs dfs -ls -R /user/root/btc/out | grep -v "/_" | head -30', 'LIVE:hdfs dfs -ls -R /user/root/btc/out | grep -v "/_" | head -30', None),
  ('30_hdfs_ls_warehouse', 'hdfs dfs -ls /user/hive/warehouse/btc.db', 'LIVE:hdfs dfs -ls /user/hive/warehouse/btc.db', None),
+
+ ('48_hdfs_check_ls_R', 'hdfs dfs -ls -R -h /user/root/btc/raw /user/root/btc/wc_in /user/root/btc/out/wordcount', 'LIVE:hdfs dfs -ls -R -h /user/root/btc/raw /user/root/btc/wc_in /user/root/btc/out/wordcount', None),
+ ('49_hdfs_check_du_cat', 'hdfs dfs -du -h /user/root/btc/raw; hdfs dfs -cat /user/root/btc/raw/btcusd_1-min_data.csv | head -n 5', 'LIVE:hdfs dfs -du -h /user/root/btc/raw; hdfs dfs -cat /user/root/btc/raw/btcusd_1-min_data.csv | head -n 5', None),
+ ('50_wordcount_cat_head', 'hdfs dfs -cat /user/root/btc/out/wordcount/part-r-00000 | head -n 15', 'LIVE:hdfs dfs -cat /user/root/btc/out/wordcount/part-r-00000 | head -n 15', None),
+ ('51_hive_load_data', HQL('hive_07_load_data.hql'), ('08_hive_load_data.log', 'hive -S'), 'CREATE TABLE candles_managed + LOAD DATA INPATH + COUNT(*)'),
+ ('52_hdfs_after_load', 'hdfs dfs -ls -h /user/root/btc/raw /user/root/btc/load_src /user/hive/warehouse/btc.db/candles_managed', 'LIVE:hdfs dfs -ls -h /user/root/btc/raw /user/root/btc/load_src /user/hive/warehouse/btc.db/candles_managed', 'raw: файл на місці; load_src: порожній (LOAD перемістив файл); candles_managed: файл у сховищі'),
 ]
 only = sys.argv[1:]
 for png, shown, src, note in J:
