@@ -33,7 +33,7 @@
 - Decimal comma in text and tables (3,14 not 3.14). Code/commands keep their own syntax.
 - No bullet lists where a sentence suffices; no bold inside paragraphs.
 - Theory section short (1–1,5 pages), own words, tied to this dataset, not a retelling of the guide.
-- Length: 10–15 pages main body + appendix.
+- Length: 10–15 pages main body + appendix. At TNR 14 / 1,5 spacing one page holds ≈ 250 words, and figures/tables take ≈ 5–6 pages, so the main-body PROSE budget is 2200–2700 words (excluding tables, captions, code, appendix). Theory ≤ 350 words. Max 12 figures, max 8 tables; prefer combining related small charts into one multi-panel figure. Short code fragments in the body ≤ 8 lines each.
 - Quotes: «ялинки».
 
 ## Report structure (report.md)

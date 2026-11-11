@@ -12,3 +12,4 @@ Hadoop Streaming       yearly           run3:    38.94 s  map+combiner+1 reduce,
 Hadoop Streaming       daily_ohlc       run1:    33.91 s  in-mapper combining+1 reduce, YARN
 Hadoop Streaming       daily_ohlc       run2:    41.48 s  in-mapper combining+1 reduce, YARN
 Hadoop Streaming       daily_ohlc       run3:    38.27 s  in-mapper combining+1 reduce, YARN
+Hive (MR)              yearly           run1:   108.95 s  hive -f: старт CLI + компіляція + MR-задачі

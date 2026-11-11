@@ -5,3 +5,4 @@ Hadoop Streaming,yearly,3,38.94,"map+combiner+1 reduce, YARN"
 Hadoop Streaming,daily_ohlc,1,33.91,"in-mapper combining+1 reduce, YARN"
 Hadoop Streaming,daily_ohlc,2,41.48,"in-mapper combining+1 reduce, YARN"
 Hadoop Streaming,daily_ohlc,3,38.27,"in-mapper combining+1 reduce, YARN"
+Hive (MR),yearly,1,108.95,hive -f: старт CLI + компіляція + MR-задачі
