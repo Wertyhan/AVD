@@ -14,6 +14,21 @@ def _font(size):
             return ImageFont.truetype(c, size)
     return ImageFont.load_default()
 
+def align_tabs(text):
+    """Вирівнює табуляції (вивід Hive/Hadoop розділений \\t) у колонки; зміст рядків не змінюється, лише пробіли."""
+    lines = text.rstrip('\n').split('\n')
+    rows = [ln.split('\t') for ln in lines]
+    tab = [r for r in rows if len(r) > 1]
+    if len(tab) < 2:
+        return text.expandtabs(8)
+    ncol = max(len(r) for r in tab)
+    w = [max((len(r[i]) for r in tab if i < len(r)), default=0) for i in range(ncol)]
+    out = []
+    for r in rows:
+        out.append('  '.join(c.ljust(w[i]) for i, c in enumerate(r)).rstrip() if len(r) > 1 else r[0])
+    return '\n'.join(out)
+
+
 def render_terminal_png(cmd, text, path, max_lines=40, cols=112):
     """Рендерить РЕАЛЬНИЙ вивід команди як вікно термінала (темний фон, моноширинний шрифт, рядок '$ команда')."""
     from PIL import Image, ImageDraw
@@ -22,8 +37,8 @@ def render_terminal_png(cmd, text, path, max_lines=40, cols=112):
     for i, part in enumerate(wrap('$ ' + cmd.replace('\n', ' '))):
         head.append(part if i == 0 else '  ' + part)
     body = []
-    for ln in text.expandtabs(8).rstrip('\n').split('\n'):
-        body += wrap(ln.replace('\t', ' '))
+    for ln in align_tabs(text).rstrip('\n').split('\n'):
+        body += wrap(ln)
     if len(body) > max_lines:
         h, t = max_lines - 12, 11
         body = body[:h] + [f'... [пропущено {len(body) - h - t} рядків / {len(body) - h - t} lines omitted] ...'] + body[-t:]

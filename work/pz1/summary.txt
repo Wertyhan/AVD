@@ -11,8 +11,8 @@
 [OK  ] Завдання 5: зовнішня таблиця Hive над CSV у HDFS
 [OK  ] Завдання 6: вибірка, групування за роком/місяцем
 [OK  ] Завдання 6: добова таблиця, топ-10 за обсягом і за High-Low
-[FAIL] Завдання 7: Pandas (ті самі агрегації) + звірка з MapReduce  <- AssertionError: Розбіжність результатів: ['hive_vs_pandas_top10_range_days'] (рядків: Hadoop/Hive vs Pandas) | Result mismatch between Hadoop/Hive and Pandas: ['hive_vs_pandas_top10_range_days']
+[OK  ] Завдання 7: Pandas (ті самі агрегації) + звірка з MapReduce
 [OK  ] Збереження версій, логів, runtimes
 
-Разом: 14 з 15 OK. Результати: /nonexistent_drive/colab_results/pz1
+Разом: 15 з 15 OK. Результати: /nonexistent_drive/colab_results/pz1
 Скріншоти: 26 файлів; CSV: 23

@@ -1,0 +1,7 @@
+tool,task,run,seconds,note
+Hadoop Streaming,yearly,1,37.74,"map+combiner+1 reduce, YARN"
+Hadoop Streaming,yearly,2,39.28,"map+combiner+1 reduce, YARN"
+Hadoop Streaming,yearly,3,38.94,"map+combiner+1 reduce, YARN"
+Hadoop Streaming,daily_ohlc,1,33.91,"in-mapper combining+1 reduce, YARN"
+Hadoop Streaming,daily_ohlc,2,41.48,"in-mapper combining+1 reduce, YARN"
+Hadoop Streaming,daily_ohlc,3,38.27,"in-mapper combining+1 reduce, YARN"

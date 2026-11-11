@@ -26,7 +26,7 @@ term('hdfs dfs -ls /user/hive/warehouse/btc.db', 'hdfs_ls_warehouse')
 ids = {}   # назва -> application id (перший успішний запуск)
 for line in apps.splitlines():
     m = re.match(r'(application_\d+_\d+)\s+(\S+)\s+', line)
-    if m and m.group(2) not in ids and ('mr_' in m.group(2) or 'bench_' in m.group(2) or 'word' in m.group(2).lower()):
+    if m and m.group(2) not in ids and ('mr_' in m.group(2) or 'word' in m.group(2).lower()):
         ids[m.group(2)] = m.group(1)
 print(ids)
 nn, rm, jh = 'http://localhost:9870', 'http://localhost:8088', 'http://localhost:19888'

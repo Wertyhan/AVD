@@ -1,0 +1,14 @@
+loadavg перед стартом: (4.06298828125, 5.59619140625, 5.5908203125)
+  PID %CPU   RSS COMMAND
+  436  116 102568 python3 -I code/bench_pz1.py
+  426  105 106172 node ./node_modules/.bin/mongosh --version
+19984  101 3293152 /usr/lib/jvm/java-21-openjdk-amd64/bin/java -cp /usr/local/lib/python3.13/dist-packages/pyspark/conf:/usr/local/lib/python3.13/dist
+ 8601  5.1 451016 /usr/lib/jvm/java-21-openjdk-amd64/bin/java -Xmx1G -Xms1G -server -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPe
+   95  5.0 408476 /opt/node22/bin/claude --preload /home/claude/.claude/remote/spare.sock
+
+Hadoop Streaming       yearly           run1:    37.74 s  map+combiner+1 reduce, YARN
+Hadoop Streaming       yearly           run2:    39.28 s  map+combiner+1 reduce, YARN
+Hadoop Streaming       yearly           run3:    38.94 s  map+combiner+1 reduce, YARN
+Hadoop Streaming       daily_ohlc       run1:    33.91 s  in-mapper combining+1 reduce, YARN
+Hadoop Streaming       daily_ohlc       run2:    41.48 s  in-mapper combining+1 reduce, YARN
+Hadoop Streaming       daily_ohlc       run3:    38.27 s  in-mapper combining+1 reduce, YARN

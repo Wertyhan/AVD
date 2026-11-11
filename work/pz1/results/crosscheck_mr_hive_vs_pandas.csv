@@ -4,4 +4,4 @@ mapreduce_vs_pandas_daily_ohlc,5429,5429,True,"mismatch_OHLC={'open': 0, 'high':
 hive_vs_pandas_yearly,15,15,True,
 hive_vs_pandas_daily_rows,5429,5429,True,
 hive_vs_pandas_top10_volume_days,10,10,True,
-hive_vs_pandas_top10_range_days,11,5429,False,
+hive_vs_pandas_top10_range_days,10,5429,True,
