@@ -6,7 +6,7 @@ import pandas as pd
 from pyspark.sql import SparkSession, functions as F, types as T
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from anomaly_rule import StreamScorer, K_SEL, KV_SEL
+from anomaly_rule import StreamScorer, K_SEL, WINDOW, load_history_parquet
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--bootstrap", default="localhost:9092")
@@ -19,14 +19,15 @@ ap.add_argument("--watermark", default="10 minutes")
 ap.add_argument("--trigger-seconds", type=int, default=10)
 ap.add_argument("--max-offsets", type=int, default=3000)
 ap.add_argument("--k", type=float, default=K_SEL)
-ap.add_argument("--kv", type=float, default=KV_SEL)
+ap.add_argument("--history-parquet", required=True, help="історія для прогріву 7-денної бази (дані ДО кожного періоду відтворення)")
+ap.add_argument("--only-anomaly", action="store_true", help="запустити лише запит аномалій (віконні запити не перезапускаються)")
 ap.add_argument("--max-seconds", type=int, default=1200)
 a = ap.parse_args()
 
 os.makedirs(a.out, exist_ok=True)
 PARTS = os.path.join(a.out, "scored_parts"); os.makedirs(PARTS, exist_ok=True)
 
-spark = (SparkSession.builder.appName("PZ3-bitcoin-streaming").master("local[2]")
+spark = (SparkSession.builder.appName("PZ3-bitcoin-streaming" + ("-anomaly-v2" if a.only_anomaly else "")).master("local[2]")
          .config("spark.jars.packages", a.kafka_pkg)
          .config("spark.sql.shuffle.partitions", "4")
          .config("spark.sql.session.timeZone", "UTC")     # вікна вирівнюються по UTC
@@ -85,25 +86,34 @@ daily = (events.groupBy(F.to_date("event_time").alias("trade_date"))
 
 trig = {"processingTime": f"{a.trigger_seconds} seconds"}
 Q = {}
+if not a.only_anomaly:
+    start_window_queries = True
+else:
+    start_window_queries = False
 # ---------- Завдання 7: parquet-приймачі (append: вікно записується після закриття водяною позначкою) ----------
-for name, df in (("win15m", w15), ("win1h", w1h)):
+for name, df in ((("win15m", w15), ("win1h", w1h)) if start_window_queries else ()):
     Q[f"sink_{name}"] = (df.writeStream.queryName(f"sink_{name}").outputMode("append").format("parquet")
                          .option("path", os.path.join(a.out, "parquet", name))
                          .option("checkpointLocation", os.path.join(a.ckpt, name)).trigger(**trig).start())
 # memory-приймачі (update): повний поточний стан вікон для перевірки та скріншотів
-Q["mem_win15m"] = w15.writeStream.queryName("win15m_mem").outputMode("update").format("memory").trigger(**trig).start()
-Q["mem_win1h"] = w1h.writeStream.queryName("win1h_mem").outputMode("update").format("memory").trigger(**trig).start()
-Q["mem_daily"] = daily.writeStream.queryName("daily_mem").outputMode("update").format("memory").trigger(**trig).start()
+if start_window_queries:
+  Q["mem_win15m"] = w15.writeStream.queryName("win15m_mem").outputMode("update").format("memory").trigger(**trig).start()
+  Q["mem_win1h"] = w1h.writeStream.queryName("win1h_mem").outputMode("update").format("memory").trigger(**trig).start()
+  Q["mem_daily"] = daily.writeStream.queryName("daily_mem").outputMode("update").format("memory").trigger(**trig).start()
 # console-приймач для демонстрації (вивід у лог)
-Q["console_1h"] = (w1h.writeStream.queryName("console_1h").outputMode("update").format("console")
-                   .option("truncate", "false").option("numRows", 6).trigger(**trig).start())
+  Q["console_1h"] = (w1h.writeStream.queryName("console_1h").outputMode("update").format("console")
+                     .option("truncate", "false").option("numRows", 6).trigger(**trig).start())
 
-# ---------- Завдання 6: аномалії у foreachBatch зі станом (буфер останніх 61 хвилини) ----------
-scorer = StreamScorer(k=a.k, kv=a.kv)
+# ---------- Завдання 6: аномалії у foreachBatch зі станом ----------
+# Стан: окремий буфер останніх W+1 = 10 081 хвилин (7 діб) для кожного ключа Kafka (= період відтворення).
+# Перед першою хвилиною кожного періоду буфер ПРОГРІВАЄТЬСЯ історією з parquet (7 діб до початку періоду),
+# тому оцінюється кожна хвилина потоку, а результат збігається з офлайн-оцінкою на всій історії.
+scorer = StreamScorer(load_history_parquet(a.history_parquet), k=a.k)
 BATCH_LOG = []
 def process_batch(bdf, batch_id):
     t0 = time.time()
-    pdf = bdf.select("ts", "close", "volume", "valid", "kafka_epoch").toPandas()
+    pdf = bdf.select("key", "ts", "close", "volume", "valid", "kafka_epoch").toPandas()
+    n_pw = len(scorer.prewarm_log)
     n_raw, n_valid = len(pdf), int(pdf["valid"].sum())
     lat = (time.time() - pdf["kafka_epoch"]).to_numpy() if n_raw else np.array([np.nan])
     res = scorer.update(pdf[pdf["valid"]]) if n_valid else pd.DataFrame()
@@ -118,7 +128,11 @@ def process_batch(bdf, batch_id):
            "latency_p95_s": float(np.nanpercentile(lat, 95)), "latency_max_s": float(np.nanmax(lat)),
            "foreachbatch_s": round(time.time() - t0, 3)}
     BATCH_LOG.append(rec)
-    print(f"[anomaly] batch {batch_id}: рядків {n_raw}, аномалій {n_anom}, "
+    for pw in scorer.prewarm_log[n_pw:]:
+        print(f"[anomaly] прогрів бази з parquet: ключ {pw['key']}, {pw['prewarm_rows']} хв до "
+              f"{pd.to_datetime(pw['first_stream_ts'], unit='s')} UTC", flush=True)
+    mx = float(res["z_ret"].max()) if len(res) else float("nan")
+    print(f"[anomaly] batch {batch_id}: рядків {n_raw}, аномалій {n_anom}, max z_ret {mx:.1f}, "
           f"затримка середня {rec['latency_mean_s']:.1f} с", flush=True)
 
 Q["anomaly"] = (parsed.writeStream.queryName("anomaly").foreachBatch(process_batch)
@@ -168,7 +182,8 @@ while time.time() - t_start < a.max_seconds:
 # ---------- збереження результатів ----------
 summary = {"status": status, "expected_messages": expected, "input_totals": totals(),
            "seconds": round(time.time() - t_start, 1)}
-if status in ("ok", "timeout"):
+pd.DataFrame(scorer.prewarm_log).to_csv(os.path.join(a.out, "prewarm_log.csv"), index=False)
+if status in ("ok", "timeout") and not a.only_anomaly:
     for tbl, fn in (("win15m_mem", "win15m_all"), ("win1h_mem", "win1h_all"), ("daily_mem", "daily_stats")):
         d = spark.table(tbl).toPandas()
         d = d.sort_values(d.columns[0]).reset_index(drop=True)
@@ -189,7 +204,7 @@ if parts:
     an = sc[sc["anomaly"]]
     an.to_parquet(os.path.join(a.out, "anomalies.parquet"), index=False)
     an.to_csv(os.path.join(a.out, "anomalies.csv"), index=False)
-    summary.update(scored_rows=len(sc), anomalies_rows=len(an), k=a.k, kv=a.kv)
+    summary.update(scored_rows=len(sc), anomalies_rows=len(an), k=a.k, window=WINDOW)
     print(f"[job] scored={len(sc)} anomalies={len(an)}", flush=True)
 json.dump(summary, open(os.path.join(a.out, "job_summary.json"), "w"), indent=1)
 for q in Q.values():
