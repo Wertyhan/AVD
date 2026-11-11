@@ -30,3 +30,4 @@ PySpark (local[*]),session_start,1,14.52,pyspark 4.3.0
 PySpark (local[*]),yearly,1,23.9,читання CSV + агрегація + toPandas
 PySpark (local[*]),yearly,2,7.34,читання CSV + агрегація + toPandas
 PySpark (local[*]),yearly,3,10.83,читання CSV + агрегація + toPandas
+PySpark (local[*]),daily_ohlc,1,16.84,читання CSV + агрегація + toPandas
