@@ -1,0 +1,19 @@
+$ python code/pz2_spark.py
+# фрагмент виводу: кеш: некешований запит, матеріалізація, кешований запит (3 раунди, п
+         mode              run  seconds
+without_cache             run1   13.018
+   with_cache materialize_run1   20.792
+   with_cache             run1    1.456
+   with_cache materialize_run2   19.526
+   with_cache             run2    1.009
+without_cache             run2   12.232
+without_cache             run3   12.057
+   with_cache materialize_run3   19.187
+   with_cache             run3    0.903
+
+медіана без кешу: 12.23 с; з кешем: 1.01 с; прискорення x12.1; матеріалізація (медіана): 19.53 с
+Розділів: всього / у кеші, пам'ять (байт), за раундами:
+   раунд 1: 16 / 16, 378135828
+   раунд 2: 16 / 16, 378135828
+   раунд 3: 16 / 16, 378135828
+Storage level: Disk Memory Serialized 1x Replicated

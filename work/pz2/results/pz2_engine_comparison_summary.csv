@@ -1,0 +1,7 @@
+task,engine,median,min,max
+daily_ohlc,pandas,4.889,4.707,5.101
+daily_ohlc,spark_cached_df,0.575,0.556,0.87
+daily_ohlc,spark_local[*],3.654,3.551,3.811
+year_count_volume,pandas,3.536,3.449,3.63
+year_count_volume,spark_cached_df,0.45,0.426,0.589
+year_count_volume,spark_local[*],2.488,2.47,2.866

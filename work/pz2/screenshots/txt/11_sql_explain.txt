@@ -1,0 +1,36 @@
+$ python code/pz2_spark.py
+# фрагмент виводу: план виконання запиту q1 (explain formatted)
+== Physical Plan ==
+AdaptiveSparkPlan (33)
++- Sort (32)
+   +- Exchange (31)
+      +- HashAggregate (30)
+         +- Exchange (29)
+            +- SortAggregate (28)
+               +- InMemoryTableScan (1)
+                     +- InMemoryRelation (2)
+                           +- AdaptiveSparkPlan (27)
+                              +- == Final Plan ==
+                                 ResultQueryStage (16)
+                                 +- Window (15)
+                                    +- * Project (14)
+                                       +- Window (13)
+                                          +- * Sort (12)
+                                             +- ShuffleQueryStage (11), Statistics(sizeI
+                                                +- Exchange (10)
+                                                   +- * Project (9)
+                                                      +- * HashAggregate (8)
+                                                         +- ShuffleQueryStage (7), Stati
+                                                            +- Exchange (6)
+                                                               +- * HashAggregate (5)
+                                                                  +- * Filter (4)
+                                                                     +- Scan csv  (3)
+                              +- == Initial Plan ==
+                                 Window (26)
+                                 +- Project (25)
+                                    +- Window (24)
+                                       +- Sort (23)
+                                          +- Exchange (22)
+                                             +- Project (21)
+                                                +- HashAggregate (20)
+                                                   +- Exchange (19)

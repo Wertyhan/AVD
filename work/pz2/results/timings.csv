@@ -1,0 +1,53 @@
+step,seconds,note
+schema_experiment_inferSchema_run1,10.5,"read+sum усіх 6 стовпців, позиція в парі 1"
+schema_experiment_explicit_run1,4.016,"read+sum усіх 6 стовпців, позиція в парі 2"
+schema_experiment_explicit_run2,2.714,"read+sum усіх 6 стовпців, позиція в парі 1"
+schema_experiment_inferSchema_run2,7.129,"read+sum усіх 6 стовпців, позиція в парі 2"
+schema_experiment_inferSchema_run3,6.224,"read+sum усіх 6 стовпців, позиція в парі 1"
+schema_experiment_explicit_run3,2.761,"read+sum усіх 6 стовпців, позиція в парі 2"
+count_explicit_schema,0.76,count() без розбору стовпців
+missing_values_per_column,8.271,
+dedup_check,6.782,
+lazy_build_transformations,0.164,"лише побудова плану, без обчислень"
+lazy_action_count_run1,6.018,
+lazy_action_agg_sum_vol60_logret_run1,17.36,
+lazy_action_noop_write_run1,20.313,
+lazy_action_agg_sum_vol60_logret_run2,14.749,
+lazy_action_noop_write_run2,17.249,
+lazy_action_count_run2,4.781,
+lazy_action_noop_write_run3,17.283,
+lazy_action_count_run3,4.759,
+lazy_action_agg_sum_vol60_logret_run3,14.471,
+cache_exp_without_cache_run1,13.018,
+cache_exp_materialize_run1,20.792,
+cache_exp_with_cache_run1,1.456,
+cache_exp_materialize_run2,19.526,
+cache_exp_with_cache_run2,1.009,
+cache_exp_without_cache_run2,12.232,
+cache_exp_without_cache_run3,12.057,
+cache_exp_materialize_run3,19.187,
+cache_exp_with_cache_run3,0.903,
+partition_sizes_and_window_boundary,4.686,
+describe_derived,1.702,
+daily_aggregation,1.481,
+top10_volatile_days,3.618,
+volume_by_hour,0.822,
+hourly_features,2.38,
+skew_kurtosis,7.882,
+minute_return_histogram,0.639,
+sql_q1_year_stats,0.97,
+sql_q2_top_days_range,0.824,
+sql_q3_dow_hour_volume,0.969,
+sql_q4_month_seasonality,1.148,
+sql_q5_max_volume_day_per_year,0.947,
+sql_q6_crash_days_vs_30d_mean,0.811,
+sql_q7_volume_spike_days,0.618,
+engine_daily_ohlc_pandas,4.889,медіана з 3 запусків
+engine_daily_ohlc_spark_cached_df,0.575,медіана з 3 запусків
+engine_daily_ohlc_spark_local[*],3.654,медіана з 3 запусків
+engine_year_count_volume_pandas,3.536,медіана з 3 запусків
+engine_year_count_volume_spark_cached_df,0.45,медіана з 3 запусків
+engine_year_count_volume_spark_local[*],2.488,медіана з 3 запусків
+engine_year_count_volume_hadoop_streaming,,[ЗАПОВНИТИ ПІСЛЯ ЗАПУСКУ]
+engine_daily_ohlc_hadoop_streaming,,[ЗАПОВНИТИ ПІСЛЯ ЗАПУСКУ]
+TOTAL_script_runtime,395.67,
