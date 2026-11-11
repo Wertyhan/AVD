@@ -1,0 +1,4 @@
+metric,value
+median_without_cache_s,19.343
+median_with_cache_s,3.043
+speedup,6.356556030233322

@@ -1,0 +1,24 @@
+$ df = spark.read.csv(RAW, header=True, inferSchema=True); df.printSchema(); df.show(5)
+root
+ |-- Timestamp: integer (nullable = true)
+ |-- Open: double (nullable = true)
+ |-- High: double (nullable = true)
+ |-- Low: double (nullable = true)
+ |-- Close: double (nullable = true)
+ |-- Volume: double (nullable = true)
+
+Кількість записів : 7816537
+Кількість атрибутів: 6
+Назви полів       : ['Timestamp', 'Open', 'High', 'Low', 'Close', 'Volume']
+Типи даних        : [('Timestamp', 'int'), ('Open', 'double'), ('High', 'double'), ('Low', 'double'), ('Close', 'double'), ('Volume', 'double')]
+Кількість розділів (partitions) DataFrame: 4
++----------+----+----+----+-----+------+
+| Timestamp|Open|High| Low|Close|Volume|
++----------+----+----+----+-----+------+
+|1325376060|4.58|4.58|4.58| 4.58|   0.0|
+|1325376120|4.58|4.58|4.58| 4.58|   0.0|
+|1325376180|4.58|4.58|4.58| 4.58|   0.0|
+|1325376240|4.58|4.58|4.58| 4.58|   0.0|
+|1325376300|4.58|4.58|4.58| 4.58|   0.0|
++----------+----+----+----+-----+------+
+only showing top 5 rows

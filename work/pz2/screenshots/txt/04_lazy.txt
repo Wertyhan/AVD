@@ -1,0 +1,91 @@
+$ df = build(); # трансформації (мс)  ->  df.count() # дія; df.explain('formatted')
+Трансформації (read, dropna, dropDuplicates, withColumn x10, Window lag/stddev): 295.6 мс – обчислень немає
+Дія count() = 7816537 рядків за 7.82 с – лише тепер Spark виконує план
+
+== Physical Plan ==
+AdaptiveSparkPlan (15)
++- Project (14)
+   +- Filter (13)
+      +- Window (12)
+         +- Project (11)
+            +- Window (10)
+               +- Sort (9)
+                  +- Exchange (8)
+                     +- Project (7)
+                        +- HashAggregate (6)
+                           +- Exchange (5)
+                              +- HashAggregate (4)
+                                 +- Project (3)
+                                    +- Filter (2)
+                                       +- Scan csv  (1)
+
+
+(1) Scan csv 
+Output [6]: [Timestamp#207L, Open#208, High#209, Low#210, Close#211, Volume#212]
+Batched: false
+Location: InMemoryFileIndex [file:/home/user/AVD/work/data/raw/btcusd_1-min_data.csv]
+ReadSchema: struct<Timestamp:bigint,Open:double,High:double,Low:double,Close:double,Volume:double>
+
+(2) Filter
+Input [6]: [Timestamp#207L, Open#208, High#209, Low#210, Close#211, Volume#212]
+Condition : atleastnnonnulls(6, Timestamp#207L, Open#208, High#209, Low#210, Close#211, Volume#212)
+
+(3) Project
+Output [2]: [Timestamp#207L, Close#211]
+Input [6]: [Timestamp#207L, Open#208, High#209, Low#210, Close#211, Volume#212]
+
+(4) HashAggregate
+Input [2]: [Timestamp#207L, Close#211]
+Keys [1]: [Timestamp#207L]
+Functions [1]: [partial_first(Close#211, false)]
+Aggregate Attributes [2]: [first#280, valueSet#281]
+Results [3]: [Timestamp#207L, first#282, valueSet#283]
+
+(5) Exchange
+Input [3]: [Timestamp#207L, first#282, valueSet#283]
+Arguments: hashpartitioning(Timestamp#207L, 16), ENSURE_REQUIREMENTS, [plan_id=455]
+
+(6) HashAggregate
+Input [3]: [Timestamp#207L, first#282, valueSet#283]
+Keys [1]: [Timestamp#207L]
+Functions [1]: [first(Close#211, false)]
+Aggregate Attributes [1]: [first(Close#211)()#276]
+Results [3]: [Timestamp#207L, first(Close#211)()#276 AS Close#277, timestamp_seconds(Timestamp#207L) AS datetime#214]
+
+(7) Project
+Output [4]: [Timestamp#207L, Close#277, cast(datetime#214 as date) AS date#215, year(cast(datetime#214 as date)) AS year#216]
+Input [3]: [Timestamp#207L, Close#277, datetime#214]
+
+(8) Exchange
+Input [4]: [Timestamp#207L, Close#277, date#215, year#216]
+Arguments: SinglePartition, ENSURE_REQUIREMENTS, [plan_id=459]
+
+(9) Sort
+Input [4]: [Timestamp#207L, Close#277, date#215, year#216]
+Arguments: [Timestamp#207L ASC NULLS FIRST], false, 0
+
+(10) Window
+Input [4]: [Timestamp#207L, Close#277, date#215, year#216]
+Arguments: [lag(Close#277, -1, null) windowspecdefinition(Timestamp#207L ASC NULLS FIRST, specifiedwindowframe(RowFrame, -1, -1)) AS _we0#223], [Timestamp#207L ASC NULLS FIRST]
+
+(11) Project
+Output [4]: [Timestamp#207L, date#215, year#216, (ln(Close#277) - ln(_we0#223)) AS log_ret#222]
+Input [5]: [Timestamp#207L, Close#277, date#215, year#216, _we0#223]
+
+(12) Window
+Input [4]: [Timestamp#207L, date#215, year#216, log_ret#222]
+Arguments: [stddev(log_ret#222) windowspecdefinition(Timestamp#207L ASC NULLS FIRST, specifiedwindowframe(RowFrame, -59, currentrow$())) AS vol60#224], [Timestamp#207L ASC NULLS FIRST]
+
+(13) Filter
+Input [5]: [Timestamp#207L, date#215, year#216, log_ret#222, vol60#224]
+Condition : (isnotnull(year#216) AND (year#216 = 2021))
+
+(14) Project
+Output [3]: [date#215, log_ret#222, vol60#224]
+Input [5]: [Timestamp#207L, date#215, year#216, log_ret#222, vol60#224]
+
+(15) AdaptiveSparkPlan
+Output [3]: [date#215, log_ret#222, vol60#224]
+Arguments: isFinalPlan=false
+
+

@@ -1,0 +1,5 @@
+metric,value
+rows,7816537
+columns,6
+raw_partitions_inferSchema,4
+raw_partitions_explicit,4
