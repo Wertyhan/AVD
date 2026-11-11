@@ -66,14 +66,14 @@
  "executionStats": {
   "executionSuccess": true,
   "nReturned": 24,
-  "executionTimeMillis": 76,
+  "executionTimeMillis": 74,
   "totalKeysExamined": 0,
   "totalDocsExamined": 130276,
   "executionStages": {
    "isCached": false,
    "stage": "SORT",
    "nReturned": 24,
-   "executionTimeMillisEstimate": 74,
+   "executionTimeMillisEstimate": 68,
    "works": 130302,
    "advanced": 24,
    "needTime": 130277,
@@ -114,7 +114,7 @@
      ]
     },
     "nReturned": 24,
-    "executionTimeMillisEstimate": 64,
+    "executionTimeMillisEstimate": 68,
     "works": 130277,
     "advanced": 24,
     "needTime": 130252,
