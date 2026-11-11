@@ -6,15 +6,18 @@ python build_report.py --md work/pzN/report.md --pz N --theme "Тема" --out w
 import argparse, os, re, subprocess, shutil, sys
 from docx import Document
 from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
-from docx.enum.text import WD_ALIGN_PARAGRAPH as AL, WD_LINE_SPACING
+from docx.enum.text import WD_ALIGN_PARAGRAPH as AL, WD_LINE_SPACING, WD_COLOR_INDEX
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Cm, Pt, Emu
 from PIL import Image
 
 TNR, ARIAL, COUR = "Times New Roman", "Arial", "Courier New"
+_FONT = next((p for p in ("/usr/share/fonts/truetype/liberation/LiberationSerif-Regular.ttf",
+                          "/usr/share/fonts/truetype/msttcorefonts/Times_New_Roman.ttf") if os.path.exists(p)), "")
 TEXT_W = 21.0 - 2.5 - 2.4  # 16.1 cm
-MAX_IMG_H = 15.5  # cm (~60 % of page height)
+MAX_IMG_H = 10.0  # cm
+MAX_IMG_H_TERM = 9.0  # cm, terminal screenshots
 DASH = "–"
 
 
@@ -47,7 +50,20 @@ def pf(p, align=None, left=None, first=None, before=0, after=0, line=1.5, kwn=Fa
 INLINE = re.compile(r"(`[^`]+`|\*\*[^*]+\*\*|(?<![\w*])\*[^*\s][^*]*\*(?![\w*]))")
 
 
+PH = re.compile(r"(\[ЗАПОВНИТИ[^\]]*\])")
+
+
 def add_inline(p, text, size=14, base_bold=None):
+    for seg in PH.split(text):
+        if not seg: continue
+        if PH.fullmatch(seg):
+            r = p.add_run(seg); set_font(r, TNR, size, base_bold)
+            r.font.highlight_color = WD_COLOR_INDEX.YELLOW
+        else:
+            _inline(p, seg, size, base_bold)
+
+
+def _inline(p, text, size, base_bold):
     for part in INLINE.split(text):
         if not part: continue
         if part.startswith("`") and part.endswith("`") and len(part) > 2:
@@ -211,7 +227,9 @@ def figure(doc, path, mdir):
         return placeholder(doc, f"[ЗОБРАЖЕННЯ НЕ ЗНАЙДЕНО: {path}]")
     with Image.open(full) as im: w, h = im.size
     wc = TEXT_W; hc = wc * h / w
-    if hc > MAX_IMG_H: hc = MAX_IMG_H; wc = hc * w / h
+    bn = os.path.basename(full).lower()
+    mh = MAX_IMG_H_TERM if (bn.startswith("term_") or "screenshot" in bn) else MAX_IMG_H
+    if hc > mh: hc = mh; wc = hc * w / h
     p = doc.add_paragraph(); pf(p, AL.CENTER, left=0, first=0, line=1.0, kwn=True)
     p.add_run().add_picture(full, width=Cm(wc), height=Cm(hc))
 
@@ -239,17 +257,37 @@ def pipe_table(doc, rows):
     n = len(hdr)
     data = [r + [""] * (n - len(r)) if len(r) < n else r[:n] for r in data]
     allr = [hdr] + data
-    size = 10.5 if n >= 8 else 11
-    # widths by content length (longest word and total length)
+    from PIL import ImageFont
+    def tw(word, sz):
+        try:
+            f = ImageFont.truetype(_FONT, 100)
+            return f.getlength(word) / 100 * sz / 72 * 2.54
+        except Exception:
+            return len(word) * sz * 0.5 / 72 * 2.54
+    PAD = 2 * 0.19 + 0.12
+    def minw(sz):
+        return [max(tw(w, sz) for w in (hdr[j].replace("`", "").split() or ["x"])) + PAD for j in range(n)]
     def need(j):
         mx = max(len(r[j].replace("`", "")) for r in allr)
         mw = max((len(w) for r in allr for w in r[j].replace("`", "").split()), default=1)
         return max(min(mx, 40), mw + 2, 4)
     ns = [need(j) for j in range(n)]
+    size = 10.5 if n >= 8 else 11
+    mins = minw(size)
+    if sum(mins) > TEXT_W and size > 10:
+        size = 10; mins = minw(size)
     tot = sum(ns); ws = [max(1.6, TEXT_W * x / tot) for x in ns]
     k = TEXT_W / sum(ws); ws = [w * k for w in ws]
     if n <= 3 and tot < 30:  # narrow table
         ws = [w * min(1.0, 12.0 / TEXT_W) for w in ws]
+    ws = [max(w, m) for w, m in zip(ws, mins)]
+    for _ in range(20):  # shrink columns above their minimum until total fits
+        ex = sum(ws) - TEXT_W
+        if ex <= 0.001: break
+        room = [w - m for w, m in zip(ws, mins)]
+        tr = sum(room)
+        if tr <= 0: break
+        ws = [w - ex * r / tr if r > 0 else w for w, r in zip(ws, room)]
     t = doc.add_table(rows=len(allr), cols=n); t.alignment = WD_TABLE_ALIGNMENT.CENTER
     grid_borders(t); fix_layout(t, ws)
     for i, r in enumerate(allr):
@@ -262,7 +300,7 @@ def pipe_table(doc, rows):
             c = row.cells[j]; c.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
             p = c.paragraphs[0]
             al = AL.CENTER if (i == 0 or j > 0) else AL.LEFT
-            pf(p, al, left=0, first=0, line=1.0, kwn=(i < len(allr) - 1 and len(allr) <= 12))
+            pf(p, al, left=0, first=0, line=1.0, kwn=(i == 0))
             add_inline(p, txt, size)
 
 

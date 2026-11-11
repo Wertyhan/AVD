@@ -3,54 +3,15 @@
 Умови порівняння: той самий запит, один warm-up запуск, далі 5 вимірювань; у таблицю йде медіана.
 Для 'до' усі вторинні індекси колекції видаляються, для 'після' створюється рівно один індекс."""
 import sys, time, json, statistics, datetime as dt
+from pz4_common import experiment
 from bson import json_util
 sys.path.insert(0, __import__("os").path.dirname(__file__))
 from pz4_common import *
+from pz4_common import drop_secondary, measure, experiment
 
 db = get_db()
 U = lambda *a: dt.datetime(*a, tzinfo=dt.timezone.utc)
 REPS = 5
-
-
-def drop_secondary(coll):
-    for ix in db[coll].index_information():
-        if ix != "_id_": db[coll].drop_index(ix)
-
-
-def measure(tag, coll, flt, sort, limit, hint=None):
-    """warm-up + 5 вимірювань: executionTimeMillis (з explain) та wall-clock фактичного виконання."""
-    run = lambda: list(db[coll].find(flt, sort=sort, limit=limit))
-    explain_find(db, coll, flt, sort, limit)                 # прогрів кешу
-    ex_t, wall = [], []
-    for _ in range(REPS):
-        ex = explain_find(db, coll, flt, sort, limit)
-        ex_t.append(ex["executionStats"]["executionTimeMillis"])
-        t = time.perf_counter(); run(); wall.append((time.perf_counter() - t) * 1000)
-    s = summarize(ex)
-    json.dump(json.loads(json_util.dumps(ex)), open(f"{EXPL}/{tag}.json", "w"), indent=1)
-    s.update(explain_ms_runs=ex_t, wall_ms_runs=[round(x, 1) for x in wall],
-             explain_ms_median=statistics.median(ex_t), wall_ms_median=round(statistics.median(wall), 1))
-    return s
-
-
-def experiment(name, coll, flt, sort, limit, spec, descr):
-    drop_secondary(coll)
-    before = measure(f"{name}_before", coll, flt, sort, limit)
-    t = time.perf_counter(); iname = db[coll].create_index(spec); build = time.perf_counter() - t
-    after = measure(f"{name}_after", coll, flt, sort, limit)
-    st = db.command("collStats", coll)
-    isize = st["indexSizes"][iname] / 2**20
-    out = []
-    for phase, m in (("до", before), ("після", after)):
-        out.append(dict(experiment=name, description=descr, collection=coll, phase=phase, index=iname if phase == "після" else "-",
-                        executionTimeMillis_explain_median=m["explain_ms_median"], wall_ms_median=m["wall_ms_median"],
-                        totalDocsExamined=m["totalDocsExamined"], totalKeysExamined=m["totalKeysExamined"],
-                        nReturned=m["nReturned"], winning_plan=m["winning_plan"],
-                        explain_ms_runs=m["explain_ms_runs"], wall_ms_runs=m["wall_ms_runs"],
-                        index_size_MB=round(isize, 2) if phase == "після" else 0, index_build_s=round(build, 2) if phase == "після" else 0))
-    for o in out: print(o["experiment"], o["phase"], o["executionTimeMillis_explain_median"], o["wall_ms_median"],
-                        o["totalDocsExamined"], o["totalKeysExamined"], o["nReturned"], o["winning_plan"], flush=True)
-    return out
 
 
 rows = []

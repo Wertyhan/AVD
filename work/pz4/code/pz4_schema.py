@@ -11,7 +11,7 @@ colls = ["candles_1m", "candles_1m_ts", "candles_1h", "candles_1d", "candles_1d_
 rows = []
 for c in colls:
     s = db.command("collStats", c)
-    rows.append(dict(collection=c, count=s["count"], avgObjSize_B=s.get("avgObjSize", 0), size_MB=round(s["size"] / 2**20, 2),
+    rows.append(dict(collection=c, count=db[c].count_documents({}) if c == "candles_1m_ts" else s["count"], avgObjSize_B=s.get("avgObjSize", 0), size_MB=round(s["size"] / 2**20, 2),
                      storageSize_MB=round(s["storageSize"] / 2**20, 2), totalIndexSize_MB=round(s["totalIndexSize"] / 2**20, 2),
                      nindexes=s["nindexes"]))
 save_csv("pz4_storage", rows)

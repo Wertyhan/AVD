@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Спільні утиліти ПЗ4: підключення до MongoDB, шляхи, запис результатів."""
 import os, csv, json, time, statistics, datetime
+from bson import json_util
 from pymongo import MongoClient
 from bson.codec_options import CodecOptions
 
@@ -68,3 +69,52 @@ def summarize(ex):
     return dict(executionTimeMillis=es["executionTimeMillis"], totalDocsExamined=es["totalDocsExamined"],
                 totalKeysExamined=es["totalKeysExamined"], nReturned=es["nReturned"],
                 winning_plan=" > ".join(stages(ex["queryPlanner"]["winningPlan"])))
+
+
+# ---------- порівняння до/після індексу (спільне для pz4_indexes.py та pz4_anomalies.py) ----------
+REPS = 5
+_db = get_db()
+
+
+def drop_secondary(coll):
+    """Видаляє всі індекси колекції, крім _id_."""
+    for ix in _db[coll].index_information():
+        if ix != "_id_": _db[coll].drop_index(ix)
+
+
+def measure(tag, coll, flt, sort, limit, hint=None):
+    """warm-up + 5 вимірювань: executionTimeMillis (з explain) та wall-clock фактичного виконання."""
+    run = lambda: list(_db[coll].find(flt, sort=sort, limit=limit))
+    explain_find(_db, coll, flt, sort, limit)                 # прогрів кешу
+    ex_t, wall = [], []
+    for _ in range(REPS):
+        ex = explain_find(_db, coll, flt, sort, limit)
+        ex_t.append(ex["executionStats"]["executionTimeMillis"])
+        t = time.perf_counter(); run(); wall.append((time.perf_counter() - t) * 1000)
+    s = summarize(ex)
+    json.dump(json.loads(json_util.dumps(ex)), open(f"{EXPL}/{tag}.json", "w"), indent=1)
+    s.update(explain_ms_runs=ex_t, wall_ms_runs=[round(x, 1) for x in wall],
+             explain_ms_median=statistics.median(ex_t), wall_ms_median=round(statistics.median(wall), 1))
+    return s
+
+
+def experiment(name, coll, flt, sort, limit, spec, descr):
+    drop_secondary(coll)
+    before = measure(f"{name}_before", coll, flt, sort, limit)
+    t = time.perf_counter(); iname = _db[coll].create_index(spec); build = time.perf_counter() - t
+    after = measure(f"{name}_after", coll, flt, sort, limit)
+    st = _db.command("collStats", coll)
+    isize = st["indexSizes"][iname] / 2**20
+    out = []
+    for phase, m in (("до", before), ("після", after)):
+        out.append(dict(experiment=name, description=descr, collection=coll, phase=phase, index=iname if phase == "після" else "-",
+                        executionTimeMillis_explain_median=m["explain_ms_median"], wall_ms_median=m["wall_ms_median"],
+                        totalDocsExamined=m["totalDocsExamined"], totalKeysExamined=m["totalKeysExamined"],
+                        nReturned=m["nReturned"], winning_plan=m["winning_plan"],
+                        explain_ms_runs=m["explain_ms_runs"], wall_ms_runs=m["wall_ms_runs"],
+                        index_size_MB=round(isize, 2) if phase == "після" else 0, index_build_s=round(build, 2) if phase == "після" else 0))
+    for o in out: print(o["experiment"], o["phase"], o["executionTimeMillis_explain_median"], o["wall_ms_median"],
+                        o["totalDocsExamined"], o["totalKeysExamined"], o["nReturned"], o["winning_plan"], flush=True)
+    return out
+
+
