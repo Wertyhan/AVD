@@ -1,7 +1,0 @@
-engine,task,peak_mb,method
-pandas,year_count_volume,744.4,"peak RSS of Python process (psutil, 50 ms polling)"
-pandas,daily_ohlc,881.6,"peak RSS of Python process (psutil, 50 ms polling)"
-spark,year_count_volume,1279.2,"peak RSS of driver JVM (java child process, psutil, 50 ms polling), local[*], driver 8g"
-spark_python_client,year_count_volume,127.4,peak RSS of PySpark Python process (excluding JVM)
-spark,daily_ohlc,1478.1,"peak RSS of driver JVM (java child process, psutil, 50 ms polling), local[*], driver 8g"
-spark_python_client,daily_ohlc,131.8,peak RSS of PySpark Python process (excluding JVM)

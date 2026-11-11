@@ -1,8 +1,0 @@
-mode,run,seconds
-without_cache,run1,19.774
-without_cache,run2,17.565
-without_cache,run3,18.349
-with_cache,materialize_count,82.293
-with_cache,run1,3.184
-with_cache,run2,2.376
-with_cache,run3,2.329
