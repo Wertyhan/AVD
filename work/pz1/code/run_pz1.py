@@ -625,8 +625,10 @@ with step('hive_daily', 'Hive: добова таблиця OHLC, топ-10 ді�
     save_csv(HIVE_TOPV, 'hive_top10_volume_days.csv')
     r = hive_f('hive_05b_top_range.hql', 'top_range')
     check(r.rc == 0, 'Топ-10 за High-Low: помилка', 'Top-10 by High-Low failed')
-    shot('hive -f hive_05b_top_range.hql', r.out, 'hive_top10_range')
-    HIVE_TOPR = hive_df(r.out); print(HIVE_TOPR.to_string(index=False))
+    # CREATE VIEW у Hive при print.header=true виводить зайвий рядок заголовка подання; лишаємо тільки результат SELECT
+    out_r = r.out[r.out.index('trade_date\thigh'):]
+    shot('hive -f hive_05b_top_range.hql', out_r, 'hive_top10_range')
+    HIVE_TOPR = hive_df(out_r); print(HIVE_TOPR.to_string(index=False))
     save_csv(HIVE_TOPR, 'hive_top10_range_days.csv')
     # вміст добової таблиці (роздільник Hive за замовчуванням \001) і звірка з MapReduce
     txt = sh('hdfs dfs -cat /user/hive/warehouse/btc.db/daily_ohlc/*', echo=False, quiet=True, tail=0).out

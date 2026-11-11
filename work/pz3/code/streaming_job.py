@@ -35,6 +35,7 @@ spark = (SparkSession.builder.appName("PZ3-bitcoin-streaming").master("local[2]"
          .config("spark.sql.streaming.forceDeleteTempCheckpointLocation", "true")
          .getOrCreate())
 spark.sparkContext.setLogLevel("WARN")
+print("[job] Spark UI:", spark.sparkContext.uiWebUrl, flush=True)
 print("[job] Spark", spark.version, "| пакет", a.kafka_pkg, flush=True)
 
 # ---------- Завдання 3: читання з Kafka ----------

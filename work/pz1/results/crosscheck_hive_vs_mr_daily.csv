@@ -1,0 +1,2 @@
+check,rows_hive,rows_mr,match
+hive_daily_vs_mapreduce_daily,5429,5429,True

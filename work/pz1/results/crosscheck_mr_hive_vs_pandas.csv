@@ -1,0 +1,7 @@
+check,left_rows,right_rows,match,note
+mapreduce_vs_pandas_yearly,15,15,True,max_rel_diff_volume=1.00e-13
+mapreduce_vs_pandas_daily_ohlc,5429,5429,True,"mismatch_OHLC={'open': 0, 'high': 0, 'low': 0, 'close': 0}; max_rel_diff_volume=8.13e-15"
+hive_vs_pandas_yearly,15,15,True,
+hive_vs_pandas_daily_rows,5429,5429,True,
+hive_vs_pandas_top10_volume_days,10,10,True,
+hive_vs_pandas_top10_range_days,11,5429,False,

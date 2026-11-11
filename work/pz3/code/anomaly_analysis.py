@@ -103,6 +103,31 @@ if not a.scored:
                  "unscored_minutes": int((~sc["scored"]).sum()), "min_obs": MIN_OBS, "window": WINDOW}
     pd.DataFrame([flat_info]).to_csv(os.path.join(a.out, "pz3_flat_minutes_handling.csv"), index=False)
     print(flat_info, flush=True)
+    # топ-дати у ліквідну еру (2018+) та показники трьох відтворюваних періодів
+    f2 = fl[fl["date"] >= "2018-01-01"]
+    t2 = f2.groupby("date").agg(n_anomalies=("ts", "size"), max_z_ret=("z_ret", "max"), max_vol_ratio=("vol_ratio", "max"),
+                                max_abs_r=("r", lambda s: s.abs().max())).sort_values("n_anomalies", ascending=False)
+    t2.head(30).to_csv(os.path.join(a.out, "pz3_top_dates_2018plus.csv"))
+    print(t2.head(12).to_string(), flush=True)
+    base_per_day = len(f2) / (len(vm) / 1440)
+    prow = []
+    for p, (d0, d1) in PERIODS.items():
+        mk = (v["date"] >= d0) & (v["date"] <= d1)
+        n_p = int(v.loc[mk, "anomaly"].sum())
+        days = mk.sum() / 1440
+        prow.append({"period": p, "from": d0, "to": d1, "scored_minutes": int(mk.sum()), "n_anomalies": n_p,
+                     "per_day": round(n_p / days, 2), "baseline_per_day_2018plus": round(base_per_day, 2),
+                     "ratio_to_baseline": round(n_p / days / base_per_day, 2),
+                     "max_z_ret": float(v.loc[mk, "z_ret"].max()), "max_vol_ratio": float(v.loc[mk, "vol_ratio"].max())})
+    pd.DataFrame(prow).to_csv(os.path.join(a.out, "pz3_periods_vs_baseline.csv"), index=False)
+    print(pd.DataFrame(prow).to_string(index=False), flush=True)
+    # закономірності: день тижня та година UTC (2018+), частка позначених від оцінених хвилин
+    vv = vm.assign(dt=pd.to_datetime(vm["ts"], unit="s", utc=True)); vv["dow"] = vv["dt"].dt.dayofweek; vv["hour"] = vv["dt"].dt.hour
+    for col, nm in (("dow", "weekday"), ("hour", "hour")):
+        g = vv.groupby(col).agg(scored_minutes=("ts", "size"), n_anomalies=("anomaly", "sum"))
+        g["share_pct"] = (100 * g["n_anomalies"] / g["scored_minutes"]).round(4)
+        g.to_csv(os.path.join(a.out, f"pz3_anomalies_by_{nm}_2018plus.csv"))
+        print(g.to_string(), flush=True)
     # результат для ПЗ4: повна історія, обрані пороги
     out = fl.rename(columns={"r": "log_return"})
     out["timestamp"] = out["datetime_utc"]

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Producer: відтворює 1-хвилинні свічки BTC/USD у Kafka (ПЗ3, завдання 2).
-1 повідомлення = 1 ринкова хвилина; key = дата UTC (YYYY-MM-DD); value = JSON.
+1 повідомлення = 1 ринкова хвилина; key = рік-місяць UTC (YYYY-MM); value = JSON.
 Затримка між повідомленнями імітує потік (прискорене відтворення)."""
 import argparse, json, os, sys, time
 import pandas as pd
@@ -54,7 +54,7 @@ t0 = time.time()
 sent = 0
 for row in df.itertuples(index=False):
     ts = int(row.Timestamp)
-    key = time.strftime("%Y-%m-%d", time.gmtime(ts))
+    key = time.strftime("%Y-%m", time.gmtime(ts))   # ключ = період (рік-місяць): кожен період іде в одну партицію, порядок у межах періоду збережено
     val = {"ts": ts, "open": num(row.Open), "high": num(row.High), "low": num(row.Low),
            "close": num(row.Close), "volume": num(row.Volume)}
     prod.produce(a.topic, key=key, value=json.dumps(val), on_delivery=on_delivery)
