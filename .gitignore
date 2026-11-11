@@ -11,3 +11,6 @@ work/mamba/
 work/tools/
 *.log
 work/test_shot.png
+work/hadoop_runtime/
+work/pz*/results/model/
+work/pz*/checkpoints/
