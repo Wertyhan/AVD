@@ -10,6 +10,7 @@ from pymongo import MongoClient
 sys.path.insert(0, __import__("os").path.dirname(__file__))
 from pz4_common import *
 
+SPARK_ONLY = "--only-spark" in sys.argv   # перезавантажити лише spark_daily_features
 DATA = f"{W}/data"
 BATCH = 20000
 db = get_db()
@@ -55,34 +56,35 @@ def clean(v):
     return None if isinstance(v, float) and math.isnan(v) else v
 
 
-# ---------- candles_1m ----------
-for name, ts_mode in (("candles_1m", False), ("candles_1m_ts", True)):
-    n, tb, ti = load_1m(name, ts_mode)
-    log.append(dict(collection=name, docs=n, batch_size=BATCH, build_docs_s=round(tb, 2), insert_s=round(ti, 2),
-                    insert_docs_per_s=round(n / ti), total_s=round(tb + ti, 2)))
-    append_timing(f"load_{name}", tb + ti, f"{n} docs, insert only {ti:.1f}s, {n/ti:.0f} docs/s")
-    print(log[-1], flush=True)
+if not SPARK_ONLY:
+    # ---------- candles_1m ----------
+    for name, ts_mode in (("candles_1m", False), ("candles_1m_ts", True)):
+        n, tb, ti = load_1m(name, ts_mode)
+        log.append(dict(collection=name, docs=n, batch_size=BATCH, build_docs_s=round(tb, 2), insert_s=round(ti, 2),
+                        insert_docs_per_s=round(n / ti), total_s=round(tb + ti, 2)))
+        append_timing(f"load_{name}", tb + ti, f"{n} docs, insert only {ti:.1f}s, {n/ti:.0f} docs/s")
+        print(log[-1], flush=True)
 
-# ---------- candles_1h, candles_1d, candles_1d_buckets ----------
-h = pd.read_parquet(f"{DATA}/btc_1h.parquet"); d = pd.read_parquet(f"{DATA}/btc_1d.parquet")
-t0 = time.perf_counter()
-db.drop_collection("candles_1h"); db.drop_collection("candles_1d"); db.drop_collection("candles_1d_buckets")
-tsh = utc_list(h["datetime_utc"])
-db.candles_1h.insert_many([{"ts": tsh[i], "open": r.Open, "high": r.High, "low": r.Low, "close": r.Close,
-                            "volume": r.Volume} for i, r in enumerate(h.itertuples())], ordered=False)
-tsd = utc_list(d["datetime_utc"])
-db.candles_1d.insert_many([{"date": tsd[i], "year": tsd[i].year, "month": tsd[i].month, "open": r.Open, "high": r.High,
-                            "low": r.Low, "close": r.Close, "volume": r.Volume, "n_minutes": r.n_minutes}
-                           for i, r in enumerate(d.itertuples())], ordered=False)
-# bucket pattern: один документ = доба з вкладеним масивом 24 годинних свічок
-h["day"] = h["datetime_utc"].dt.floor("D")
-buckets = []
-for day, g in h.groupby("day"):
-    dd = pd.Timestamp(day).tz_convert("UTC").to_pydatetime() if pd.Timestamp(day).tzinfo else pd.Timestamp(day).tz_localize("UTC").to_pydatetime()
-    buckets.append({"date": dd, "year": dd.year, "month": dd.month, "n_hours": len(g),
-                    "hours": [{"hour": int(x.datetime_utc.hour), "open": x.Open, "high": x.High, "low": x.Low,
-                               "close": x.Close, "volume": x.Volume} for x in g.itertuples()]})
-db.candles_1d_buckets.insert_many(buckets, ordered=False)
+    # ---------- candles_1h, candles_1d, candles_1d_buckets ----------
+    h = pd.read_parquet(f"{DATA}/btc_1h.parquet"); d = pd.read_parquet(f"{DATA}/btc_1d.parquet")
+    t0 = time.perf_counter()
+    db.drop_collection("candles_1h"); db.drop_collection("candles_1d"); db.drop_collection("candles_1d_buckets")
+    tsh = utc_list(h["datetime_utc"])
+    db.candles_1h.insert_many([{"ts": tsh[i], "open": r.Open, "high": r.High, "low": r.Low, "close": r.Close,
+                                "volume": r.Volume} for i, r in enumerate(h.itertuples())], ordered=False)
+    tsd = utc_list(d["datetime_utc"])
+    db.candles_1d.insert_many([{"date": tsd[i], "year": tsd[i].year, "month": tsd[i].month, "open": r.Open, "high": r.High,
+                                "low": r.Low, "close": r.Close, "volume": r.Volume, "n_minutes": r.n_minutes}
+                               for i, r in enumerate(d.itertuples())], ordered=False)
+    # bucket pattern: один документ = доба з вкладеним масивом 24 годинних свічок
+    h["day"] = h["datetime_utc"].dt.floor("D")
+    buckets = []
+    for day, g in h.groupby("day"):
+        dd = pd.Timestamp(day).tz_convert("UTC").to_pydatetime() if pd.Timestamp(day).tzinfo else pd.Timestamp(day).tz_localize("UTC").to_pydatetime()
+        buckets.append({"date": dd, "year": dd.year, "month": dd.month, "n_hours": len(g),
+                        "hours": [{"hour": int(x.datetime_utc.hour), "open": x.Open, "high": x.High, "low": x.Low,
+                                   "close": x.Close, "volume": x.Volume} for x in g.itertuples()]})
+    db.candles_1d_buckets.insert_many(buckets, ordered=False)
 
 # ---------- spark_daily_features (ПЗ2) ----------
 f = pd.read_parquet(f"{W}/pz2/results/pz2_daily_features.parquet")
@@ -96,7 +98,8 @@ for r in f.to_dict("records"):
     doc["n_minutes"] = int(r["n_minutes"]); doc["n_flat"] = int(r["n_flat"])
     docs.append(doc)
 db.spark_daily_features.insert_many(docs, ordered=False)
-append_timing("load_small_collections", time.perf_counter() - t0, "candles_1h, candles_1d, buckets, spark_daily_features")
-save_csv("pz4_load_throughput", log)
+if not SPARK_ONLY:
+    append_timing("load_small_collections", time.perf_counter() - t0, "candles_1h, candles_1d, buckets, spark_daily_features")
+    save_csv("pz4_load_throughput", log)
 save_csv("pz4_spark_nan_to_null", [dict(field=k, nan_replaced_by_null=v) for k, v in nan_counts.items()])
 print("DONE", {c: db[c].estimated_document_count() for c in db.list_collection_names()})

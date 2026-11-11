@@ -46,6 +46,6 @@ idx = []
 for c in db.list_collection_names():
     if c.endswith("_ts") or c.startswith("system"): continue
     st = db.command("collStats", c)
-    for n, sz in st["indexSizes"].items(): idx.append(dict(collection=c, index=n, size_MB=round(sz / 2**20, 3)))
+    for n, sz in st["indexSizes"].items(): idx.append(dict(collection=c, index=n, size_MiB=round(sz / 2**20, 3)))
 save_csv("pz4_index_sizes", idx)
 print("OK")

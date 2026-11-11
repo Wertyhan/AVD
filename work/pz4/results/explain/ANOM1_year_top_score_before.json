@@ -67,7 +67,7 @@
  "executionStats": {
   "executionSuccess": true,
   "nReturned": 20,
-  "executionTimeMillis": 3,
+  "executionTimeMillis": 6,
   "totalKeysExamined": 0,
   "totalDocsExamined": 5437,
   "executionStages": {

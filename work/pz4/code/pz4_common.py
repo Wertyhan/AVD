@@ -85,6 +85,7 @@ def drop_secondary(coll):
 def measure(tag, coll, flt, sort, limit, hint=None):
     """warm-up + 5 вимірювань: executionTimeMillis (з explain) та wall-clock фактичного виконання."""
     run = lambda: list(_db[coll].find(flt, sort=sort, limit=limit))
+    load_start = os.getloadavg()[0]
     explain_find(_db, coll, flt, sort, limit)                 # прогрів кешу
     ex_t, wall = [], []
     for _ in range(REPS):
@@ -93,7 +94,7 @@ def measure(tag, coll, flt, sort, limit, hint=None):
         t = time.perf_counter(); run(); wall.append((time.perf_counter() - t) * 1000)
     s = summarize(ex)
     json.dump(json.loads(json_util.dumps(ex)), open(f"{EXPL}/{tag}.json", "w"), indent=1)
-    s.update(explain_ms_runs=ex_t, wall_ms_runs=[round(x, 1) for x in wall],
+    s.update(loadavg_1m=f"{load_start:.2f}->{os.getloadavg()[0]:.2f}", explain_ms_runs=ex_t, wall_ms_runs=[round(x, 1) for x in wall],
              explain_ms_median=statistics.median(ex_t), wall_ms_median=round(statistics.median(wall), 1))
     return s
 
@@ -104,15 +105,15 @@ def experiment(name, coll, flt, sort, limit, spec, descr):
     t = time.perf_counter(); iname = _db[coll].create_index(spec); build = time.perf_counter() - t
     after = measure(f"{name}_after", coll, flt, sort, limit)
     st = _db.command("collStats", coll)
-    isize = st["indexSizes"][iname] / 2**20
+    isize = st["indexSizes"][iname] / 2**20   # МіБ
     out = []
     for phase, m in (("до", before), ("після", after)):
         out.append(dict(experiment=name, description=descr, collection=coll, phase=phase, index=iname if phase == "після" else "-",
                         executionTimeMillis_explain_median=m["explain_ms_median"], wall_ms_median=m["wall_ms_median"],
                         totalDocsExamined=m["totalDocsExamined"], totalKeysExamined=m["totalKeysExamined"],
-                        nReturned=m["nReturned"], winning_plan=m["winning_plan"],
+                        nReturned=m["nReturned"], winning_plan=m["winning_plan"], loadavg_1m=m["loadavg_1m"],
                         explain_ms_runs=m["explain_ms_runs"], wall_ms_runs=m["wall_ms_runs"],
-                        index_size_MB=round(isize, 2) if phase == "після" else 0, index_build_s=round(build, 2) if phase == "після" else 0))
+                        index_size_MiB=round(isize, 2) if phase == "після" else 0, index_build_s=round(build, 2) if phase == "після" else 0))
     for o in out: print(o["experiment"], o["phase"], o["executionTimeMillis_explain_median"], o["wall_ms_median"],
                         o["totalDocsExamined"], o["totalKeysExamined"], o["nReturned"], o["winning_plan"], flush=True)
     return out

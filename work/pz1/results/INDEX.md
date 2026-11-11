@@ -7,7 +7,7 @@
 | Завдання методички | Докази |
 |---|---|
 | 1. Архітектура Hadoop, принципи HDFS | screenshots 03 (dfsadmin -report), 04 (getconf: fs.defaultFS, replication, blocksize), 11 (fsck з блоками); `hdfs_cluster_config.csv`, `hdfs_file_info.csv` |
-| 2. Встановлення pseudo-distributed | screenshots 01 (jps), 02/05 (yarn node), 28 (jps фінальний); UI 31 (NameNode overview), 32 (Datanodes), 35, 37 (YARN); конфіг у `run_pz1.py` (крок install); `env_versions.csv` |
+| 2. Встановлення pseudo-distributed | screenshots 01 (jps), 02/05 (yarn node), 28 (jps фінальний); UI 31 (NameNode overview), 32 (Datanodes), 37 (YARN nodes); конфіг у `run_pz1.py` (крок install); `env_versions.csv` |
 | 3. Завантаження даних у HDFS | screenshots 06 (mkdir/ls), 07 (ls -h), 08 (du), 09 (cat head), 10 (tail), 11 (fsck), 29, 30; UI 33, 34 (Browse Directory); `hdfs_file_info.csv` (розмір, блоки, час put) |
 | 4. MapReduce | WordCount: screenshots 12–14, UI 38–40, `wordcount_top50.csv`. Streaming річні: 15, 16, UI 44–46, `mr_yearly_stats.csv`, `mr_counters_mr_yearly.csv`. Streaming добові OHLC: 17, 18, UI 41–43, `mr_daily_ohlc_full.csv`, `mr_daily_ohlc_sample.csv`, `mr_daily_ohlc_rowcount.csv`, `mr_counters_mr_daily_ohlc.csv`. Список задач: 27, UI 36, 47 |
 | 5. Hive: таблиця над даними в HDFS | screenshots 19 (CREATE EXTERNAL TABLE + DESCRIBE), 20 (SELECT, COUNT); `hive_count_check.csv` |
@@ -19,3 +19,5 @@
 
 ## Умови вимірювання часу (чесне застереження)
 Вимірювався повний настінний час від команди до результату (Streaming/Hive – з запуском JVM/контейнерів YARN; Pandas/Spark – з читанням CSV; Spark – з toPandas; створення SparkSession 14,52 с окремо). Hive-запит `yearly` виконується двома MR-стадіями. Під час вимірювань на тій самій 4-ядерній машині працювали сторонні процеси (loadavg 1 хв = 4,06 на старті, див. `timing_conditions.csv`; поруч виконувався Spark-сеанс іншого завдання), тому абсолютні значення, особливо Pandas/Spark, мають похибку; розкид наведено в min/max. Перший запуск PySpark yearly (23,9 с) містить холодний прогрів JVM.
+
+Примітка (рендер для друку): термінальні PNG перерендерено спільним рендером tools_report/term_png.py (code/rerender_pz1.py); 26 – реальна команда python3 code/pandas_yearly.py; 06 – поточний стан HDFS; UI 35_ui_yarn_cluster.png видалено як дублікат 36_ui_yarn_applications.png (вміст однаковий). Веб-UI 31-34, 37, 39-40, 42-43, 45-47 перезняті з clip (code/ui_recapture_pz1.py); 36, 38, 41, 44 – обрізані (crop) попередні реальні знімки RM, бо після перезапуску ResourceManager втратив список застосунків.

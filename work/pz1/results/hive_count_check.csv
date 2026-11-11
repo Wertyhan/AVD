@@ -1,2 +1,2 @@
-hive_count,csv_rows,equal
-7816537,7816537,True
+hive_count_view,hive_count_table,csv_rows,equal_view,equal_table
+7816537,7816537,7816537,True,True

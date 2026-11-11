@@ -11,8 +11,8 @@ colls = ["candles_1m", "candles_1m_ts", "candles_1h", "candles_1d", "candles_1d_
 rows = []
 for c in colls:
     s = db.command("collStats", c)
-    rows.append(dict(collection=c, count=db[c].count_documents({}) if c == "candles_1m_ts" else s["count"], avgObjSize_B=s.get("avgObjSize", 0), size_MB=round(s["size"] / 2**20, 2),
-                     storageSize_MB=round(s["storageSize"] / 2**20, 2), totalIndexSize_MB=round(s["totalIndexSize"] / 2**20, 2),
+    rows.append(dict(collection=c, count=db[c].count_documents({}) if c == "candles_1m_ts" else s["count"], avgObjSize_B=s.get("avgObjSize", 0), size_MiB=round(s["size"] / 2**20, 2),
+                     storageSize_MiB=round(s["storageSize"] / 2**20, 2), totalIndexSize_MiB=round(s["totalIndexSize"] / 2**20, 2),
                      nindexes=s["nindexes"]))
 save_csv("pz4_storage", rows)
 for r in rows: print(r)
@@ -41,7 +41,7 @@ save_csv("pz4_missing_values", miss)
 ex = {}
 for c in colls:
     d = db[c].find_one({}, sort=[("_id", 1)]) if c != "candles_1d_buckets" else db[c].find_one()
-    if c == "candles_1d_buckets": d["hours"] = d["hours"][:2] + [{"...": "ще %d годин" % (len(d["hours"]) - 2)}]
+    if c == "candles_1d_buckets": d["hours"] = d["hours"][:2]   # скорочено до перших двох годин (решта опущена у звіті)
     ex[c] = json.loads(json_util.dumps(d, json_options=json_util.RELAXED_JSON_OPTIONS))
 json.dump(ex, open(f"{RES}/pz4_sample_documents.json", "w"), ensure_ascii=False, indent=2)
 print(json.dumps(ex["candles_1m"], indent=1))

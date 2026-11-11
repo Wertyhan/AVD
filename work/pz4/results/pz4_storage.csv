@@ -1,7 +1,7 @@
-collection,count,avgObjSize_B,size_MB,storageSize_MB,totalIndexSize_MB,nindexes
-candles_1m,7816537,120,894.53,383.22,82.23,1
+collection,count,avgObjSize_B,size_MiB,storageSize_MiB,totalIndexSize_MiB,nindexes
+candles_1m,7816537,120,894.53,383.05,280.07,3
 candles_1m_ts,7816537,0,76.94,69.31,0.45,1
-candles_1h,130276,106,13.17,6.56,1.24,1
-candles_1d,5429,144,0.75,0.3,0.07,1
-candles_1d_buckets,5429,2255,11.68,5.25,0.07,1
-spark_daily_features,5429,393,2.04,0.96,0.07,1
+candles_1h,130276,106,13.17,6.56,2.72,2
+candles_1d,5429,144,0.75,0.3,0.25,3
+candles_1d_buckets,5429,2255,11.68,5.25,0.14,2
+spark_daily_features,5429,393,2.04,0.96,0.14,2
