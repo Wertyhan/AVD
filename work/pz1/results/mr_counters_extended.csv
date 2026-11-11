@@ -54,3 +54,4 @@ wordcount,job_1794418481996_0001,Total time spent by all reduce tasks (ms),2708
 wordcount,job_1794418481996_0001,HDFS: Number of bytes read,16993
 wordcount,job_1794418481996_0001,HDFS: Number of bytes written,10901
 wordcount,job_1794418481996_0001,number of splits,2
+mr_yearly,job_1794418481996_0002,File Input Format: Bytes Read,396857686
