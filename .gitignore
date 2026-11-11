@@ -7,3 +7,7 @@ work/format/
 !work/data/facts.csv
 *.whl
 work/pz*/results/*.parquet
+work/mamba/
+work/tools/
+*.log
+work/test_shot.png
