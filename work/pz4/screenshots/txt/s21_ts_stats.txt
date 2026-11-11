@@ -1,0 +1,17 @@
+$ mongosh bigdata_db --quiet --eval 'db.candles_1m_ts.stats(); db.candles_1m.stats()'
+{
+  ns: 'bigdata_db.candles_1m_ts',
+  timeseries: {
+    bucketCount: 7817,
+    avgBucketSize: 10320
+  },
+  size: 80672930,
+  storageSize: 72679424
+}
+{
+  ns: 'bigdata_db.candles_1m',
+  count: 7816537,
+  size: 937984440,
+  storageSize: 401653760,
+  avgObjSize: 120
+}

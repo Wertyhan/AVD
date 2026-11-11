@@ -608,3 +608,6 @@ Compiled by ngangam on Sun Apr 3 16:58:16 EDT 2022
 ==============================================================================
 
 $ hive -S -f /home/user/AVD/work/pz1/code/hive_01_create_table.hql
+  [скріншот/screenshot] 19_hive_create_table.png
+
+$ hive -S -f /home/user/AVD/work/pz1/code/hive_02_select.hql

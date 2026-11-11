@@ -1,0 +1,17 @@
+$ mongosh bigdata_db --quiet --eval 'q = db.anomalies.find({date:{...2021}}).sort({score:-1}).limit(20); q.hint({$natural:1}).explain('executionStats') vs q.explain('executionStats')'
+BEFORE (hint $natural):
+{
+  stage: 'COLLSCAN <- SORT',
+  executionTimeMillis: 65,
+  totalDocsExamined: 108119,
+  totalKeysExamined: 0,
+  nReturned: 20
+}
+AFTER (index):
+{
+  stage: 'IXSCAN <- SORT <- FETCH',
+  executionTimeMillis: 0,
+  totalDocsExamined: 20,
+  totalKeysExamined: 270,
+  nReturned: 20
+}

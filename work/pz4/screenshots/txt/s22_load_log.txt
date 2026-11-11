@@ -1,0 +1,8 @@
+$ python3 code/pz4_load.py  (фрагмент виводу)
+candles_1m 0 7816537 0s
+candles_1m 7200000 7816537 92s
+{'collection': 'candles_1m', 'docs': 7816537, 'batch_size': 20000, 'build_docs_s': 18.17, 'insert_s': 99.57, 'insert_docs_per_s': 78504, 'total_s': 117.74}
+candles_1m_ts 0 7816537 0s
+candles_1m_ts 7200000 7816537 72s
+{'collection': 'candles_1m_ts', 'docs': 7816537, 'batch_size': 20000, 'build_docs_s': 20.74, 'insert_s': 78.45, 'insert_docs_per_s': 99638, 'total_s': 99.19}
+DONE {'candles_1h': 130276, 'candles_1d': 5429, 'candles_1m': 7816537, 'candles_1m_ts': 7816537, 'system.buckets.candles_1m_ts': 7817, 'system.views': 1, 'candles_1d_buckets': 5429, 'spark_daily_features': 5429}

@@ -19,3 +19,4 @@ work/pz*/**/checkpoint*/
 work/pz*/**/*.parquet/
 work/pz*/results/**/*.parquet
 __pycache__/
+work/pz*/_old_run/

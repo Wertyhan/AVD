@@ -1,0 +1,17 @@
+$ mongosh bigdata_db --quiet --eval 'q = db.candles_1m.find({ts:{$gte:ISODate('2021-05-19'),$lt:ISODate('2021-05-20')}}).sort({ts:1}); q.hint({$natural:1}).explain('executionStats') vs q.explain('executionStats')'
+BEFORE (hint $natural):
+{
+  stage: 'COLLSCAN <- SORT',
+  executionTimeMillis: 4070,
+  totalDocsExamined: 7816537,
+  totalKeysExamined: 0,
+  nReturned: 1440
+}
+AFTER (index):
+{
+  stage: 'IXSCAN <- FETCH',
+  executionTimeMillis: 1,
+  totalDocsExamined: 1440,
+  totalKeysExamined: 1440,
+  nReturned: 1440
+}
