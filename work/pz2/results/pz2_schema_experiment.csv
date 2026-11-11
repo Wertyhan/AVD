@@ -1,7 +1,0 @@
-variant,run,position_in_pair,seconds,note
-inferSchema,1,1,10.5,warm OS file cache: file read once before the runs; free -m buff/cache 3259 -> 3259 MB; action = sum of all 6 columns
-explicit,1,2,4.016,warm OS file cache: file read once before the runs; free -m buff/cache 3259 -> 3259 MB; action = sum of all 6 columns
-explicit,2,1,2.714,warm OS file cache: file read once before the runs; free -m buff/cache 3259 -> 3259 MB; action = sum of all 6 columns
-inferSchema,2,2,7.129,warm OS file cache: file read once before the runs; free -m buff/cache 3259 -> 3259 MB; action = sum of all 6 columns
-inferSchema,3,1,6.224,warm OS file cache: file read once before the runs; free -m buff/cache 3259 -> 3259 MB; action = sum of all 6 columns
-explicit,3,2,2.761,warm OS file cache: file read once before the runs; free -m buff/cache 3259 -> 3259 MB; action = sum of all 6 columns

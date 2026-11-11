@@ -1,5 +1,0 @@
-action,median,min,max
-transformations_build_only,0.1638513380000859,0.1638513380000859,0.1638513380000859
-agg_sum_vol60_logret,14.749,14.471,17.36
-count,4.781,4.759,6.018
-noop_write,17.283,17.249,20.313

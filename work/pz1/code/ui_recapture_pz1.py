@@ -18,6 +18,12 @@ def box(pg, first, last=None, pad=10, nth_last=False):
     return {'x': max(o['x'] - pad, 0), 'y': max(o['y'] - pad, 0), 'width': o['r'] - o['x'] + 2 * pad, 'height': o['b'] - o['y'] + 2 * pad}
 
 def shot(b, url, name, first, last=None, wait=3500, css=None, nth_last=False, hide_apps=False):
+    try:
+        _shot(b, url, name, first, last, wait, css, nth_last, hide_apps)
+    except Exception as e:
+        print('SKIP', name, str(e)[:60])
+
+def _shot(b, url, name, first, last=None, wait=3500, css=None, nth_last=False, hide_apps=False):
     pg = b.new_page(viewport={'width': 1280, 'height': 800}, device_scale_factor=2)
     pg.goto(url, wait_until='domcontentloaded'); pg.wait_for_selector(first, timeout=20000); pg.wait_for_timeout(wait)
     if hide_apps:

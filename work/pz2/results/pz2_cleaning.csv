@@ -1,5 +1,0 @@
-metric,value
-rows_raw,7816537
-rows_after_dropna,7816537
-rows_after_dropDuplicates_Timestamp,7816537
-duplicates_removed,0

@@ -592,6 +592,8 @@ def ui_screens():
     def exec_id(label):
         for e in sql_list:
             if label in (e.get("description") or ""): return e["id"]
+    def hide_fixed(pg):   # плаваючі кнопки прокрутки не повинні перекривати знімок
+        pg.evaluate("document.querySelectorAll('*').forEach(e=>{if(getComputedStyle(e).position=='fixed')e.style.display='none'})")
     def snap(pg, sel, path, maxh=520):
         el = pg.locator(sel).first; el.wait_for(timeout=30000)
         bb = el.bounding_box()
@@ -601,10 +603,11 @@ def ui_screens():
         b = p.chromium.launch(executable_path=exe, args=["--no-sandbox"])
         pg = b.new_page(viewport={"width": 1280, "height": 800}, device_scale_factor=2)
         pages = {"jobs": ("jobs/", "#completedJob-table"), "stages": ("stages/", "#completedStage-table"),
-                 "storage": ("storage/", "#storage-by-rdd-table"), "sql": ("SQL/", "table:has(tbody tr)"),
+                 "storage": ("storage/", "#storage-by-rdd-table"), "sql": ("SQL/", "table:has(th:has-text('Description'))"),
                  "executors": ("executors/", "#summary-execs-table"), "environment": ("environment/", "#runtime-table")}
         for k, (u, sel) in pages.items():
             pg.goto(f"{sc.uiWebUrl}/{u}", wait_until="load"); pg.wait_for_timeout(2500)
+            hide_fixed(pg)
             pg.evaluate("document.body.style.zoom = 1.5")         # збільшує текст відносно ширини знімка
             pg.wait_for_timeout(500)
             snap(pg, sel, f"{SHOTS}/spark_ui_{k}.png")
@@ -614,7 +617,10 @@ def ui_screens():
             if i is None: print("SQL execution not found:", label); continue
             pg.goto(f"{sc.uiWebUrl}/SQL/execution/?id={i}", wait_until="load")
             pg.wait_for_selector("#plan-viz-graph svg", timeout=30000); pg.wait_for_timeout(2500)
-            pg.locator("#plan-viz-graph").screenshot(path=f"{SHOTS}/{fn}.png")
+            hide_fixed(pg); pg.evaluate("document.body.style.zoom = 2.2"); pg.wait_for_timeout(800)
+            bb = pg.evaluate("(()=>{const r=document.querySelector('#plan-viz-graph svg > g').getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height}})()")
+            pg.screenshot(path=f"{SHOTS}/{fn}.png", full_page=True, clip={"x": max(bb["x"] - 10, 0), "y": max(bb["y"] - 10, 0),
+                          "width": bb["width"] + 20, "height": bb["height"] + 20})     # лише область графа DAG
         b.close()
 ui_screens()
 
