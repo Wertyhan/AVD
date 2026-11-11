@@ -1,0 +1,24 @@
+$ python code/pz2_spark.py
+# фрагмент виводу: трансформації (мс) проти дій; explain() для count() і для sum(vol60)
+Трансформації (build): 191.9 мс – обчислень немає
+
+                    action  median    min    max
+transformations_build_only   0.192  0.192  0.192
+      agg_sum_vol60_logret  19.717 18.576 33.508
+                     count   5.033  5.019  5.834
+                noop_write  23.653 23.271 24.255
+
+План count() містить Window: False; план sum(vol60): True
+
+== df.groupBy().count().explain() ==
+== Physical Plan ==
+AdaptiveSparkPlan (10)
++- HashAggregate (9)
+   +- Exchange (8)
+      +- HashAggregate (7)
+         +- HashAggregate (6)
+            +- Exchange (5)
+               +- HashAggregate (4)
+                  +- Project (3)
+== df.agg(sum('vol60')).explain(), вузли ==
+

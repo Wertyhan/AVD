@@ -221,7 +221,10 @@ def figure_caption(doc, text):
 
 
 IMG_CACHE = None  # set in main(): build cache dir for cropped copies
-MAX_IMG_H_CHART = 9.0   # cm
+MAX_IMG_H_CHART = 8.5   # cm
+MIN_IMG_H_CHART = 6.0   # cm, floor for the pre-pass shrink
+IMG_SCALE = {}          # basename -> shrink factor (pre-pass)
+FIG_LOG = []            # (basename, kind) of figures in document order
 MAX_IMG_H_SHOT = 12.0   # cm, terminal / web UI screenshots
 
 
@@ -275,6 +278,11 @@ def figure(doc, path, mdir):
     wc = TEXT_W if kind != "chart" else min(TEXT_W, 1e9)
     hc = wc * h / w
     if hc > mh: hc = mh; wc = hc * w / h
+    FIG_LOG.append((os.path.basename(full), kind))
+    if kind == "chart" and IMG_SCALE.get(os.path.basename(full), 1.0) < 1.0:
+        k = IMG_SCALE[os.path.basename(full)]
+        hn = max(MIN_IMG_H_CHART, hc * k)
+        if hn < hc: wc *= hn / hc; hc = hn
     if est: print(f"  {os.path.basename(full)}: terminal text ~{est:.1f} pt at full width; placed {wc:.1f}x{hc:.1f} cm")
     p = doc.add_paragraph(); pf(p, AL.CENTER, left=0, first=0, line=1.0, kwn=True)
     p.add_run().add_picture(full, width=Cm(wc), height=Cm(hc))
@@ -382,10 +390,22 @@ def pipe_table(doc, rows):
             add_inline(p, txt, size)
 
 
+def work_title(doc, md_text, theme):
+    """Page 2: work title (= theme), centered, indent 1.25, + empty line. Returns True if added."""
+    norm = lambda t: re.sub(r"[\s«»\"#*]+", " ", t).strip().lower()
+    head = next((l for l in md_text.split("\n") if l.strip()), "")
+    if norm(head) == norm(theme): return False
+    p = doc.add_paragraph(); pf(p, AL.CENTER, left=1.25, first=0, pbb=True, kwn=True)
+    set_font(p.add_run(theme), TNR, 14)
+    e = doc.add_paragraph(); pf(e, AL.CENTER, left=1.25, first=0); set_font(e.add_run(""), TNR, 14)
+    return True
+
+
 def convert(md_text, mdir, doc, pz, theme):
     title_page(doc, pz, theme)
+    has_title = work_title(doc, md_text, theme)
     lines = md_text.replace("\r\n", "\n").split("\n")
-    i = 0; first = True; in_appendix = False; para = []
+    i = 0; first = not has_title; in_appendix = False; para = []
     def flush():
         nonlocal para, first
         if para:
@@ -450,6 +470,33 @@ def to_pdf(docx_path):
                    check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
+def shrink_pass(pdf, gap_cm=5.0, caption_cm=1.3):
+    """Find pages with a big blank bottom followed by a page that starts with a chart; shrink that chart."""
+    import pymupdf
+    pt = 72 / 2.54; bottom = 29.7 * pt - 2.0 * pt; top = 2.0 * pt
+    doc = pymupdf.open(pdf); changed = False
+    infos = [(pg, sorted(pg.get_image_info(), key=lambda d: d["bbox"][1])) for pg in doc]
+    counts = [len(x[1]) for x in infos]
+    for n, (pg, imgs) in enumerate(infos):
+        if n == 0 or not imgs: continue
+        tops = [b[1] for b in pg.get_text("blocks") if b[1] > top - 1]
+        d = imgs[0]
+        if d["bbox"][1] > min(tops + [d["bbox"][1]]) + 2: continue
+        fi = sum(counts[:n])
+        if fi >= len(FIG_LOG): continue
+        name, kind = FIG_LOG[fi]
+        if kind != "chart": continue
+        prev = infos[n - 1][0]
+        ys = [b[3] for b in prev.get_text("blocks") if b[1] > top] + [x["bbox"][3] for x in prev.get_image_info()]
+        blank = (bottom - max(ys, default=top)) / pt
+        h = (d["bbox"][3] - d["bbox"][1]) / pt
+        if blank <= gap_cm or h <= MIN_IMG_H_CHART + 0.05: continue
+        k = max(0.75, MIN_IMG_H_CHART / h, min(1.0, (blank - caption_cm) / h))
+        if blank - caption_cm < h * k: continue  # still would not fit
+        IMG_SCALE[name] = IMG_SCALE.get(name, 1.0) * k; changed = True
+    return changed
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--md", required=True); ap.add_argument("--pz", required=True)
@@ -460,14 +507,21 @@ def main():
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
     global IMG_CACHE
     IMG_CACHE = os.path.join(os.path.dirname(os.path.abspath(out)), "imgcache")
-    doc = Document(); setup(doc)
-    # drop python-docx default empty first paragraph if any
-    for p in list(doc.paragraphs):
-        if not p.text and not p._p.xpath(".//w:drawing"): p._p.getparent().remove(p._p)
     with open(a.md, encoding="utf-8") as f: txt = f.read()
-    convert(txt, os.path.dirname(os.path.abspath(a.md)), doc, a.pz, a.theme)
-    doc.save(out + ".docx")
-    if not a.no_pdf: to_pdf(out + ".docx")
+    def build():
+        FIG_LOG.clear()
+        doc = Document(); setup(doc)
+        for p in list(doc.paragraphs):
+            if not p.text and not p._p.xpath(".//w:drawing"): p._p.getparent().remove(p._p)
+        convert(txt, os.path.dirname(os.path.abspath(a.md)), doc, a.pz, a.theme)
+        doc.save(out + ".docx")
+        if not a.no_pdf: to_pdf(out + ".docx")
+    IMG_SCALE.clear(); build()
+    if not a.no_pdf:
+        for it in range(2):
+            if not shrink_pass(out + ".pdf"): break
+            print(f"gap pre-pass iteration {it + 1}: {IMG_SCALE}")
+            build()
     print(out + ".docx", out + ".pdf")
 
 
