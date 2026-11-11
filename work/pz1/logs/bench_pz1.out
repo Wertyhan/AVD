@@ -58,4 +58,21 @@ PySpark (local[*])     session_start    run1:    14.52 s  pyspark 4.3.0
 [Stage 24:>                                                         (0 + 4) / 4][Stage 24:==============>                                           (1 + 3) / 4][Stage 24:=============================>                            (2 + 2) / 4][Stage 24:===========================================>              (3 + 1) / 4]                                                                                [Stage 28:>                                                         (0 + 1) / 1]                                                                                PySpark (local[*])     daily_ohlc       run1:    16.84 s  читання CSV + агрегація + toPandas
 /usr/local/lib/python3.13/site-packages/pyspark/sql/pandas/conversion.py:324: FutureWarning: PySpark does not yet fully support pandas >= 3.0.0. Some features may not work correctly. It is recommended to use pandas < 3.0.0 for now.
   require_minimum_pandas_version()
-[Stage 32:>                                                         (0 + 4) / 4]
+[Stage 32:>                                                         (0 + 4) / 4][Stage 32:==============>                                           (1 + 3) / 4][Stage 32:=============================>                            (2 + 2) / 4]                                                                                PySpark (local[*])     daily_ohlc       run2:    15.73 s  читання CSV + агрегація + toPandas
+/usr/local/lib/python3.13/site-packages/pyspark/sql/pandas/conversion.py:324: FutureWarning: PySpark does not yet fully support pandas >= 3.0.0. Some features may not work correctly. It is recommended to use pandas < 3.0.0 for now.
+  require_minimum_pandas_version()
+[Stage 40:>                                                         (0 + 4) / 4][Stage 40:==============>                                           (1 + 3) / 4][Stage 40:=============================>                            (2 + 2) / 4][Stage 40:===========================================>              (3 + 1) / 4]                                                                                PySpark (local[*])     daily_ohlc       run3:    13.15 s  читання CSV + агрегація + toPandas
+crosscheck spark vs pandas: True True
+              tool          task  median    min    max  runs
+  Hadoop Streaming        yearly   38.94  37.74  39.28     3
+  Hadoop Streaming    daily_ohlc   38.27  33.91  41.48     3
+         Hive (MR)        yearly  105.29 103.30 108.95     3
+         Hive (MR)    daily_ohlc   78.30  71.84  81.38     3
+            Pandas      read_csv    9.82   9.71  10.76     3
+            Pandas    yearly_agg    0.60   0.56   0.87     3
+            Pandas     daily_agg    0.74   0.60   0.78     3
+            Pandas        yearly   10.69  10.27  11.36     3
+            Pandas    daily_ohlc   10.56  10.31  11.54     3
+PySpark (local[*]) session_start   14.52  14.52  14.52     1
+PySpark (local[*])        yearly   10.83   7.34  23.90     3
+PySpark (local[*])    daily_ohlc   15.73  13.15  16.84     3

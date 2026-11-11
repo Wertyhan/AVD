@@ -1,0 +1,35 @@
+tool,task,run,seconds,note,machine
+Hadoop Streaming,yearly,1,37.74,"map+combiner+1 reduce, YARN",4 vCPU / 15 GiB RAM
+Hadoop Streaming,yearly,2,39.28,"map+combiner+1 reduce, YARN",4 vCPU / 15 GiB RAM
+Hadoop Streaming,yearly,3,38.94,"map+combiner+1 reduce, YARN",4 vCPU / 15 GiB RAM
+Hadoop Streaming,daily_ohlc,1,33.91,"in-mapper combining+1 reduce, YARN",4 vCPU / 15 GiB RAM
+Hadoop Streaming,daily_ohlc,2,41.48,"in-mapper combining+1 reduce, YARN",4 vCPU / 15 GiB RAM
+Hadoop Streaming,daily_ohlc,3,38.27,"in-mapper combining+1 reduce, YARN",4 vCPU / 15 GiB RAM
+Hive (MR),yearly,1,108.95,hive -f: старт CLI + компіляція + MR-задачі,4 vCPU / 15 GiB RAM
+Hive (MR),yearly,2,103.3,hive -f: старт CLI + компіляція + MR-задачі,4 vCPU / 15 GiB RAM
+Hive (MR),yearly,3,105.29,hive -f: старт CLI + компіляція + MR-задачі,4 vCPU / 15 GiB RAM
+Hive (MR),daily_ohlc,1,81.38,"CTAS daily_ohlc (min/max над struct(ts,значення))",4 vCPU / 15 GiB RAM
+Hive (MR),daily_ohlc,2,71.84,"CTAS daily_ohlc (min/max над struct(ts,значення))",4 vCPU / 15 GiB RAM
+Hive (MR),daily_ohlc,3,78.3,"CTAS daily_ohlc (min/max над struct(ts,значення))",4 vCPU / 15 GiB RAM
+Pandas,read_csv,1,10.76,read_csv+dropna (частина обох задач),4 vCPU / 15 GiB RAM
+Pandas,yearly_agg,1,0.6,"лише groupby, без читання",4 vCPU / 15 GiB RAM
+Pandas,daily_agg,1,0.78,"лише sort+groupby, без читання",4 vCPU / 15 GiB RAM
+Pandas,yearly,1,11.36,читання CSV + агрегація,4 vCPU / 15 GiB RAM
+Pandas,daily_ohlc,1,11.54,читання CSV + агрегація,4 vCPU / 15 GiB RAM
+Pandas,read_csv,2,9.82,read_csv+dropna (частина обох задач),4 vCPU / 15 GiB RAM
+Pandas,yearly_agg,2,0.87,"лише groupby, без читання",4 vCPU / 15 GiB RAM
+Pandas,daily_agg,2,0.74,"лише sort+groupby, без читання",4 vCPU / 15 GiB RAM
+Pandas,yearly,2,10.69,читання CSV + агрегація,4 vCPU / 15 GiB RAM
+Pandas,daily_ohlc,2,10.56,читання CSV + агрегація,4 vCPU / 15 GiB RAM
+Pandas,read_csv,3,9.71,read_csv+dropna (частина обох задач),4 vCPU / 15 GiB RAM
+Pandas,yearly_agg,3,0.56,"лише groupby, без читання",4 vCPU / 15 GiB RAM
+Pandas,daily_agg,3,0.6,"лише sort+groupby, без читання",4 vCPU / 15 GiB RAM
+Pandas,yearly,3,10.27,читання CSV + агрегація,4 vCPU / 15 GiB RAM
+Pandas,daily_ohlc,3,10.31,читання CSV + агрегація,4 vCPU / 15 GiB RAM
+PySpark (local[*]),session_start,1,14.52,pyspark 4.3.0,4 vCPU / 15 GiB RAM
+PySpark (local[*]),yearly,1,23.9,читання CSV + агрегація + toPandas,4 vCPU / 15 GiB RAM
+PySpark (local[*]),yearly,2,7.34,читання CSV + агрегація + toPandas,4 vCPU / 15 GiB RAM
+PySpark (local[*]),yearly,3,10.83,читання CSV + агрегація + toPandas,4 vCPU / 15 GiB RAM
+PySpark (local[*]),daily_ohlc,1,16.84,читання CSV + агрегація + toPandas,4 vCPU / 15 GiB RAM
+PySpark (local[*]),daily_ohlc,2,15.73,читання CSV + агрегація + toPandas,4 vCPU / 15 GiB RAM
+PySpark (local[*]),daily_ohlc,3,13.15,читання CSV + агрегація + toPandas,4 vCPU / 15 GiB RAM

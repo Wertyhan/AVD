@@ -1,0 +1,6 @@
+$ LogisticRegression on label = (next-hour return > 0): control experiment
+                  metric  value
+   LR direction: ROC-AUC 0.5267
+  LR direction: accuracy 0.5134
+majority accuracy (test) 0.5000
+           up share test 0.5000

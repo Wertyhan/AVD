@@ -1,0 +1,3 @@
+check,match
+spark_vs_pandas_yearly,True
+spark_vs_pandas_daily_ohlc,True

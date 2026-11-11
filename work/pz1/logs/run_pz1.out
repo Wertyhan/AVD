@@ -5,7 +5,7 @@
 ==============================================================================
 Заголовок / header: Timestamp,Open,High,Low,Close,Volume
 Файл: btcusd_1-min_data.csv, 396.8 MB, рядків даних: 7,816,537
---- [data] завершено за 0.7 с / done in 0.7 s ---
+--- [data] завершено за 0.8 с / done in 0.8 s ---
 
 ==============================================================================
 == [install] Налаштування Hadoop 3.3.6 (pseudo-distributed)
@@ -24,28 +24,27 @@ Compiled on platform linux-x86_64
 Compiled with protoc 3.7.1
 From source with checksum 5652179ad55f76cb287d9c633bb53bbd
 This command was run using /home/user/AVD/work/tools/hadoop-3.3.6/share/hadoop/common/hadoop-common-3.3.6.jar
---- [install] завершено за 0.6 с / done in 0.6 s ---
+--- [install] завершено за 1.2 с / done in 1.2 s ---
 
 ==============================================================================
 == [daemons] Запуск HDFS + YARN (pseudo-distributed)
 ==============================================================================
-22064 Kafka
 19984 SparkSubmit
 10193 JobHistoryServer
 10033 ResourceManager
 9954 DataNode
 9891 NameNode
-8115 Jps
-25047 SparkSubmit
+8601 Kafka
 10124 NodeManager
+17086 Jps
 
 $ mapred --daemon start historyserver
 historyserver is running as process 10193.  Stop it first and ensure /home/user/AVD/work/hadoop_runtime/pids/hadoop-root-historyserver.pid file is empty before retry.
 Configured Capacity: 270553174016 (251.97 GB)
-Present Capacity: 21385330580 (19.92 GB)
-DFS Remaining: 20978814976 (19.54 GB)
-DFS Used: 406515604 (387.68 MB)
-DFS Used%: 1.90%
+Present Capacity: 18411879121 (17.15 GB)
+DFS Remaining: 17993080832 (16.76 GB)
+DFS Used: 418798289 (399.40 MB)
+DFS Used%: 2.27%
 Replicated Blocks:
 	Under replicated blocks: 0
 	Blocks with corrupt replicas: 0
@@ -67,56 +66,56 @@ Name: 127.0.0.1:9866 (localhost)
 Hostname: localhost
 Decommission Status : Normal
 Configured Capacity: 270553174016 (251.97 GB)
-DFS Used: 406515604 (387.68 MB)
-Non DFS Used: 19898204268 (18.53 GB)
-DFS Remaining: 20978814976 (19.54 GB)
+DFS Used: 418798289 (399.40 MB)
+Non DFS Used: 22878147887 (21.31 GB)
+DFS Remaining: 17986588672 (16.75 GB)
 DFS Used%: 0.15%
-DFS Remaining%: 7.75%
+DFS Remaining%: 6.65%
 Configured Cache Capacity: 0 (0 B)
 Cache Used: 0 (0 B)
 Cache Remaining: 0 (0 B)
 Cache Used%: 100.00%
 Cache Remaining%: 0.00%
 Xceivers: 0
-Last contact: Wed Nov 11 13:48:36 UTC 2026
+Last contact: Wed Nov 11 14:16:22 UTC 2026
 Last Block Report: Wed Nov 11 13:36:09 UTC 2026
-Num of Blocks: 36
+Num of Blocks: 94
 
 
-2026-11-11 13:48:38,515 INFO client.DefaultNoHARMFailoverProxyProvider: Connecting to ResourceManager at localhost/127.0.0.1:8032
+2026-11-11 14:16:24,451 INFO client.DefaultNoHARMFailoverProxyProvider: Connecting to ResourceManager at localhost/127.0.0.1:8032
 Total Nodes:1
          Node-Id	     Node-State	Node-Http-Address	Number-of-Running-Containers
  localhost:38997	        RUNNING	   localhost:8042	                           0
 
 $ hdfs dfsadmin -safemode wait
 Safe mode is OFF
-19984 SparkSubmit
 10193 JobHistoryServer
 10033 ResourceManager
 9954 DataNode
-8467 Jps
 9891 NameNode
+8601 Kafka
+17339 Jps
 10124 NodeManager
 
 $ jps
-19984 SparkSubmit
 10193 JobHistoryServer
 10033 ResourceManager
 9954 DataNode
-8482 Jps
 9891 NameNode
+8601 Kafka
+17354 Jps
 10124 NodeManager
   [скріншот/screenshot] 01_jps_daemons.png
 
 $ hdfs dfs -mkdir -p /user/root/btc/raw /user/root/btc/wc_in /user/root/btc/out /tmp /user/hive/warehouse && hdfs dfs -chmod -R 777 /tmp /user/hive
 
 $ yarn node -list
-2026-11-11 13:48:49,167 INFO client.DefaultNoHARMFailoverProxyProvider: Connecting to ResourceManager at localhost/127.0.0.1:8032
+2026-11-11 14:16:34,305 INFO client.DefaultNoHARMFailoverProxyProvider: Connecting to ResourceManager at localhost/127.0.0.1:8032
 Total Nodes:1
          Node-Id	     Node-State	Node-Http-Address	Number-of-Running-Containers
  localhost:38997	        RUNNING	   localhost:8042	                           0
   [скріншот/screenshot] 02_yarn_node_list.png
---- [daemons] завершено за 14.6 с / done in 14.6 s ---
+--- [daemons] завершено за 17.2 с / done in 17.2 s ---
 
 ==============================================================================
 == [arch] Конфігурація кластера: dfsadmin -report, getconf
@@ -124,10 +123,10 @@ Total Nodes:1
 
 $ hdfs dfsadmin -report
 Configured Capacity: 270553174016 (251.97 GB)
-Present Capacity: 21445123988 (19.97 GB)
-DFS Remaining: 21038608384 (19.59 GB)
-DFS Used: 406515604 (387.68 MB)
-DFS Used%: 1.90%
+Present Capacity: 18382938112 (17.12 GB)
+DFS Remaining: 17964077056 (16.73 GB)
+DFS Used: 418861056 (399.46 MB)
+DFS Used%: 2.28%
 Replicated Blocks:
 	Under replicated blocks: 0
 	Blocks with corrupt replicas: 0
@@ -149,20 +148,20 @@ Name: 127.0.0.1:9866 (localhost)
 Hostname: localhost
 Decommission Status : Normal
 Configured Capacity: 270553174016 (251.97 GB)
-DFS Used: 406515604 (387.68 MB)
-Non DFS Used: 19838410860 (18.48 GB)
-DFS Remaining: 21038608384 (19.59 GB)
+DFS Used: 418861056 (399.46 MB)
+Non DFS Used: 22900596736 (21.33 GB)
+DFS Remaining: 17964077056 (16.73 GB)
 DFS Used%: 0.15%
-DFS Remaining%: 7.78%
+DFS Remaining%: 6.64%
 Configured Cache Capacity: 0 (0 B)
 Cache Used: 0 (0 B)
 Cache Remaining: 0 (0 B)
 Cache Used%: 100.00%
 Cache Remaining%: 0.00%
 Xceivers: 0
-Last contact: Wed Nov 11 13:48:51 UTC 2026
+Last contact: Wed Nov 11 14:16:34 UTC 2026
 Last Block Report: Wed Nov 11 13:36:09 UTC 2026
-Num of Blocks: 36
+Num of Blocks: 94
 
 
   [скріншот/screenshot] 03_hdfs_dfsadmin_report.png
@@ -175,16 +174,16 @@ dfs.namenode.name.dir = file:///home/user/AVD/work/hadoop_runtime/nn
   [скріншот/screenshot] 04_hdfs_getconf.png
 
 $ yarn node -list -all
-2026-11-11 13:48:58,340 INFO client.DefaultNoHARMFailoverProxyProvider: Connecting to ResourceManager at localhost/127.0.0.1:8032
+2026-11-11 14:16:42,384 INFO client.DefaultNoHARMFailoverProxyProvider: Connecting to ResourceManager at localhost/127.0.0.1:8032
 Total Nodes:1
          Node-Id	     Node-State	Node-Http-Address	Number-of-Running-Containers
  localhost:38997	        RUNNING	   localhost:8042	                           0
   [скріншот/screenshot] 05_yarn_nodes.png
 Configured Capacity: 270553174016 (251.97 GB)
-Present Capacity: 21443661716 (19.97 GB)
-DFS Remaining: 21037146112 (19.59 GB)
-DFS Used: 406515604 (387.68 MB)
-DFS Used%: 1.90%
+Present Capacity: 18366009344 (17.10 GB)
+DFS Remaining: 17947148288 (16.71 GB)
+DFS Used: 418861056 (399.46 MB)
+DFS Used%: 2.28%
 Replicated Blocks:
 	Under replicated blocks: 0
 	Blocks with corrupt replicas: 0
@@ -206,27 +205,27 @@ Name: 127.0.0.1:9866 (localhost)
 Hostname: localhost
 Decommission Status : Normal
 Configured Capacity: 270553174016 (251.97 GB)
-DFS Used: 406515604 (387.68 MB)
-Non DFS Used: 19839873132 (18.48 GB)
-DFS Remaining: 21037146112 (19.59 GB)
+DFS Used: 418861056 (399.46 MB)
+Non DFS Used: 22917525504 (21.34 GB)
+DFS Remaining: 17947148288 (16.71 GB)
 DFS Used%: 0.15%
-DFS Remaining%: 7.78%
+DFS Remaining%: 6.63%
 Configured Cache Capacity: 0 (0 B)
 Cache Used: 0 (0 B)
 Cache Remaining: 0 (0 B)
 Cache Used%: 100.00%
 Cache Remaining%: 0.00%
 Xceivers: 0
-Last contact: Wed Nov 11 13:49:00 UTC 2026
+Last contact: Wed Nov 11 14:16:43 UTC 2026
 Last Block Report: Wed Nov 11 13:36:09 UTC 2026
-Num of Blocks: 36
+Num of Blocks: 94
 
 
 hdfs://localhost:9000
 1
 134217728
   [csv] hdfs_cluster_config.csv: 5 рядків / rows
---- [arch] завершено за 15.6 с / done in 15.6 s ---
+--- [arch] завершено за 13.9 с / done in 13.9 s ---
 
 ==============================================================================
 == [hdfs] HDFS: каталоги, put, ls, du, cat, fsck
@@ -234,33 +233,39 @@ hdfs://localhost:9000
 
 $ hdfs dfs -mkdir -p /user/root/btc/raw /user/root/btc/wc_in /user/root/btc/out && hdfs dfs -ls -R /user/root
 drwxr-xr-x   - root supergroup          0 2026-11-11 13:36 /user/root/btc
-drwxr-xr-x   - root supergroup          0 2026-11-11 13:38 /user/root/btc/out
-drwxr-xr-x   - root supergroup          0 2026-11-11 13:39 /user/root/btc/out/mr_daily_ohlc
--rw-r--r--   1 root supergroup          0 2026-11-11 13:39 /user/root/btc/out/mr_daily_ohlc/_SUCCESS
--rw-r--r--   1 root supergroup     348911 2026-11-11 13:39 /user/root/btc/out/mr_daily_ohlc/part-00000
-drwxr-xr-x   - root supergroup          0 2026-11-11 13:38 /user/root/btc/out/mr_yearly
--rw-r--r--   1 root supergroup          0 2026-11-11 13:38 /user/root/btc/out/mr_yearly/_SUCCESS
--rw-r--r--   1 root supergroup        453 2026-11-11 13:38 /user/root/btc/out/mr_yearly/part-00000
-drwxr-xr-x   - root supergroup          0 2026-11-11 13:37 /user/root/btc/out/wordcount
--rw-r--r--   1 root supergroup          0 2026-11-11 13:37 /user/root/btc/out/wordcount/_SUCCESS
--rw-r--r--   1 root supergroup      10901 2026-11-11 13:37 /user/root/btc/out/wordcount/part-r-00000
-drwxr-xr-x   - root supergroup          0 2026-11-11 13:36 /user/root/btc/raw
--rw-r--r--   1 root supergroup  396849494 2026-11-11 13:36 /user/root/btc/raw/btcusd_1-min_data.csv
-drwxr-xr-x   - root supergroup          0 2026-11-11 13:37 /user/root/btc/wc_in
--rw-r--r--   1 root supergroup      15217 2026-11-11 13:37 /user/root/btc/wc_in/LICENSE.txt
--rw-r--r--   1 root supergroup       1541 2026-11-11 13:37 /user/root/btc/wc_in/NOTICE.txt
+drwxr-xr-x   - root supergroup          0 2026-11-11 14:04 /user/root/btc/out
+drwxr-xr-x   - root supergroup          0 2026-11-11 14:04 /user/root/btc/out/bench_daily
+-rw-r--r--   1 root supergroup          0 2026-11-11 14:04 /user/root/btc/out/bench_daily/_SUCCESS
+-rw-r--r--   1 root supergroup     348911 2026-11-11 14:04 /user/root/btc/out/bench_daily/part-00000
+drwxr-xr-x   - root supergroup          0 2026-11-11 14:02 /user/root/btc/out/bench_yearly
+-rw-r--r--   1 root supergroup          0 2026-11-11 14:02 /user/root/btc/out/bench_yearly/_SUCCESS
+-rw-r--r--   1 root supergroup        453 2026-11-11 14:02 /user/root/btc/out/bench_yearly/part-00000
+drwxr-xr-x   - root supergroup          0 2026-11-11 13:51 /user/root/btc/out/mr_daily_ohlc
+-rw-r--r--   1 root supergroup          0 2026-11-11 13:51 /user/root/btc/out/mr_daily_ohlc/_SUCCESS
+-rw-r--r--   1 root supergroup     348911 2026-11-11 13:51 /user/root/btc/out/mr_daily_ohlc/part-00000
+drwxr-xr-x   - root supergroup          0 2026-11-11 13:51 /user/root/btc/out/mr_yearly
+-rw-r--r--   1 root supergroup          0 2026-11-11 13:51 /user/root/btc/out/mr_yearly/_SUCCESS
+-rw-r--r--   1 root supergroup        453 2026-11-11 13:51 /user/root/btc/out/mr_yearly/part-00000
+drwxr-xr-x   - root supergroup          0 2026-11-11 13:50 /user/root/btc/out/wordcount
+-rw-r--r--   1 root supergroup          0 2026-11-11 13:50 /user/root/btc/out/wordcount/_SUCCESS
+-rw-r--r--   1 root supergroup      10901 2026-11-11 13:50 /user/root/btc/out/wordcount/part-r-00000
+drwxr-xr-x   - root supergroup          0 2026-11-11 13:49 /user/root/btc/raw
+-rw-r--r--   1 root supergroup  396849494 2026-11-11 13:49 /user/root/btc/raw/btcusd_1-min_data.csv
+drwxr-xr-x   - root supergroup          0 2026-11-11 13:49 /user/root/btc/wc_in
+-rw-r--r--   1 root supergroup      15217 2026-11-11 13:49 /user/root/btc/wc_in/LICENSE.txt
+-rw-r--r--   1 root supergroup       1541 2026-11-11 13:49 /user/root/btc/wc_in/NOTICE.txt
   [скріншот/screenshot] 06_hdfs_mkdir_ls.png
 
 $ hdfs dfs -put -f "/home/user/AVD/work/data/raw/btcusd_1-min_data.csv" /user/root/btc/raw/btcusd_1-min_data.csv
-hdfs put: 4.4 с
+hdfs put: 4.3 с
 
 $ hdfs dfs -ls -h /user/root/btc/raw
 Found 1 items
--rw-r--r--   1 root supergroup    378.5 M 2026-11-11 13:49 /user/root/btc/raw/btcusd_1-min_data.csv
+-rw-r--r--   1 root supergroup    378.5 M 2026-11-11 14:16 /user/root/btc/raw/btcusd_1-min_data.csv
   [скріншот/screenshot] 07_hdfs_ls_raw.png
 
 $ hdfs dfs -du -h /user/root/btc
-351.8 K  351.8 K  /user/root/btc/out
+693.0 K  693.0 K  /user/root/btc/out
 378.5 M  378.5 M  /user/root/btc/raw
 16.4 K   16.4 K   /user/root/btc/wc_in
   [скріншот/screenshot] 08_hdfs_du.png
@@ -298,13 +303,13 @@ $ hdfs dfs -tail /user/root/btc/raw/btcusd_1-min_data.csv
 
 $ hdfs fsck /user/root/btc/raw -files -blocks -locations
 Connecting to namenode via http://localhost:9870/fsck?ugi=root&files=1&blocks=1&locations=1&path=%2Fuser%2Froot%2Fbtc%2Fraw
-FSCK started by root (auth:SIMPLE) from /127.0.0.1 for path /user/root/btc/raw at Wed Nov 11 13:49:30 UTC 2026
+FSCK started by root (auth:SIMPLE) from /127.0.0.1 for path /user/root/btc/raw at Wed Nov 11 14:17:09 UTC 2026
 
 /user/root/btc/raw <dir>
 /user/root/btc/raw/btcusd_1-min_data.csv 396849494 bytes, replicated: replication=1, 3 block(s):  OK
-0. BP-1832236554-127.0.0.1-1794404160092:blk_1073741989_1165 len=134217728 Live_repl=1  [DatanodeInfoWithStorage[127.0.0.1:9866,DS-a6bc67e1-de65-4d51-97f1-239b796dafe7,DISK]]
-1. BP-1832236554-127.0.0.1-1794404160092:blk_1073741990_1166 len=134217728 Live_repl=1  [DatanodeInfoWithStorage[127.0.0.1:9866,DS-a6bc67e1-de65-4d51-97f1-239b796dafe7,DISK]]
-2. BP-1832236554-127.0.0.1-1794404160092:blk_1073741991_1167 len=128414038 Live_repl=1  [DatanodeInfoWithStorage[127.0.0.1:9866,DS-a6bc67e1-de65-4d51-97f1-239b796dafe7,DISK]]
+0. BP-1832236554-127.0.0.1-1794404160092:blk_1073742345_1521 len=134217728 Live_repl=1  [DatanodeInfoWithStorage[127.0.0.1:9866,DS-a6bc67e1-de65-4d51-97f1-239b796dafe7,DISK]]
+1. BP-1832236554-127.0.0.1-1794404160092:blk_1073742346_1522 len=134217728 Live_repl=1  [DatanodeInfoWithStorage[127.0.0.1:9866,DS-a6bc67e1-de65-4d51-97f1-239b796dafe7,DISK]]
+2. BP-1832236554-127.0.0.1-1794404160092:blk_1073742347_1523 len=128414038 Live_repl=1  [DatanodeInfoWithStorage[127.0.0.1:9866,DS-a6bc67e1-de65-4d51-97f1-239b796dafe7,DISK]]
 
 
 Status: HEALTHY
@@ -341,14 +346,14 @@ Erasure Coded Block Groups:
  Corrupt block groups:		0
  Missing internal blocks:	0
  Blocks queued for replication:	0
-FSCK ended at Wed Nov 11 13:49:30 UTC 2026 in 2 milliseconds
+FSCK ended at Wed Nov 11 14:17:09 UTC 2026 in 2 milliseconds
 
 
 The filesystem under path '/user/root/btc/raw' is HEALTHY
   [скріншот/screenshot] 11_hdfs_fsck.png
 396849494
   [csv] hdfs_file_info.csv: 1 рядків / rows
---- [hdfs] завершено за 29.1 с / done in 29.1 s ---
+--- [hdfs] завершено за 23.1 с / done in 23.1 s ---
 
 ==============================================================================
 == [selftest] Локальна перевірка mapper/reducer на вибірці (cat | mapper | sort | reducer)
@@ -362,7 +367,7 @@ $ cat /home/user/AVD/work/hadoop_runtime/sample_200k.csv | python3 /home/user/AV
 2012-05-17	5.04	5.04	5.01	5.02	611.21283218	1440
 2012-05-18	5.02	5.06	5.02	5.05	898.5893585099999	1281
 Selftest OK: роки=1, доби=139
---- [selftest] завершено за 2.0 с / done in 2.0 s ---
+--- [selftest] завершено за 2.8 с / done in 2.8 s ---
 
 ==============================================================================
 == [wordcount] WordCount (hadoop-mapreduce-examples) - перевірка кластера
@@ -374,10 +379,10 @@ $ hdfs dfs -rm -r -f /user/root/btc/out/wordcount
 Deleted /user/root/btc/out/wordcount
 
 $ hadoop jar /home/user/AVD/work/tools/hadoop-3.3.6/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.3.6.jar wordcount /user/root/btc/wc_in /user/root/btc/out/wordcount
-		Total vcore-milliseconds taken by all map tasks=10932
-		Total vcore-milliseconds taken by all reduce tasks=4574
-		Total megabyte-milliseconds taken by all map tasks=11194368
-		Total megabyte-milliseconds taken by all reduce tasks=7025664
+		Total vcore-milliseconds taken by all map tasks=8378
+		Total vcore-milliseconds taken by all reduce tasks=3098
+		Total megabyte-milliseconds taken by all map tasks=8579072
+		Total megabyte-milliseconds taken by all reduce tasks=4758528
 	Map-Reduce Framework
 		Map input records=304
 		Map output records=1879
@@ -394,15 +399,15 @@ $ hadoop jar /home/user/AVD/work/tools/hadoop-3.3.6/share/hadoop/mapreduce/hadoo
 		Shuffled Maps =2
 		Failed Shuffles=0
 		Merged Map outputs=2
-		GC time elapsed (ms)=531
-		CPU time spent (ms)=1700
-		Physical memory (bytes) snapshot=913154048
-		Virtual memory (bytes) snapshot=7737790464
-		Total committed heap usage (bytes)=941621248
-		Peak Map Physical memory (bytes)=375238656
-		Peak Map Virtual memory (bytes)=2484228096
-		Peak Reduce Physical memory (bytes)=248082432
-		Peak Reduce Virtual memory (bytes)=2770644992
+		GC time elapsed (ms)=292
+		CPU time spent (ms)=1610
+		Physical memory (bytes) snapshot=823451648
+		Virtual memory (bytes) snapshot=7739547648
+		Total committed heap usage (bytes)=870318080
+		Peak Map Physical memory (bytes)=296435712
+		Peak Map Virtual memory (bytes)=2486693888
+		Peak Reduce Physical memory (bytes)=239783936
+		Peak Reduce Virtual memory (bytes)=2769698816
 	Shuffle Errors
 		BAD_ID=0
 		CONNECTION=0
@@ -418,8 +423,8 @@ $ hadoop jar /home/user/AVD/work/tools/hadoop-3.3.6/share/hadoop/mapreduce/hadoo
 
 $ hdfs dfs -ls /user/root/btc/out/wordcount
 Found 2 items
--rw-r--r--   1 root supergroup          0 2026-11-11 13:50 /user/root/btc/out/wordcount/_SUCCESS
--rw-r--r--   1 root supergroup      10901 2026-11-11 13:50 /user/root/btc/out/wordcount/part-r-00000
+-rw-r--r--   1 root supergroup          0 2026-11-11 14:17 /user/root/btc/out/wordcount/_SUCCESS
+-rw-r--r--   1 root supergroup      10901 2026-11-11 14:17 /user/root/btc/out/wordcount/part-r-00000
   [скріншот/screenshot] 13_wordcount_ls.png
 
 $ hdfs dfs -cat /user/root/btc/out/wordcount/part-r-00000 | sort -k2 -nr | head -n 20
@@ -446,7 +451,7 @@ with	12
   [скріншот/screenshot] 14_wordcount_top20.png
   [csv] wordcount_top50.csv: 50 рядків / rows
 Унікальних слів / distinct words: 748  Усього / total: 1879
---- [wordcount] завершено за 48.2 с / done in 48.2 s ---
+--- [wordcount] завершено за 40.8 с / done in 40.8 s ---
 
 ==============================================================================
 == [mr_year] Hadoop Streaming: кількість свічок і сумарний обсяг за роками
@@ -454,9 +459,9 @@ with	12
 Deleted /user/root/btc/out/mr_yearly
 
 $ hadoop jar /home/user/AVD/work/tools/hadoop-3.3.6/share/hadoop/tools/lib/hadoop-streaming-3.3.6.jar -D mapreduce.job.name=mr_yearly -D mapreduce.job.reduces=1 -files /home/user/AVD/work/pz1/code/mapper_year.py,/home/user/AVD/work/pz1/code/reducer_year.py -mapper 'python3 mapper_year.py' -combiner 'python3 reducer_year.py' -reducer 'python3 reducer_year.py' -input /user/root/btc/raw -output /user/r ...
-		Total vcore-milliseconds taken by all reduce tasks=6362
-		Total megabyte-milliseconds taken by all map tasks=69102592
-		Total megabyte-milliseconds taken by all reduce tasks=9772032
+		Total vcore-milliseconds taken by all reduce tasks=2529
+		Total megabyte-milliseconds taken by all map tasks=47726592
+		Total megabyte-milliseconds taken by all reduce tasks=3884544
 	Map-Reduce Framework
 		Map input records=7816538
 		Map output records=7816537
@@ -473,15 +478,15 @@ $ hadoop jar /home/user/AVD/work/tools/hadoop-3.3.6/share/hadoop/tools/lib/hadoo
 		Shuffled Maps =3
 		Failed Shuffles=0
 		Merged Map outputs=3
-		GC time elapsed (ms)=1580
-		CPU time spent (ms)=20510
-		Physical memory (bytes) snapshot=1614856192
-		Virtual memory (bytes) snapshot=10234408960
-		Total committed heap usage (bytes)=1735917568
-		Peak Map Physical memory (bytes)=601059328
-		Peak Map Virtual memory (bytes)=2504331264
-		Peak Reduce Physical memory (bytes)=247066624
-		Peak Reduce Virtual memory (bytes)=2771095552
+		GC time elapsed (ms)=1448
+		CPU time spent (ms)=14530
+		Physical memory (bytes) snapshot=2021654528
+		Virtual memory (bytes) snapshot=10235555840
+		Total committed heap usage (bytes)=2301100032
+		Peak Map Physical memory (bytes)=627011584
+		Peak Map Virtual memory (bytes)=2502524928
+		Peak Reduce Physical memory (bytes)=247955456
+		Peak Reduce Virtual memory (bytes)=2771202048
 	Shuffle Errors
 		BAD_ID=0
 		CONNECTION=0
@@ -493,10 +498,10 @@ $ hadoop jar /home/user/AVD/work/tools/hadoop-3.3.6/share/hadoop/tools/lib/hadoo
 		Bytes Read=396857686
 	File Output Format Counters 
 		Bytes Written=453
-2026-11-11 13:51:10,143 INFO streaming.StreamJob: Output directory: /user/root/btc/out/mr_yearly
+2026-11-11 14:18:32,840 INFO streaming.StreamJob: Output directory: /user/root/btc/out/mr_yearly
   [скріншот/screenshot] 15_mr_yearly_job_output.png
   [csv] mr_counters_mr_yearly.csv: 9 рядків / rows
-Лічильники / counters: {'Map input records': 7816538, 'Map output records': 7816537, 'Combine input records': 7816537, 'Combine output records': 17, 'Reduce input groups': 15, 'Reduce input records': 17, 'Reduce output records': 15, 'Launched map tasks': 4, 'Launched reduce tasks': 1}
+Лічильники / counters: {'Map input records': 7816538, 'Map output records': 7816537, 'Combine input records': 7816537, 'Combine output records': 17, 'Reduce input groups': 15, 'Reduce input records': 17, 'Reduce output records': 15, 'Launched map tasks': 3, 'Launched reduce tasks': 1}
   [скріншот/screenshot] 16_mr_yearly_result.png
  year  candles       volume
  2012   527039 5.679486e+05
@@ -515,7 +520,7 @@ $ hadoop jar /home/user/AVD/work/tools/hadoop-3.3.6/share/hadoop/tools/lib/hadoo
  2025   525600 6.399458e+05
  2026   452378 6.363713e+05
   [csv] mr_yearly_stats.csv: 15 рядків / rows
---- [mr_year] завершено за 51.9 с / done in 51.9 s ---
+--- [mr_year] завершено за 42.2 с / done in 42.2 s ---
 
 ==============================================================================
 == [mr_ohlc] Hadoop Streaming: добові OHLC зі свічок 1 хв
@@ -523,9 +528,9 @@ $ hadoop jar /home/user/AVD/work/tools/hadoop-3.3.6/share/hadoop/tools/lib/hadoo
 Deleted /user/root/btc/out/mr_daily_ohlc
 
 $ hadoop jar /home/user/AVD/work/tools/hadoop-3.3.6/share/hadoop/tools/lib/hadoop-streaming-3.3.6.jar -D mapreduce.job.name=mr_daily_ohlc -D mapreduce.job.reduces=1 -files /home/user/AVD/work/pz1/code/mapper_ohlc.py,/home/user/AVD/work/pz1/code/reducer_ohlc.py -mapper 'python3 mapper_ohlc.py'  -reducer 'python3 reducer_ohlc.py' -input /user/root/btc/raw -output /user/root/btc/out/mr_daily_ohlc
-		Total vcore-milliseconds taken by all reduce tasks=4131
-		Total megabyte-milliseconds taken by all map tasks=44343296
-		Total megabyte-milliseconds taken by all reduce tasks=6345216
+		Total vcore-milliseconds taken by all reduce tasks=2502
+		Total megabyte-milliseconds taken by all map tasks=34994176
+		Total megabyte-milliseconds taken by all reduce tasks=3843072
 	Map-Reduce Framework
 		Map input records=7816538
 		Map output records=5431
@@ -542,15 +547,15 @@ $ hadoop jar /home/user/AVD/work/tools/hadoop-3.3.6/share/hadoop/tools/lib/hadoo
 		Shuffled Maps =3
 		Failed Shuffles=0
 		Merged Map outputs=3
-		GC time elapsed (ms)=1877
-		CPU time spent (ms)=7570
-		Physical memory (bytes) snapshot=1839878144
-		Virtual memory (bytes) snapshot=10228039680
-		Total committed heap usage (bytes)=1988100096
-		Peak Map Physical memory (bytes)=625311744
-		Peak Map Virtual memory (bytes)=2487189504
-		Peak Reduce Physical memory (bytes)=242233344
-		Peak Reduce Virtual memory (bytes)=2768322560
+		GC time elapsed (ms)=1173
+		CPU time spent (ms)=7860
+		Physical memory (bytes) snapshot=1569738752
+		Virtual memory (bytes) snapshot=10237894656
+		Total committed heap usage (bytes)=1666711552
+		Peak Map Physical memory (bytes)=569278464
+		Peak Map Virtual memory (bytes)=2489888768
+		Peak Reduce Physical memory (bytes)=248934400
+		Peak Reduce Virtual memory (bytes)=2771812352
 	Shuffle Errors
 		BAD_ID=0
 		CONNECTION=0
@@ -562,7 +567,7 @@ $ hadoop jar /home/user/AVD/work/tools/hadoop-3.3.6/share/hadoop/tools/lib/hadoo
 		Bytes Read=396857686
 	File Output Format Counters 
 		Bytes Written=348911
-2026-11-11 13:51:54,608 INFO streaming.StreamJob: Output directory: /user/root/btc/out/mr_daily_ohlc
+2026-11-11 14:19:08,004 INFO streaming.StreamJob: Output directory: /user/root/btc/out/mr_daily_ohlc
   [скріншот/screenshot] 17_mr_daily_ohlc_job_output.png
   [csv] mr_counters_mr_daily_ohlc.csv: 9 рядків / rows
 Лічильники / counters: {'Map input records': 7816538, 'Map output records': 5431, 'Combine input records': 0, 'Combine output records': 0, 'Reduce input groups': 5429, 'Reduce input records': 5431, 'Reduce output records': 5429, 'Launched map tasks': 3, 'Launched reduce tasks': 1}
@@ -576,7 +581,7 @@ $ hadoop jar /home/user/AVD/work/tools/hadoop-3.3.6/share/hadoop/tools/lib/hadoo
 2012-01-03  5.00  5.32 5.00   5.29  88.037281     1440
 2012-01-04  5.29  5.57 4.93   5.57 107.233260     1440
 2012-01-05  5.57  6.65 5.57   6.65  94.801829     1440
---- [mr_ohlc] завершено за 43.0 с / done in 43.0 s ---
+--- [mr_ohlc] завершено за 35.3 с / done in 35.3 s ---
 
 ==============================================================================
 == [hive_install] Hive 3.1.3 + Derby (embedded metastore)
@@ -587,7 +592,7 @@ $ hive --version 2>/dev/null | head -n 3
 Hive 3.1.3
 Git git://MacBook-Pro.fios-router.home/Users/ngangam/commit/hive -r 4df4d75bf1e16fe0af75aad0b4179c34c07fc975
 Compiled by ngangam on Sun Apr 3 16:58:16 EDT 2022
---- [hive_install] завершено за 9.5 с / done in 9.5 s ---
+--- [hive_install] завершено за 5.1 с / done in 5.1 s ---
 
 ==============================================================================
 == [hive_table] Hive: CREATE EXTERNAL TABLE над CSV у HDFS + вибірка
@@ -619,7 +624,7 @@ total_candles
 7816537
 
   [csv] hive_count_check.csv: 1 рядків / rows
---- [hive_table] завершено за 100.2 с / done in 100.2 s ---
+--- [hive_table] завершено за 82.5 с / done in 82.5 s ---
 
 ==============================================================================
 == [hive_queries] Hive: GROUP BY рік / рік+місяць
@@ -650,7 +655,7 @@ $ hive -S -f /home/user/AVD/work/pz1/code/hive_03b_monthly.hql
   [csv] hive_monthly_stats.csv: 179 рядків / rows
 місяців / months: 179
   [csv] crosscheck_hive_vs_mr_yearly.csv: 1 рядків / rows
---- [hive_queries] завершено за 151.0 с / done in 151.0 s ---
+--- [hive_queries] завершено за 126.4 с / done in 126.4 s ---
 
 ==============================================================================
 == [hive_daily] Hive: добова таблиця OHLC, топ-10 діб за обсягом і за High-Low
@@ -686,111 +691,3 @@ trade_date    open    high     low   close        volume  candles
   [csv] hive_top10_volume_days.csv: 10 рядків / rows
 
 $ hive -S -f /home/user/AVD/work/pz1/code/hive_05b_top_range.hql
-  [скріншот/screenshot] 25_hive_top10_range.png
-trade_date      high       low  price_range       volume
-2021-05-19  43601.63  30066.00     13535.63 32468.863970
-2025-10-10 122582.00 109683.00     12899.00  4713.818945
-2021-12-04  53877.77  41967.50     11910.27 10025.689669
-2026-02-06  71673.00  59930.00     11743.00 12389.363472
-2024-12-05 103647.00  92092.00     11555.00  7450.450187
-2025-02-03 102569.00  91530.00     11039.00  4081.884021
-2026-02-05  73175.00  62200.00     10975.00 12980.445067
-2021-02-22  57564.19  47400.00     10164.19 17002.832731
-2025-03-02  95152.00  85029.00     10123.00  3153.029650
-2021-09-07  52956.47  42900.01     10056.46  6811.922188
-  [csv] hive_top10_range_days.csv: 10 рядків / rows
-  [csv] hive_daily_rowcount.csv: 1 рядків / rows
-  [csv] crosscheck_hive_vs_mr_daily.csv: 1 рядків / rows
---- [hive_daily] завершено за 191.8 с / done in 191.8 s ---
-
-==============================================================================
-== [pandas] Pandas: ті самі агрегації + звірка з MapReduce/Hive
-==============================================================================
-Pandas: читання 10.4 с, річна агрегація 0.4 с, добові OHLC 0.6 с
-  [csv] pandas_yearly_stats.csv: 15 рядків / rows
-  [csv] pandas_daily_ohlc_full.csv: 5429 рядків / rows
-  [csv] pandas_top10_volume_days.csv: 10 рядків / rows
-  [csv] pandas_top10_range_days.csv: 10 рядків / rows
-  [скріншот/screenshot] 26_pandas_yearly.png
-  [csv] crosscheck_mr_hive_vs_pandas.csv: 6 рядків / rows
-                           check  left_rows  right_rows  match                                                                                     note
-      mapreduce_vs_pandas_yearly         15          15   True                                                             max_rel_diff_volume=1.00e-13
-  mapreduce_vs_pandas_daily_ohlc       5429        5429   True mismatch_OHLC={'open': 0, 'high': 0, 'low': 0, 'close': 0}; max_rel_diff_volume=8.13e-15
-           hive_vs_pandas_yearly         15          15   True                                                                                         
-       hive_vs_pandas_daily_rows       5429        5429   True                                                                                         
-hive_vs_pandas_top10_volume_days         10          10   True                                                                                         
- hive_vs_pandas_top10_range_days         10        5429   True                                                                                         
---- [pandas] завершено за 11.6 с / done in 11.6 s ---
-
-==============================================================================
-== [save] versions.txt, логи, runtimes.csv
-==============================================================================
-/home/user/AVD/work/pz1/code/run_pz1.py:717: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-  'Date UTC': datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'),
-openjdk version "1.8.0_472"
-OpenJDK Runtime Environment (Zulu 8.90.0.19-CA-linux64) (build 1.8.0_472-b08)
-OpenJDK 64-Bit Server VM (Zulu 8.90.0.19-CA-linux64) (build 25.472-b08, mixed mode)
-Hadoop 3.3.6
-Source code repository https://github.com/apache/hadoop.git -r 1be78238728da9266a4f88195058f08fd012bf9c
-Compiled by ubuntu on 2023-06-18T08:22Z
-Compiled on platform linux-x86_64
-Compiled with protoc 3.7.1
-From source with checksum 5652179ad55f76cb287d9c633bb53bbd
-This command was run using /home/user/AVD/work/tools/hadoop-3.3.6/share/hadoop/common/hadoop-common-3.3.6.jar
-Hive 3.1.3
-Version: 4.3.0
-Intel(R) Xeon(R) Processor @ 2.10GHz
-4
-15Gi
-/dev/vda        252G   20G   19G  52% /
-4
-               total        used        free      shared  buff/cache   available
-Mem:            15Gi       7.7Gi       4.3Gi        16Mi       4.0Gi       8.0Gi
-Swap:             0B          0B          0B
-  [csv] env_versions.csv: 14 рядків / rows
-Java: openjdk version "1.8.0_472"
-Hadoop: Hadoop 3.3.6
-Hive: Hive 3.1.3
-Python: 3.13.18
-pandas: 3.0.5
-numpy: 2.5.3
-pyspark: Version: 4.3.0
-Hadoop JAVA_HOME: /home/user/AVD/work/mamba/envs/jdk8
-OS: Linux-6.18.44-fc-v378-x86_64-with-glibc2.39
-CPU: Intel(R) Xeon(R) Processor @ 2.10GHz
-nproc: 4
-RAM: 15Gi
-Disk: /dev/vda        252G   20G   19G  52% /
-Date UTC: 2026-11-11 13:59:52
-
---- nproc / free -h ---
-4
-               total        used        free      shared  buff/cache   available
-Mem:            15Gi       7.7Gi       4.3Gi        16Mi       4.0Gi       8.0Gi
-Swap:             0B          0B          0B
-
---- [save] завершено за 8.7 с / done in 8.7 s ---
-
-==============================================================================
-== ПІДСУМКОВИЙ ЧЕКЛІСТ / FINAL CHECKLIST
-==============================================================================
-[OK  ] Дані: archive.zip -> CSV (Data prepared)
-[OK  ] Завдання 1: архітектура Hadoop / HDFS (dfsadmin, fsck, jps)
-[OK  ] Завдання 2: Java 8 + Hadoop 3.3 встановлено і налаштовано
-[OK  ] Завдання 2: NameNode/DataNode/ResourceManager/NodeManager запущено
-[OK  ] Завдання 3: CSV завантажено в HDFS (ls/du/cat/fsck)
-[OK  ] Попередня перевірка mapper/reducer на вибірці (vs Pandas)
-[OK  ] Завдання 4: WordCount (hadoop-mapreduce-examples)
-[OK  ] Завдання 4: власна Streaming-задача, свічки та обсяг за роками
-[OK  ] Завдання 4: власна Streaming-задача, добові OHLC
-[OK  ] Завдання 5: Hive 3.1.3 + Derby metastore
-[OK  ] Завдання 5: зовнішня таблиця Hive над CSV у HDFS
-[OK  ] Завдання 6: вибірка, групування за роком/місяцем
-[OK  ] Завдання 6: добова таблиця, топ-10 за обсягом і за High-Low
-[OK  ] Завдання 7: Pandas (ті самі агрегації) + звірка з MapReduce
-[OK  ] Збереження версій, логів, runtimes
-
-Разом: 15 з 15 OK. Результати: /nonexistent_drive/colab_results/pz1
-Скріншоти: 26 файлів; CSV: 23
-
-Результати збережено у /home/user/AVD/work/pz1

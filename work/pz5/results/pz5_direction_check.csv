@@ -1,0 +1,14 @@
+metric,value
+n_hours,77667.0
+conf95_bound,0.007032954475824413
+acf_ret_lag1,-0.02133603833200345
+acf_abs_ret_lag1,0.2951418484431607
+acf_abs_ret_lag24,0.19823822687370604
+acf_abs_ret_lag168_not_shown,0.1444815029572566
+up_share_next_hour,0.5065662168786604
+majority_accuracy_direction,0.5065662168786604
+sign_persistence_accuracy_direction,0.4643937239899708
+LR direction: ROC-AUC,0.5266891479619031
+LR direction: accuracy,0.5134420733672878
+majority accuracy (test),0.5000322351879312
+up share test,0.5000322351879312

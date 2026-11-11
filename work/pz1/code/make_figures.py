@@ -47,7 +47,8 @@ for ax, task, title in zip(axs, ['yearly', 'daily_ohlc'], ['Кількість �
     s = S[S.task == task].set_index('tool').loc[tools]
     err = np.vstack([s['median'] - s['min'], s['max'] - s['median']])
     ax.bar(labels, s['median'], color=cols, yerr=err, capsize=5)
-    for i, v in enumerate(s['median']): ax.text(i, v, f'{v:.1f}'.replace('.', ','), ha='center', va='bottom', fontsize=10, fontweight='bold')
+    for i, (v, mx) in enumerate(zip(s['median'], s['max'])): ax.text(i, mx * 1.02, f'{v:.1f}'.replace('.', ','), ha='center', va='bottom', fontsize=10, fontweight='bold')
+    ax.set_ylim(0, s['max'].max() * 1.12)
     ax.set_title(title); ax.set_ylabel('Час виконання, с (медіана з 3 запусків)')
 fig.suptitle('Порівняння часу: 7,8 млн рядків CSV, 4 vCPU / 15 GiB', y=1.0); fig.tight_layout()
 fig.savefig(F / 'fig_timing_comparison.png'); plt.close(fig)
