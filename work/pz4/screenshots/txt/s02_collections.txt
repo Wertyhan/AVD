@@ -1,8 +1,8 @@
-$ mongosh bigdata_db --quiet --eval 'db.getCollectionNames().filter(n => !n.startsWith('system.'))'
+$ mongosh --quiet --eval 'db.getCollectionNames().filter(n => !n.startsWith("system."))' bigdata_db
 [
-  'anomalies',
   'candles_1h',
   'candles_1d',
+  'anomalies',
   'candles_1m',
   'candles_1m_ts',
   'candles_1d_buckets',

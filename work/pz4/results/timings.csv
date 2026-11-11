@@ -13,3 +13,8 @@ agg_ANOM_per_year,1.550,"anomalies, 15 рядків"
 agg_ANOM_lookup_features,2.026,"anomalies, 4015 рядків"
 agg_ANOM_by_rule,1.515,"anomalies, 3 рядків"
 agg_ANOM_top_dates,1.204,"anomalies, 10 рядків"
+load_anomalies,0.120,5437 docs з /home/user/AVD/work/pz3/results/pz3_anomalies.csv
+agg_ANOM_per_year,0.064,"anomalies, 14 рядків"
+agg_ANOM_lookup_features,0.117,"anomalies, 1572 рядків"
+agg_ANOM_by_rule,0.061,"anomalies, 1 рядків"
+agg_ANOM_top_dates,0.052,"anomalies, 10 рядків"

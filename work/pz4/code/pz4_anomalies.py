@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Завдання 7 (частина ПЗ3): колекція anomalies, індекси, запити та $lookup зі spark_daily_features.
 Скрипт перезапускний: читає актуальний work/pz3/results/pz3_anomalies.csv, перезавантажує колекцію
-та пише власні результати results/pz4_anom_*.csv, explain/anom_*.json. Лише обов'язкові колонки: timestamp, date, score."""
+та пише власні результати results/pz4_anom_*.csv, explain/anom_*.json. Обов'язкові колонки: timestamp, date, score; решта (v2: z_vol, sigma_ret, med_vol, rule_version тощо) завантажується як є."""
 import sys, time, json, math, datetime as dt
 import pandas as pd
 from bson import json_util
@@ -25,6 +25,7 @@ for r in df.to_dict("records"):
         if isinstance(v, float) and math.isnan(v): v = None            # NaN -> null
         elif hasattr(v, "item"): v = v.item()
         d[k] = v
+    if "ts" in r: d["ts_epoch"] = int(r["ts"])                               # Int (секунди Unix)
     d["ts"] = dt.datetime.fromisoformat(str(r["timestamp"])).replace(tzinfo=dt.timezone.utc)   # Date (UTC)
     d["date"] = dt.datetime.fromisoformat(str(r["date"])[:10]).replace(tzinfo=dt.timezone.utc)
     d["year"] = d["date"].year

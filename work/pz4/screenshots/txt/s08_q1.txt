@@ -1,4 +1,4 @@
-$ mongosh bigdata_db --quiet --eval 'db.candles_1d.find({date:{$gte:ISODate('2021-01-01'),$lt:ISODate('2022-01-01')},close:{$gt:60000}},{_id:0,date:1,close:1,volume:1}).sort({date:1}).limit(8)'
+$ mongosh --quiet --eval 'db.candles_1d.find({date:{$gte:ISODate("2021-01-01"),$lt:ISODate("2022-01-01")},close:{$gt:60000}},{_id:0,date:1,close:1,volume:1}).sort({date:1}).limit(8)' bigdata_db
 [
   {
     date: ISODate('2021-03-13T00:00:00.000Z'),
@@ -38,6 +38,4 @@ $ mongosh bigdata_db --quiet --eval 'db.candles_1d.find({date:{$gte:ISODate('202
   {
     date: ISODate('2021-10-16T00:00:00.000Z'),
     close: 60870.26,
-    volume: 1263.44800176
-  }
-]
+… (ще 3 рядків)

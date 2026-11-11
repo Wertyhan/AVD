@@ -74,7 +74,7 @@ EXPL = lambda coll, flt, extra: (
     "print('AFTER (index):'); printjson(f(q().explain('executionStats')))")
 shf("s18_explain_ts", "s18_explain_ts.js")
 shf("s19_explain_vol", "s19_explain_vol.js")
-shf("s20_explain_anom", "s20_explain_anom.js", "anomalies = v1 (залежить від перезапуску ПЗ3)")
+shf("s20_explain_anom", "s20_explain_anom.js")
 sh("s21_ts_stats", "const s=db.candles_1m_ts.stats(); printjson({ns:s.ns,timeseries:{bucketCount:s.timeseries.bucketCount,avgBucketSize:s.timeseries.avgBucketSize},size:s.size,storageSize:s.storageSize}); const f=db.candles_1m.stats(); printjson({ns:f.ns,count:f.count,size:f.size,storageSize:f.storageSize,avgObjSize:f.avgObjSize})")
 # --- shell-виводи ---
 run("s22_load_log", "grep -E '^\\{|^DONE|7200000| 0s$' results/load.log | tail -c 4000",

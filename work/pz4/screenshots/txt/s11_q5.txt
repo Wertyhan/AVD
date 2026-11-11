@@ -1,4 +1,4 @@
-$ mongosh bigdata_db --quiet --eval 'db.spark_daily_features.find({is_complete:1,ret_1d:{$lt:-0.10}},{_id:0,date:1,close:1,ret_1d:1,rv:1}).sort({ret_1d:1}).limit(8)'
+$ mongosh --quiet --eval 'db.spark_daily_features.find({is_complete:1,ret_1d:{$lt:-0.10}},{_id:0,date:1,close:1,ret_1d:1,rv:1}).sort({ret_1d:1}).limit(8)' bigdata_db
 [
   {
     date: ISODate('2013-04-11T00:00:00.000Z'),
@@ -38,14 +38,4 @@ $ mongosh bigdata_db --quiet --eval 'db.spark_daily_features.find({is_complete:1
   },
   {
     date: ISODate('2013-12-06T00:00:00.000Z'),
-    close: 814.91,
-    rv: 0.2306678932195975,
-    ret_1d: -0.22826716671999403
-  },
-  {
-    date: ISODate('2013-11-19T00:00:00.000Z'),
-    close: 536.01,
-    rv: 0.5357658889769019,
-    ret_1d: -0.22164619008643616
-  }
-]
+… (ще 11 рядків)

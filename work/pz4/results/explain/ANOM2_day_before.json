@@ -43,34 +43,34 @@
  },
  "executionStats": {
   "executionSuccess": true,
-  "nReturned": 5,
-  "executionTimeMillis": 53,
+  "nReturned": 82,
+  "executionTimeMillis": 2,
   "totalKeysExamined": 0,
-  "totalDocsExamined": 108119,
+  "totalDocsExamined": 5437,
   "executionStages": {
    "isCached": false,
    "stage": "SORT",
-   "nReturned": 5,
-   "executionTimeMillisEstimate": 51,
-   "works": 108126,
-   "advanced": 5,
-   "needTime": 108120,
+   "nReturned": 82,
+   "executionTimeMillisEstimate": 0,
+   "works": 5521,
+   "advanced": 82,
+   "needTime": 5438,
    "needYield": 0,
-   "saveState": 2,
-   "restoreState": 2,
+   "saveState": 0,
+   "restoreState": 0,
    "isEOF": 1,
    "sortPattern": {
     "score": -1
    },
    "memLimit": 104857600,
    "type": "simple",
-   "totalDataSizeSorted": 1210,
+   "totalDataSizeSorted": 27798,
    "usedDisk": false,
    "spills": 0,
    "spilledRecords": 0,
    "spilledBytes": 0,
    "spilledDataStorageSize": 0,
-   "peakTrackedMemBytes": 1210,
+   "peakTrackedMemBytes": 27798,
    "inputStage": {
     "stage": "COLLSCAN",
     "filter": {
@@ -80,18 +80,18 @@
       }
      }
     },
-    "nReturned": 5,
-    "executionTimeMillisEstimate": 51,
-    "works": 108120,
-    "advanced": 5,
-    "needTime": 108114,
+    "nReturned": 82,
+    "executionTimeMillisEstimate": 0,
+    "works": 5438,
+    "advanced": 82,
+    "needTime": 5355,
     "needYield": 0,
-    "saveState": 2,
-    "restoreState": 2,
+    "saveState": 0,
+    "restoreState": 0,
     "isEOF": 1,
     "nss": "bigdata_db.anomalies",
     "direction": "forward",
-    "docsExamined": 108119
+    "docsExamined": 5437
    }
   }
  },

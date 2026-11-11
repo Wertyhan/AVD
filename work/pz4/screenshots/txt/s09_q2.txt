@@ -1,4 +1,4 @@
-$ mongosh bigdata_db --quiet --eval 'db.candles_1d.find({},{_id:0,date:1,volume:1,close:1}).sort({volume:-1}).limit(10)'
+$ mongosh --quiet --eval 'db.candles_1d.find({},{_id:0,date:1,volume:1,close:1}).sort({volume:-1}).limit(10)' bigdata_db
 [
   {
     date: ISODate('2013-12-18T00:00:00.000Z'),
@@ -38,16 +38,4 @@ $ mongosh bigdata_db --quiet --eval 'db.candles_1d.find({},{_id:0,date:1,volume:
   {
     date: ISODate('2014-02-10T00:00:00.000Z'),
     close: 687.81,
-    volume: 71860.53695222
-  },
-  {
-    date: ISODate('2013-11-19T00:00:00.000Z'),
-    close: 536.01,
-    volume: 71560.94596711
-  },
-  {
-    date: ISODate('2018-02-06T00:00:00.000Z'),
-    close: 7737.37,
-    volume: 70961.36965826
-  }
-]
+… (ще 13 рядків)

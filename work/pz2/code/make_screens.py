@@ -28,6 +28,8 @@ for p in sorted(glob.glob(f"{BASE}/screenshots/txt/*.txt")):
     for i, l in enumerate(lines):
         if i == 0 and l.startswith("$"):
             d.text((PAD, y), "$", font=fb, fill=(120, 220, 120)); d.text((PAD + cw * 2, y), l[2:], font=fb, fill=(240, 240, 240))
+        elif i == 1 and l.startswith("# фрагмент виводу"):
+            d.text((PAD, y), l, font=f, fill=(110, 118, 130))            # приглушений коментар
         else:
             d.text((PAD, y), l, font=f, fill=(205, 210, 220))
         y += lh

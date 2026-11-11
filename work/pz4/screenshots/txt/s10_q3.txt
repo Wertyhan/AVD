@@ -1,4 +1,4 @@
-$ mongosh bigdata_db --quiet --eval 'db.candles_1m.find({ts:{$gte:ISODate('2020-03-12T12:00:00Z'),$lt:ISODate('2020-03-12T13:00:00Z')}},{_id:0,ts:1,low:1,close:1,volume:1}).sort({low:1}).limit(5)'
+$ mongosh --quiet --eval 'db.candles_1m.find({ts:{$gte:ISODate("2020-03-12T12:00:00Z"),$lt:ISODate("2020-03-12T13:00:00Z")}},{_id:0,ts:1,low:1,close:1,volume:1}).sort({low:1}).limit(5)' bigdata_db
 [
   {
     ts: ISODate('2020-03-12T12:49:00.000Z'),

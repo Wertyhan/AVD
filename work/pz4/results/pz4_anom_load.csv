@@ -1,2 +1,2 @@
 source,csv_rows,mongo_docs,columns,load_s
-/home/user/AVD/work/pz3/results/pz3_anomalies_v1.csv,108119,108119,timestamp|ts|close|log_return|volume|z_ret|vol_ratio|score|rule|k|k_v|date|in_stream_replay,3.07
+/home/user/AVD/work/pz3/results/pz3_anomalies.csv,5437,5437,timestamp|ts|close|log_return|volume|z_ret|vol_ratio|score|rule|k|k_v|date|z_vol|sigma_ret|med_vol|in_stream_replay|rule_version,0.12
