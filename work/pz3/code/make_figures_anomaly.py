@@ -20,7 +20,7 @@ for p, g in st.groupby("key"):
     a1.plot(g["dt"], g["close"], lw=.8, color=C1, label="ціна закриття (потік)")
     an = g[g["anomaly"]]
     a1.scatter(an["dt"], an["close"], s=20, c=C2, zorder=3, label=f"аномалії (k={K_SEL}, z_vol>0): {len(an)}")
-    a1.set_ylabel("Close, USD"); a1.set_title(f"Потік і виявлені аномалії: {names.get(p, p)}"); a1.legend(loc="best")
+    a1.set_ylabel("Ціна закриття, USD"); a1.set_title(f"Потік і виявлені аномалії: {names.get(p, p)}"); a1.legend(loc="best")
     a2.plot(g["dt"], g["z_ret"], lw=.6, color="gray", label="z_ret = |r| / (Q90₇д|r| / 1,6449)")
     a2.axhline(K_SEL, color=C2, ls="--", lw=1, label=f"поріг k={K_SEL}")
     a2.set_yscale("symlog", linthresh=10); a2.set_ylabel("z_ret"); a2.set_xlabel("час UTC"); a2.legend(loc="upper right", fontsize=8)

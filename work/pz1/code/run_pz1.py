@@ -631,7 +631,7 @@ with step('pandas', 'Pandas: ті самі агрегації + звірка з 
     save_csv(PD_DAILY, 'pandas_daily_ohlc_full.csv')
     PD_DAILY.assign(price_range=PD_DAILY.high - PD_DAILY.low).nlargest(10, 'volume').pipe(lambda x: save_csv(x, 'pandas_top10_volume_days.csv'))
     PD_DAILY.assign(price_range=PD_DAILY.high - PD_DAILY.low).nlargest(10, 'price_range').pipe(lambda x: save_csv(x, 'pandas_top10_range_days.csv'))
-    shot('python: pandas yearly (count, volume)', PD_YEAR.to_string(index=False), 'pandas_yearly')
+    shot('python3 code/pandas_yearly.py', PD_YEAR.to_string(index=False), 'pandas_yearly')
 
     rows, problems = [], []
     def cmp(name, a, b, ok, extra=''):

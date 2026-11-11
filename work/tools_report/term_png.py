@@ -39,7 +39,7 @@ def wrap(line, cols=COLS, marker='↪ '):
     return out
 
 
-def render_terminal_png(cmd, text, path, note=None, max_lines=MAX_LINES, tail=10):
+def render_terminal_png(cmd, text, path, note=None, max_lines=MAX_LINES, tail=10, extra_skipped=0):
     """cmd - команда (без '$'), text - вивід, note - підпис «# фрагмент виводу: …» (необов'язково)."""
     path_f = next(p for p in _FONTS if os.path.exists(p))
     size = _fit_size(path_f)
@@ -55,11 +55,13 @@ def render_terminal_png(cmd, text, path, note=None, max_lines=MAX_LINES, tail=10
     body = []
     for ln in text.rstrip('\n').split('\n'):
         body += wrap(ln)
-    if len(body) > max_lines:
+    if extra_skipped and len(body) <= max_lines:
+        body += [f'… ({extra_skipped} рядків пропущено)']
+    elif len(body) > max_lines:
         keep_t = min(tail, max_lines - 2)
         keep_h = max_lines - 1 - keep_t
         cut = len(body) - keep_h - keep_t
-        body = body[:keep_h] + [f'… ({cut} рядків пропущено)'] + body[len(body) - keep_t:]
+        body = body[:keep_h] + [f'… ({cut + extra_skipped} рядків пропущено)'] + body[len(body) - keep_t:]
     nl = len(head) + (1 if note else 0) + len(body)
     bar, gap = 34, 12
     H = bar + PAD + nl * lh + gap + PAD

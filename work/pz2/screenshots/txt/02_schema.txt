@@ -1,5 +1,5 @@
 $ python code/pz2_spark.py
-# фрагмент виводу: printSchema(), кількість записів/атрибутів, назви та типи полів, show(5)
+# фрагмент виводу: printSchema(), кількість записів/атрибутів, назви та типи полів, sho
 root
  |-- Timestamp: integer (nullable = true)
  |-- Open: double (nullable = true)
@@ -11,7 +11,7 @@ root
 Кількість записів : 7816537
 Кількість атрибутів: 6
 Назви полів       : ['Timestamp', 'Open', 'High', 'Low', 'Close', 'Volume']
-Типи даних        : [('Timestamp', 'int'), ('Open', 'double'), ('High', 'double'), ('Low', 'double'), ('Close', 'double'), ('Volume', 'double')]
+Типи даних        : {'Timestamp': 'int', 'Open': 'double', 'High': 'double', 'Low': 'double', 'Close': 'double', 'Volume': 'double'}
 Кількість розділів (partitions) DataFrame: 4
 +----------+----+----+----+-----+------+
 | Timestamp|Open|High| Low|Close|Volume|

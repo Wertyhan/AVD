@@ -17,7 +17,7 @@ with sync_playwright() as p:
     shot("ui_streaming_tab")
     href = pg.eval_on_selector_all("a[href*='StreamingQuery/statistics']", "e=>e.map(x=>[x.textContent.trim(),x.href])")
     print(href, flush=True)
-    link = [h for n, h in href if n == "anomaly"][0]
+    link = href[0][1]  # у цьому прогоні активний лише запит anomaly
     pg.goto(link, wait_until="load"); pg.wait_for_timeout(4000)
     shot("ui_query_anomaly", 2400)
     b.close()

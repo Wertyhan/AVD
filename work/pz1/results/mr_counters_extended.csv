@@ -1,0 +1,56 @@
+job,job_id,counter,value
+mr_yearly,job_1794418481996_0002,Killed map tasks,1
+mr_yearly,job_1794418481996_0002,Launched map tasks,4
+mr_yearly,job_1794418481996_0002,Data-local map tasks,4
+mr_yearly,job_1794418481996_0002,Map input records,7816538
+mr_yearly,job_1794418481996_0002,Map output records,7816537
+mr_yearly,job_1794418481996_0002,Map output bytes,127655772
+mr_yearly,job_1794418481996_0002,Map output materialized bytes,567
+mr_yearly,job_1794418481996_0002,Combine input records,7816537
+mr_yearly,job_1794418481996_0002,Combine output records,17
+mr_yearly,job_1794418481996_0002,Reduce input groups,15
+mr_yearly,job_1794418481996_0002,Reduce input records,17
+mr_yearly,job_1794418481996_0002,Reduce output records,15
+mr_yearly,job_1794418481996_0002,Reduce shuffle bytes,567
+mr_yearly,job_1794418481996_0002,CPU time spent (ms),13130
+mr_yearly,job_1794418481996_0002,Total time spent by all map tasks (ms),42926
+mr_yearly,job_1794418481996_0002,Total time spent by all reduce tasks (ms),2603
+mr_yearly,job_1794418481996_0002,HDFS: Number of bytes read,396858025
+mr_yearly,job_1794418481996_0002,HDFS: Number of bytes written,453
+mr_yearly,job_1794418481996_0002,number of splits,3
+mr_daily_ohlc,job_1794418481996_0003,Launched map tasks,3
+mr_daily_ohlc,job_1794418481996_0003,Data-local map tasks,3
+mr_daily_ohlc,job_1794418481996_0003,Map input records,7816538
+mr_daily_ohlc,job_1794418481996_0003,Map output records,5431
+mr_daily_ohlc,job_1794418481996_0003,Map output bytes,490246
+mr_daily_ohlc,job_1794418481996_0003,Map output materialized bytes,501126
+mr_daily_ohlc,job_1794418481996_0003,Combine input records,0
+mr_daily_ohlc,job_1794418481996_0003,Combine output records,0
+mr_daily_ohlc,job_1794418481996_0003,Reduce input groups,5429
+mr_daily_ohlc,job_1794418481996_0003,Reduce input records,5431
+mr_daily_ohlc,job_1794418481996_0003,Reduce output records,5429
+mr_daily_ohlc,job_1794418481996_0003,Reduce shuffle bytes,501126
+mr_daily_ohlc,job_1794418481996_0003,CPU time spent (ms),7250
+mr_daily_ohlc,job_1794418481996_0003,Total time spent by all map tasks (ms),32617
+mr_daily_ohlc,job_1794418481996_0003,Total time spent by all reduce tasks (ms),2328
+mr_daily_ohlc,job_1794418481996_0003,HDFS: Number of bytes read,396858025
+mr_daily_ohlc,job_1794418481996_0003,HDFS: Number of bytes written,348911
+mr_daily_ohlc,job_1794418481996_0003,number of splits,3
+wordcount,job_1794418481996_0001,Launched map tasks,2
+wordcount,job_1794418481996_0001,Data-local map tasks,2
+wordcount,job_1794418481996_0001,Map input records,304
+wordcount,job_1794418481996_0001,Map output records,1879
+wordcount,job_1794418481996_0001,Map output bytes,23115
+wordcount,job_1794418481996_0001,Map output materialized bytes,14478
+wordcount,job_1794418481996_0001,Combine input records,1879
+wordcount,job_1794418481996_0001,Combine output records,798
+wordcount,job_1794418481996_0001,Reduce input groups,748
+wordcount,job_1794418481996_0001,Reduce input records,798
+wordcount,job_1794418481996_0001,Reduce output records,748
+wordcount,job_1794418481996_0001,Reduce shuffle bytes,14478
+wordcount,job_1794418481996_0001,CPU time spent (ms),1480
+wordcount,job_1794418481996_0001,Total time spent by all map tasks (ms),6263
+wordcount,job_1794418481996_0001,Total time spent by all reduce tasks (ms),2708
+wordcount,job_1794418481996_0001,HDFS: Number of bytes read,16993
+wordcount,job_1794418481996_0001,HDFS: Number of bytes written,10901
+wordcount,job_1794418481996_0001,number of splits,2

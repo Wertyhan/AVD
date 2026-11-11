@@ -48,7 +48,7 @@ def cap(name, what):
     with contextlib.redirect_stdout(buf):
         yield
     with open(f"{TXT}/{name}.txt", "w", encoding="utf-8") as f:
-        f.write(f"$ python code/pz2_spark.py\n# фрагмент виводу: {what}\n" + buf.getvalue())
+        f.write(f"$ python code/pz2_spark.py\n# фрагмент виводу: {what[:68]}\n" + buf.getvalue())
 
 def save(df, name):
     df.to_csv(f"{RES}/{name}.csv", index=False, encoding="utf-8")
@@ -108,7 +108,7 @@ ver_rows = [
 pd.DataFrame(ver_rows, columns=["parameter", "value"]).to_csv(f"{RES}/env_versions.csv", index=False)
 with cap("01_env", "версії програмного забезпечення та конфігурація SparkSession"):
     for k, v in ver_rows:
-        print(f"{k:46s} {v}")
+        print(f"{k:44s} {v}"[:90])
 
 # ---------- Завдання 2. Завантаження даних ----------
 SCHEMA = StructType([StructField("Timestamp", LongType()), StructField("Open", DoubleType()),
@@ -155,7 +155,7 @@ with cap("02_schema", "printSchema(), кількість записів/атри
     print("Кількість записів :", n_rows)
     print("Кількість атрибутів:", len(raw_inf.columns))
     print("Назви полів       :", raw_inf.columns)
-    print("Типи даних        :", raw_inf.dtypes)
+    print("Типи даних        :", dict(raw_inf.dtypes))
     print("Кількість розділів (partitions) DataFrame:", raw_inf.rdd.getNumPartitions())
     raw_inf.show(5)
 
@@ -288,13 +288,13 @@ act_sum = act.groupby("action")["seconds"].agg(["median", "min", "max"]).reset_i
 act_sum = pd.concat([pd.DataFrame([("transformations_build_only", t_transform, t_transform, t_transform)], columns=act_sum.columns), act_sum])
 save(act_sum, "pz2_lazy_vs_action_summary")
 with cap("04_lazy", "трансформації (мс) проти дій; explain() для count() і для sum(vol60)"):
-    print(f"Трансформації (read, dropna, dropDuplicates, withColumn x10, Window lag/stddev): {t_transform*1000:.1f} мс – обчислень немає\n")
+    print(f"Трансформації (build): {t_transform*1000:.1f} мс – обчислень немає\n")
     print(act_sum.round(3).to_string(index=False))
-    print(f"\nПлан count() містить вузол Window: {has_win_count}; план sum(vol60): {has_win_vol}\n")
-    print("== df.groupBy().count().explain('formatted') ==")
-    print(plan_count[:1800])
-    print("== df.agg(sum('vol60')).explain('formatted'), фрагмент ==")
-    print("\n".join(l for l in plan_vol.splitlines() if "Window" in l or "Exchange" in l or "Sort" in l or l.startswith("== ")))
+    print(f"\nПлан count() містить Window: {has_win_count}; план sum(vol60): {has_win_vol}\n")
+    print("== df.groupBy().count().explain() ==")
+    print("\n".join(plan_count.splitlines()[:9]))
+    print("== df.agg(sum('vol60')).explain(), вузли ==")
+    print("\n".join(l[:88] for l in plan_vol.splitlines()[:30] if ("Window" in l or "Exchange" in l or "Scan" in l) and l.startswith(("+-", "   ", "(", "-")) and "[" in l)[:2000])
 
 # ---------- Кешування (M4): розділи, матеріалізація, кешований vs некешований запит ----------
 def heavy_query(d):
@@ -338,7 +338,8 @@ pd.DataFrame([("median_without_cache_s", m_no), ("median_with_cache_s", m_c), ("
 with cap("05_cache", "кеш: некешований запит, матеріалізація, кешований запит (3 раунди, порядок чергується)"):
     print(cache_df.to_string(index=False))
     print(f"\nмедіана без кешу: {m_no:.2f} с; з кешем: {m_c:.2f} с; прискорення x{m_no/m_c:.1f}; матеріалізація (медіана): {m_mat:.2f} с")
-    print("Розділів кешу (всього / закешовано) та пам'ять, байт:", [(r[2], r[3], r[4]) for r in part_rows])
+    print("Розділів: всього / у кеші, пам'ять (байт), за раундами:")
+    for r in part_rows: print(f"   раунд {r[0]}: {r[2]} / {r[3]}, {r[4]}")
     print("Storage level:", df.storageLevel)
 
 # Розподіл рядків за розділами кешу та крайовий ефект вікон
@@ -372,8 +373,8 @@ save(flat_by_year, "pz2_yearly_volume_flat")
 pd.DataFrame([("flat_minutes", flat["flat"]), ("rows", flat["n"]), ("flat_share_pct", round(100 * flat["flat"] / flat["n"], 2))],
              columns=["metric", "value"]).to_csv(f"{RES}/pz2_flat_summary.csv", index=False)
 with cap("06_derived", "похідні атрибути (травень 2021) та describe()"):
-    df.select("Timestamp", "datetime", "Open", "High", "Low", "Close", "Volume", "log_ret", "range", "rel_range", "vol60", "year", "month", "hour").filter("year = 2021 and month = 5").show(8, truncate=False)
-    print(desc.to_string(index=False))
+    df.select("datetime", "Close", "Volume", "log_ret", "rel_range", "vol60").filter("year = 2021 and month = 5").show(6, truncate=False)
+    print(desc[["summary", "Close", "Volume", "log_ret", "vol60"]].to_string(index=False, float_format=lambda v: f"{v:.5g}"))
     print(f"\nНульовий обсяг: {flat['flat']} з {flat['n']} = {100*flat['flat']/flat['n']:.2f} %")
 
 # ---------- Завдання 4. Розподілена аналітика ----------
@@ -425,12 +426,11 @@ save(top_rv[cols], "pz2_top10_rv"); save(top_hl[cols], "pz2_top10_hl_rel")
 save(top_rv_active[cols], "pz2_top10_rv_active"); save(top_hl_active[cols], "pz2_top10_hl_rel_active")
 with cap("07_top_days", "топ-10 найволатильніших діб (rv та (High-Low)/Open)"):
     pd.set_option("display.width", 200)
-    print("Топ-10 за реалізованою волатильністю rv = sqrt(sum(log_ret^2)), повні доби:")
-    print(top_rv[cols].round(4).to_string(index=False))
-    print("\nТоп-10 за (High-Low)/Open:")
-    print(top_hl[cols].round(4).to_string(index=False))
-    print("\nТоп-10 за rv, flat_share < 0,5:")
-    print(top_rv_active[cols].round(4).to_string(index=False))
+    c6 = ["date", "close", "volume", "rv", "hl_rel", "ret_1d", "flat_share"]
+    print("Топ-10 за rv = sqrt(sum(log_ret^2)), повні доби:")
+    print(top_rv[c6].round(4).to_string(index=False))
+    print("\nТоп-10 за (High-Low)/Open, повні доби:")
+    print(top_hl[c6].round(4).to_string(index=False))
 
 # 4.3 Обсяг за годиною доби (UTC) та за роками
 with timed("volume_by_hour"):
@@ -443,7 +443,7 @@ with timed("volume_by_hour"):
 save(vh, "pz2_volume_by_hour")
 save(flat_by_year, "pz2_volume_by_year")
 with cap("08_volume", "обсяг за годиною доби (UTC) і за роками"):
-    print(vh.round(5).to_string(index=False)); print(); print(flat_by_year.round(2).to_string(index=False))
+    print(vh[["hour", "volume_total", "volume_mean_per_minute", "share_pct"]].round(4).to_string(index=False))
 
 # 4.4 Погодинна таблиця ознак
 with timed("hourly_features"):
@@ -488,9 +488,9 @@ mom = pd.DataFrame(rows)[["series", "n", "mean", "std", "skew", "excess_kurtosis
 save(mom, "pz2_skew_kurtosis")
 save(ext, "pz2_top10_abs_minute_returns")
 with cap("09_moments", "асиметрія й ексцес на 1 хв / 1 год / 1 добу та стійкість до викидів"):
-    print(mom.to_string(index=False, float_format=lambda v: f"{v:.6g}"))
-    print("\n10 найбільших за модулем хвилинних дохідностей:")
-    print(ext.to_string(index=False, float_format=lambda v: f"{v:.6g}"))
+    print(mom[["series", "n", "skew", "excess_kurtosis"]].to_string(index=False, float_format=lambda v: f"{v:.5g}"))
+    print("\n5 найбільших за модулем хвилинних дохідностей:")
+    print(ext[["datetime", "Close", "Volume", "log_ret"]].head(5).to_string(index=False, float_format=lambda v: f"{v:.5g}"))
 
 # гістограма хвилинних дохідностей (лише з торгами) для порівняння з нормальним розподілом
 BW = 0.0001
@@ -530,7 +530,7 @@ def run_sql(k, q):
         r = spark.sql(q).toPandas()
     res_sql[k] = r; save(r, f"pz2_sql_{k}")
     with cap(f"10_sql_{k}", f"результат запиту {k} (spark.sql)"):
-        print(" ".join(q.split())[:300] + "\n"); print(r.head(25).to_string(index=False))
+        print(" ".join(q.split())[:86] + "…\n"); print(r.head(18).to_string(index=False))
 for k, q in SQLQ.items(): run_sql(k, q)
 
 # Q7 (M6): УСІ доби з 2018 року, де обсяг перевищує поріг k × середній обсяг попередніх 30 діб (те саме правило, що в Q6)
@@ -556,7 +556,7 @@ with open(f"{RES}/pz2_sql_queries.sql", "w", encoding="utf-8") as f:
     for k, q in SQLQ.items():
         f.write(f"-- {k}\n{' '.join(q.split())};\n\n")
 with cap("11_sql_explain", "план виконання запиту q1 (explain formatted)"):
-    print(explain_str(spark.sql(SQLQ["q1_year_stats"]), "formatted")[:3500])
+    print("\n".join(l[:88] for l in explain_str(spark.sql(SQLQ["q1_year_stats"]), "formatted").splitlines()[:34]))
 
 # ---------- Завдання 6. Spark на кешованому DataFrame; підсумок порівняння рушіїв ----------
 # (S/P-запуски без кешу виконано вище; тут – агрегація над даними в пам'яті, без читання CSV)
@@ -580,33 +580,41 @@ for _, r in summ.iterrows():
 rec("engine_year_count_volume_hadoop_streaming", float("nan"), "[ЗАПОВНИТИ ПІСЛЯ ЗАПУСКУ]")
 rec("engine_daily_ohlc_hadoop_streaming", float("nan"), "[ЗАПОВНИТИ ПІСЛЯ ЗАПУСКУ]")
 with cap("12_engines", "Spark проти pandas (порядок S,P,S,P,S,P), медіани, звірка результатів"):
-    print(cmp.to_string(index=False)); print(); print(summ.to_string(index=False))
-    print("\nЗвірка результатів двох рушіїв (assert):"); print(pd.read_csv(f"{RES}/pz2_engine_equality.csv").to_string(index=False))
+    print(summ.to_string(index=False))
+    print("\nЗвірка результатів двох рушіїв (assert):"); print(pd.read_csv(f"{RES}/pz2_engine_equality.csv").drop(columns="detail").to_string(index=False))
 
 # ---------- Знімки Spark UI, поки SparkSession жива ----------
 def ui_screens():
+    """Знімки Spark UI: viewport 1280x800, device_scale_factor=2, лише потрібна область (таблиця/граф), масштаб сторінки 1,5."""
     from playwright.sync_api import sync_playwright
-    pages = {"jobs": "jobs/", "stages": "stages/", "storage": "storage/", "sql": "SQL/", "executors": "executors/", "environment": "environment/"}
     exe = "/opt/pw-browsers/chromium-1243/chrome-linux64/chrome"
     sql_list = rest("sql?details=false&length=1000")
     def exec_id(label):
         for e in sql_list:
             if label in (e.get("description") or ""): return e["id"]
+    def snap(pg, sel, path, maxh=520):
+        el = pg.locator(sel).first; el.wait_for(timeout=30000)
+        bb = el.bounding_box()
+        pg.screenshot(path=path, full_page=True, clip={"x": max(bb["x"] - 4, 0), "y": max(bb["y"] - 4, 0),
+                      "width": min(bb["width"] + 8, 1280), "height": min(bb["height"] + 8, maxh)})
     with sync_playwright() as p:
         b = p.chromium.launch(executable_path=exe, args=["--no-sandbox"])
-        pg = b.new_page(viewport={"width": 1500, "height": 950})
-        for k, u in pages.items():
-            pg.goto(f"{sc.uiWebUrl}/{u}", wait_until="load"); pg.wait_for_timeout(1500)
-            pg.screenshot(path=f"{SHOTS}/spark_ui_{k}.png")
-        # деталі SQL-запиту: DAG обрізається до області графа та знімається з подвійним масштабом
-        pg2 = b.new_page(viewport={"width": 1600, "height": 1000}, device_scale_factor=2)
+        pg = b.new_page(viewport={"width": 1280, "height": 800}, device_scale_factor=2)
+        pages = {"jobs": ("jobs/", "#completedJob-table"), "stages": ("stages/", "#completedStage-table"),
+                 "storage": ("storage/", "#storage-by-rdd-table"), "sql": ("SQL/", "table:has(tbody tr)"),
+                 "executors": ("executors/", "#summary-execs-table"), "environment": ("environment/", "#runtime-table")}
+        for k, (u, sel) in pages.items():
+            pg.goto(f"{sc.uiWebUrl}/{u}", wait_until="load"); pg.wait_for_timeout(2500)
+            pg.evaluate("document.body.style.zoom = 1.5")         # збільшує текст відносно ширини знімка
+            pg.wait_for_timeout(500)
+            snap(pg, sel, f"{SHOTS}/spark_ui_{k}.png")
+        # деталі SQL-запиту: DAG знімається як елемент графа
         for label, fn in (("lazy_action_noop_write_run1", "spark_ui_sql_detail"), ("sql_q5_max_volume_day_per_year", "spark_ui_sql_detail_q5")):
             i = exec_id(label)
             if i is None: print("SQL execution not found:", label); continue
-            pg2.goto(f"{sc.uiWebUrl}/SQL/execution/?id={i}", wait_until="load")
-            pg2.wait_for_selector("#plan-viz-graph svg", timeout=30000); pg2.wait_for_timeout(2500)
-            pg2.locator("#plan-viz-graph").screenshot(path=f"{SHOTS}/{fn}_dag.png")
-            pg2.screenshot(path=f"{SHOTS}/{fn}.png", full_page=False)
+            pg.goto(f"{sc.uiWebUrl}/SQL/execution/?id={i}", wait_until="load")
+            pg.wait_for_selector("#plan-viz-graph svg", timeout=30000); pg.wait_for_timeout(2500)
+            pg.locator("#plan-viz-graph").screenshot(path=f"{SHOTS}/{fn}.png")
         b.close()
 ui_screens()
 
