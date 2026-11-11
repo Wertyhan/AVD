@@ -1,0 +1,11 @@
+item,value
+MongoDB server,db version v8.3.7
+mongosh,2.14.1
+pymongo,4.19.0
+Python,3.13.18
+pandas,3.0.5
+OS,Linux-6.18.44-fc-v378-x86_64-with-glibc2.39
+CPU,Intel(R) Xeon(R) Processor @ 2.10GHz x4
+RAM_GiB,15.7
+storage engine,"WiredTiger (default, snappy)"
+Compass,не встановлювався (GUI недоступний у середовищі)

@@ -1,0 +1,45 @@
+$ mongosh bigdata_db --quiet --eval 'db.anomalies.aggregate([{$group:{_id:'$date',n_anom:{$sum:1},max_score:{$max:'$score'}}},{$lookup:{from:'spark_daily_features',localField:'_id',foreignField:'date',as:'f'}},{$unwind:'$f'},{$project:{_id:0,date:'$_id',n_anom:1,max_score:1,rv:'$f.rv',volume:'$f.volume'}},{$sort:{n_anom:-1}},{$limit:6}])'
+[
+  {
+    n_anom: 314,
+    max_score: 10.484764693286408,
+    date: ISODate('2013-11-01T00:00:00.000Z'),
+    rv: 0.10142102013630112,
+    volume: 4962.8090017100085
+  },
+  {
+    n_anom: 313,
+    max_score: 11.340020059674494,
+    date: ISODate('2013-06-22T00:00:00.000Z'),
+    rv: 0.11050836534125559,
+    volume: 3350.3255713100025
+  },
+  {
+    n_anom: 311,
+    max_score: 8.557699650918238,
+    date: ISODate('2013-05-26T00:00:00.000Z'),
+    rv: 0.09922526733606381,
+    volume: 3916.0646751500008
+  },
+  {
+    n_anom: 297,
+    max_score: 9.589791732612872,
+    date: ISODate('2013-11-02T00:00:00.000Z'),
+    rv: 0.06941659065485423,
+    volume: 6600.098259400009
+  },
+  {
+    n_anom: 284,
+    max_score: 18.201398261224263,
+    date: ISODate('2013-04-28T00:00:00.000Z'),
+    rv: 0.14196011579159254,
+    volume: 5136.525500600005
+  },
+  {
+    n_anom: 265,
+    max_score: 9.197589180614248,
+    date: ISODate('2013-05-30T00:00:00.000Z'),
+    rv: 0.1372949116748727,
+    volume: 9432.356131710007
+  }
+]

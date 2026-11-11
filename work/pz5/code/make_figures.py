@@ -48,11 +48,15 @@ def roc_pr(score, y):
 scores = {"Персистентність": P.persist.values, "LR": P.p_LR.values, "RF": P.p_RF.values, "GBT": P.p_GBT.values}
 cols = {"Персистентність": C["persist"], "LR": C["LR"], "RF": C["RF"], "GBT": C["GBT"]}
 M = pd.read_csv(f"{R}/pz5_metrics_test.csv")
+MROW = {"Персистентність": "Персистентність (rv_t > порогу)", "LR": "LR (поріг 0,5)", "RF": "RF (поріг 0,5)", "GBT": "GBT (поріг 0,5)"}
 fig, ax = plt.subplots(1, 2, figsize=(10, 4.3))
 for k, sc in scores.items():
     fpr, tpr, rc, pr = roc_pr(sc, y)
-    auc = float(np.trapezoid(tpr, fpr)); ap = float(np.sum(np.diff(rc) * pr[1:]))
-    ax[0].plot(fpr, tpr, color=cols[k], label=f"{k} (AUC={auc:.3f})"); ax[1].plot(rc, pr, color=cols[k], label=f"{k} (AP={ap:.3f})")
+    # значення беруться з CSV (Spark areaUnderROC / areaUnderPR), крива лише ілюструє; перевірка власного інтегрування (трапеції по зростаючому recall)
+    row = M[M.model == MROW[k]].iloc[0]; auc, ap = float(row.roc_auc), float(row.pr_auc)
+    auc_chk = float(np.trapezoid(tpr, fpr)); ap_chk = float(abs(np.trapezoid(pr, rc)))
+    assert abs(auc - auc_chk) < 5e-3, (k, auc, auc_chk)
+    ax[0].plot(fpr, tpr, color=cols[k], label=f"{k} (AUC={auc:.3f})"); ax[1].plot(rc, pr, color=cols[k], label=f"{k} (PR-AUC={ap:.3f})")
 ax[0].plot([0, 1], [0, 1], "k--", lw=.8); ax[0].set_xlabel("FPR"); ax[0].set_ylabel("TPR"); ax[0].set_title("ROC-криві (test)"); ax[0].legend()
 ax[1].axhline(y.mean(), ls="--", color="k", lw=.8, label=f"частка класу 1 = {y.mean():.3f}"); ax[1].set_xlabel("Recall"); ax[1].set_ylabel("Precision")
 ax[1].set_title("PR-криві (test)"); ax[1].legend()
@@ -74,7 +78,7 @@ I = pd.read_csv(f"{R}/pz5_feature_importance.csv")
 fig, ax = plt.subplots(1, 3, figsize=(12, 4.8))
 for x, col, t, c in ((ax[0], "RF_importance", "Random Forest", C["RF"]), (ax[1], "GBT_importance", "GBT", C["GBT"]), (ax[2], "LR_coef_standardized", "LR: стандартизовані коефіцієнти", C["LR"])):
     q = I.reindex(I[col].abs().sort_values().index).tail(12)
-    x.barh(q.feature, q[col], color=c); x.set_title(t)
+    x.barh(q.feature, q[col], color=c); x.set_title(t); x.set_xlabel("Коефіцієнт" if col.startswith("LR") else "Важливість ознаки")
 fig_save("fig05_feature_importance")
 
 # Аналіз помилок (за найкращою за PR-AUC моделлю з порогом із валідації)
@@ -103,21 +107,23 @@ c = pd.read_csv(f"{R}/pz5_random_vs_chrono.csv")
 fig, ax = plt.subplots(1, 3, figsize=(11, 3.8))
 for x, met, t in zip(ax, ("roc_auc", "pr_auc", "f1"), ("ROC-AUC", "PR-AUC", "F1 (поріг 0,5)")):
     pv = c.pivot(index="model", columns="split", values=met).loc[["LR", "RF", "GBT"]]
-    pv.plot.bar(ax=x, rot=0, color=["#4c78a8", "#e45756"]); x.set_title(t); x.set_xlabel(""); x.legend(fontsize=7)
+    pv = pv.rename(columns={"random 80/20 (shuffle)": "випадковий поділ 80/20", "chronological 80/20": "хронологічний поділ 80/20"})
+    pv.plot.bar(ax=x, rot=0, color=["#e45756", "#4c78a8"][::-1] if False else ["#4c78a8", "#e45756"]); x.set_title(t); x.set_xlabel("Модель"); x.legend(fontsize=7)
     lo = pv.values.min(); x.set_ylim(max(0, lo - .08), pv.values.max() + .03)
 fig_save("fig07_random_vs_chrono")
 
 # 8. Порівняння моделей та час
 tm = pd.read_csv(f"{R}/pz5_model_runtimes.csv")
 mm = M[M.kind != "model"].copy()
-fig, ax = plt.subplots(1, 2, figsize=(11, 4))
-lab = [n.replace(" (поріг", "\n(поріг").replace("(rv_t > порогу)", "") for n in mm.model]
-xx = np.arange(len(mm)); wd = .2
-for i, (met, col) in enumerate((("f1", "C0"), ("roc_auc", "C2"), ("pr_auc", "C3"), ("accuracy", "C7"))):
-    ax[0].bar(xx + (i - 1.5) * wd, mm[met], wd, label=met, color=col)
-ax[0].set_xticks(xx, [l[:22] for l in lab], rotation=40, ha="right", fontsize=7); ax[0].legend(fontsize=7); ax[0].set_title("Метрики на test")
+import textwrap
+fig, ax = plt.subplots(1, 2, figsize=(13, 5.6), gridspec_kw={"width_ratios": [2.3, 1]})
+lab = ["\n".join(textwrap.wrap(n.replace("(rv_t > порогу)", "").strip(), 30)) for n in mm.model]
+yy = np.arange(len(mm))[::-1]; wd = .2
+for i, (met, col, ln) in enumerate((("f1", "C0", "F1"), ("roc_auc", "C2", "ROC-AUC"), ("pr_auc", "C3", "PR-AUC"), ("accuracy", "C7", "Accuracy (частка правильних)"))):
+    ax[0].barh(yy + (1.5 - i) * wd, mm[met], wd, label=ln, color=col)
+ax[0].set_yticks(yy, lab, fontsize=8); ax[0].legend(fontsize=8, loc="upper center", bbox_to_anchor=(.5, -.1), ncol=4); ax[0].set_title("Метрики на тестовій вибірці"); ax[0].set_xlabel("Значення метрики")
 ax[1].bar(tm.model, tm.fit_seconds, label="навчання"); ax[1].bar(tm.model, tm.inference_seconds_test, bottom=tm.fit_seconds, label="інференс (test)")
-ax[1].set_ylabel("с"); ax[1].set_title("Час виконання"); ax[1].legend()
+ax[1].set_ylabel("Час, с"); ax[1].set_title("Час виконання"); ax[1].legend()
 fig_save("fig08_model_comparison")
 
 # 9. Налаштування гіперпараметрів
@@ -137,3 +143,11 @@ for nm in ("LR", "RF", "GBT"):
 ax.set_xlabel("Поріг ймовірності"); ax.set_ylabel("F1 на валідації"); ax.legend(); ax.set_title("Вибір порогу рішення (валідаційний фолд)")
 fig_save("fig10_threshold")
 print("ok", best)
+
+# G8: перерахунок pz5_split.csv за логікою поділу з pz5_spark.py (rn <= n_train - EMB навчання, ембарго EMB, rn > n_train тест)
+EMB = 24; ds = s.index.to_series().reset_index(drop=True); N = len(ds); n_train = int(N * 0.8)
+sp = pd.DataFrame([("rows_model_total", N), ("train_rows", n_train - EMB), ("embargo_rows", EMB), ("test_rows", N - n_train),
+                   ("train_share_pct", round(100 * n_train / N, 2)), ("train_start", str(ds[0])),
+                   ("train_end", str(ds[n_train - EMB - 1])), ("embargo_end_nominal_train_boundary", str(ds[n_train - 1])),
+                   ("test_start", str(ds[n_train])), ("test_end", str(ds[N - 1]))], columns=["parameter", "value"])
+sp.to_csv(f"{R}/pz5_split.csv", index=False, encoding="utf-8")

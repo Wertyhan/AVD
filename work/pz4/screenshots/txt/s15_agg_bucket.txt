@@ -1,0 +1,10 @@
+$ mongosh bigdata_db --quiet --eval 'db.candles_1d.aggregate([{$bucket:{groupBy:'$close',boundaries:[0,10,100,1000,10000,50000,100000,1000000],default:'other',output:{days:{$sum:1},avg_volume:{$avg:'$volume'}}}}])'
+[
+  { _id: 0, days: 217, avg_volume: 838.5517222178802 },
+  { _id: 10, days: 305, avg_volume: 5338.916581505738 },
+  { _id: 100, days: 1332, avg_volume: 12393.715353876862 },
+  { _id: 1000, days: 1112, avg_volume: 10092.297941357816 },
+  { _id: 10000, days: 1317, avg_volume: 4696.697208436841 },
+  { _id: 50000, days: 929, avg_volume: 2338.4590684702043 },
+  { _id: 100000, days: 217, avg_volume: 1586.305922012719 }
+]

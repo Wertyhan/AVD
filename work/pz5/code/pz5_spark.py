@@ -124,13 +124,13 @@ save(nulls_before.merge(nulls_after, on="column"), "pz5_missing_values")
 
 # ---------- Хронологічний поділ 80/20 ----------
 n_train = int(N * 0.8)
-bounds = m.filter(F.col("rn").isin(1, n_train, n_train + 1, N)).select("rn", "datetime_utc").orderBy("rn").toPandas()
+bounds = m.filter(F.col("rn").isin(1, n_train - EMB, n_train, n_train + 1, N)).select("rn", "datetime_utc").orderBy("rn").toPandas()
 train = m.filter(F.col("rn") <= n_train - EMB).cache()      # ембарго: останні 24 год навчальної частини вилучено
 test = m.filter(F.col("rn") > n_train).cache()
 n_tr, n_te = train.count(), test.count()
 sp = pd.DataFrame([("rows_model_total", N), ("train_rows", n_tr), ("embargo_rows", EMB), ("test_rows", n_te),
                    ("train_share_pct", round(100 * (n_train) / N, 2)), ("train_start", str(bounds.datetime_utc[0])),
-                   ("train_end_nominal", str(bounds.datetime_utc[1])), ("test_start", str(bounds.datetime_utc[2])), ("test_end", str(bounds.datetime_utc[3]))],
+                   ("train_end", str(bounds.datetime_utc[1])), ("embargo_end_nominal_train_boundary", str(bounds.datetime_utc[2])), ("test_start", str(bounds.datetime_utc[3])), ("test_end", str(bounds.datetime_utc[4]))],
                   columns=["parameter", "value"])
 save(sp, "pz5_split")
 lab = {}

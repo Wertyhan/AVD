@@ -5,6 +5,7 @@ embargo_rows,24
 test_rows,15534
 train_share_pct,80.0
 train_start,2018-01-01 00:00:00
-train_end_nominal,2025-02-01 20:00:00
+train_end,2025-01-31 20:00:00
+embargo_end_nominal_train_boundary,2025-02-01 20:00:00
 test_start,2025-02-01 21:00:00
 test_end,2026-11-11 02:00:00

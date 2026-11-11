@@ -1,0 +1,35 @@
+$ mongosh bigdata_db --quiet --eval 'db.candles_1m.aggregate([{$sort:{ts:1}},{$group:{_id:{y:{$year:'$ts'},m:{$month:'$ts'}},open:{$first:'$open'},high:{$max:'$high'},low:{$min:'$low'},close:{$last:'$close'},volume:{$sum:'$volume'}}},{$sort:{_id:1}},{$match:{'_id.y':2021,'_id.m':{\$lte:4}}}],{allowDiskUse:true})'
+[
+  {
+    _id: { y: 2021, m: 1 },
+    open: 28999.63,
+    high: 42000,
+    low: 27734,
+    close: 33141.38,
+    volume: 457460.82978648
+  },
+  {
+    _id: { y: 2021, m: 2 },
+    open: 33110.32,
+    high: 58354.14,
+    low: 32333.01,
+    close: 45240.96,
+    volume: 240350.58332404
+  },
+  {
+    _id: { y: 2021, m: 3 },
+    open: 45261.56,
+    high: 61781.83,
+    low: 45020.25,
+    close: 58782.58,
+    volume: 157899.39519804
+  },
+  {
+    _id: { y: 2021, m: 4 },
+    open: 58789.96,
+    high: 64895.22,
+    low: 47004.2,
+    close: 57775.27,
+    volume: 139623.60228363
+  }
+]
