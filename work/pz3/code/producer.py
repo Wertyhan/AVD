@@ -41,7 +41,7 @@ if a.max_rows:
     df = df.head(a.max_rows)
 print(f"[producer] рядків до відправки: {len(df)}; затримка {a.delay_ms} мс; тема {a.topic}", flush=True)
 
-prod = Producer({"bootstrap.servers": a.bootstrap, "linger.ms": 5, "acks": "1"})
+prod = Producer({"bootstrap.servers": a.bootstrap, "linger.ms": 5, "acks": "all", "enable.idempotence": True})   # ідемпотентний producer: повтори не дублюють і не переставляють повідомлення
 errors = []
 def on_delivery(err, msg):  # зворотний виклик: рахуємо помилки доставки
     if err is not None:

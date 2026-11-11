@@ -24,7 +24,7 @@ ap.add_argument("--only-anomaly", action="store_true", help="запустити 
 ap.add_argument("--ui-port", type=int, default=4040, help="порт Spark UI (якщо зайнятий – Spark бере наступний вільний)")
 ap.add_argument("--max-seconds", type=int, default=1200)
 a = ap.parse_args()
-# Seed: випадкових величин у конвеєрі немає (правило детерміноване), тому seed 42 не потрібен; зафіксовано для відповідності RULES.
+# Seed 42 (конвеєр детермінований; випадковість використовується лише в скриптах перевірки).
 SEED = 42; np.random.seed(SEED)
 
 os.makedirs(a.out, exist_ok=True)
@@ -48,7 +48,7 @@ raw = (spark.readStream.format("kafka")
        .option("subscribe", a.topic)
        .option("startingOffsets", "earliest")
        .option("maxOffsetsPerTrigger", a.max_offsets)   # обмеження розміру мікробатчу
-       .option("failOnDataLoss", "false")
+       .option("failOnDataLoss", "true")
        .load())
 
 # ---------- Завдання 4: декодування, типи, фільтрація ----------
@@ -68,7 +68,7 @@ parsed = (raw.select(F.col("key").cast("string").alias("key"),                # 
                       & (F.col("high") >= F.col("low")) & (F.col("close") > 0) & (F.col("volume") >= 0)))
 valid = parsed.filter("valid")                                                # фільтрація некоректних записів
 
-# watermark: допустиме запізнення подій 10 хв (докладніше у ноутбуці)
+# watermark: допустиме запізнення подій 10 хв (обґрунтування: results/pz3_watermark_*.csv, watermark_analysis.py)
 events = valid.withWatermark("event_time", a.watermark)
 
 # ---------- Завдання 5: віконні агрегації (tumbling) ----------
@@ -83,9 +83,10 @@ def win_agg(df, dur):
 
 w15, w1h = win_agg(events, "15 minutes"), win_agg(events, "1 hour")
 # групування + статистичне агрегування по календарній добі (без вікна)
-daily = (events.groupBy(F.to_date("event_time").alias("trade_date"))
+daily = (events.groupBy(F.window("event_time", "1 day").alias("w"))    # доба = tumbling-вікно 1 день: стан витісняється водяною позначкою
          .agg(F.count(F.lit(1)).alias("n"), F.avg("close").alias("avg_close"), F.stddev("close").alias("std_close"),
-              F.min("low").alias("min_low"), F.max("high").alias("max_high"), F.sum("volume").alias("volume")))
+              F.min("low").alias("min_low"), F.max("high").alias("max_high"), F.sum("volume").alias("volume"))
+         .select(F.col("w.start").cast("date").alias("trade_date"), "n", "avg_close", "std_close", "min_low", "max_high", "volume"))
 
 trig = {"processingTime": f"{a.trigger_seconds} seconds"}
 Q = {}
@@ -112,14 +113,18 @@ if start_window_queries:
 # Перед першою хвилиною кожного періоду буфер ПРОГРІВАЄТЬСЯ історією з parquet (7 діб до початку періоду),
 # тому оцінюється кожна хвилина потоку, а результат збігається з офлайн-оцінкою на всій історії.
 scorer = StreamScorer(load_history_parquet(a.history_parquet), k=a.k)
-BATCH_LOG = []
+BATCH_LOG, LAT_ALL = [], []
 def process_batch(bdf, batch_id):
     t0 = time.time()
     pdf = bdf.select("key", "ts", "close", "volume", "valid", "kafka_epoch").toPandas()
+    t_col = time.time()                                  # дані мікробатчу зібрано в драйвері
     n_pw = len(scorer.prewarm_log)
     n_raw, n_valid = len(pdf), int(pdf["valid"].sum())
-    lat = (time.time() - pdf["kafka_epoch"]).to_numpy() if n_raw else np.array([np.nan])
+    lat = (t_col - pdf["kafka_epoch"]).to_numpy() if n_raw else np.array([np.nan])   # Kafka CreateTime -> початок оцінювання
     res = scorer.update(pdf[pdf["valid"]]) if n_valid else pd.DataFrame()
+    if n_raw:   # затримка до готового результату = затримка до початку оцінювання + тривалість оцінювання мікробатчу
+        LAT_ALL.append(pd.DataFrame({"batch_id": batch_id, "key": pdf["key"], "ts": pdf["ts"], "lat_to_score_start_s": lat,
+                                     "lat_to_result_s": lat + (time.time() - t_col)}))
     n_anom = 0
     if len(res):
         res = res.copy()
@@ -143,11 +148,20 @@ Q["anomaly"] = (parsed.writeStream.queryName("anomaly").foreachBatch(process_bat
 print("STREAMING_STARTED", [q.name for q in Q.values()], flush=True)
 
 # ---------- моніторинг: збір прогресу, умова зупинки ----------
-PROG = {}
+PROG, RAW = {}, {}
+def _ts(x):
+    return pd.Timestamp(x) if x else pd.NaT
 def collect():
     for key, q in Q.items():
         for p in q.recentProgress:
+            RAW[(key, p["batchId"])] = p
+            so = p.get("stateOperators") or []
+            wm = (p.get("eventTime") or {}).get("watermark")
             PROG[(key, p["batchId"])] = {
+                "dropped_by_watermark": sum(o.get("numRowsDroppedByWatermark", 0) for o in so),
+                "state_rows_total": sum(o.get("numRowsTotal", 0) for o in so),
+                "event_time_max": (p.get("eventTime") or {}).get("max"), "event_time_min": (p.get("eventTime") or {}).get("min"),
+                "watermark_gap_s": ((_ts(p["timestamp"]) - _ts(wm)).total_seconds() if wm else None),
                 "query": key, "batch_id": p["batchId"], "timestamp": p["timestamp"],
                 "num_input_rows": p["numInputRows"], "input_rows_per_s": p.get("inputRowsPerSecond"),
                 "processed_rows_per_s": p.get("processedRowsPerSecond"),
@@ -197,6 +211,13 @@ if status in ("ok", "timeout") and not a.only_anomaly:
         if tbl == "win1h_mem":
             print(d.head(8).to_string(index=False), flush=True)
 pd.DataFrame(list(PROG.values())).sort_values(["query", "batch_id"]).to_csv(os.path.join(a.out, "progress.csv"), index=False)
+# сирий прогрес усіх мікробатчів (джерело для watermark, droppedByWatermark, швидкостей) і lastProgress кожного запиту
+with open(os.path.join(a.out, "progress_raw.jsonl"), "w") as f:
+    for (k, bid), p in sorted(RAW.items()):
+        f.write(json.dumps({"query": k, **p}, ensure_ascii=False) + "\n")
+json.dump({k: q.lastProgress for k, q in Q.items()}, open(os.path.join(a.out, "lastProgress.json"), "w"), indent=1, ensure_ascii=False)
+if LAT_ALL:
+    pd.concat(LAT_ALL, ignore_index=True).to_parquet(os.path.join(a.out, "latency_per_message.parquet"), index=False)
 pd.DataFrame(BATCH_LOG).to_csv(os.path.join(a.out, "batch_stats.csv"), index=False)
 parts = sorted(glob.glob(os.path.join(PARTS, "part-*.parquet")))
 if parts:

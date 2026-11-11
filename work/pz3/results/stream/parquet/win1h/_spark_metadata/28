@@ -1,5 +1,0 @@
-v1
-{"path":"file:///home/user/AVD/work/pz3/results/stream/parquet/win1h/part-00000-8ce42806-f4aa-4b7e-b16a-f95d6bf50c20-c000.snappy.parquet","size":2385,"isDir":false,"modificationTime":1794405241535,"blockReplication":1,"blockSize":33554432,"action":"add"}
-{"path":"file:///home/user/AVD/work/pz3/results/stream/parquet/win1h/part-00001-fe70a998-1a4d-4d35-bd52-81b115d94958-c000.snappy.parquet","size":2580,"isDir":false,"modificationTime":1794405241719,"blockReplication":1,"blockSize":33554432,"action":"add"}
-{"path":"file:///home/user/AVD/work/pz3/results/stream/parquet/win1h/part-00002-8dae8ca8-d919-4941-92d0-e3caea5f11e3-c000.snappy.parquet","size":2384,"isDir":false,"modificationTime":1794405241951,"blockReplication":1,"blockSize":33554432,"action":"add"}
-{"path":"file:///home/user/AVD/work/pz3/results/stream/parquet/win1h/part-00003-1577280b-d45b-4aa1-9393-f833bfb3b521-c000.snappy.parquet","size":2395,"isDir":false,"modificationTime":1794405241951,"blockReplication":1,"blockSize":33554432,"action":"add"}

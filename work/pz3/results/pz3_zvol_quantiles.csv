@@ -1,8 +1,0 @@
-stat,value_2018plus
-zvol_p50,-0.005
-zvol_p90,1.131
-zvol_p99,2.008
-zvol_p99.9,2.587
-zvol_p99.99,3.067
-share_zvol_gt4_pct,9e-05
-max_zvol,4.239

@@ -1,6 +1,0 @@
-stage,seconds
-offline_score_full_history_v2_7.8M_rows,75.5
-design_comparison_19_variants,127
-producer_v2_send_loop_s,310.945
-stream_v2_anomaly_job_wall_s,377.3
-spark_job_v2_reported_s,340.7

@@ -63,17 +63,25 @@ def add_inline(p, text, size=14, base_bold=None):
             _inline(p, seg, size, base_bold)
 
 
+NB_NUM = re.compile(r"(?<=\d) (?=\d{3}\b)")
+NB_UNIT = re.compile(r"(?<=\d) (?=(?:%|с|мс|МБ|ГБ)(?!\w))")
+
+
+def nbsp(t):
+    return NB_UNIT.sub("\u00a0", NB_NUM.sub("\u00a0", t))
+
+
 def _inline(p, text, size, base_bold):
     for part in INLINE.split(text):
         if not part: continue
         if part.startswith("`") and part.endswith("`") and len(part) > 2:
             set_font(p.add_run(part[1:-1]), COUR, size * 0.9 if size >= 12 else size, base_bold)
         elif part.startswith("**") and part.endswith("**") and len(part) > 4:
-            set_font(p.add_run(part[2:-2]), TNR, size, True)
+            set_font(p.add_run(nbsp(part[2:-2])), TNR, size, True)
         elif part.startswith("*") and part.endswith("*") and len(part) > 2:
-            set_font(p.add_run(part[1:-1]), TNR, size, base_bold, True)
+            set_font(p.add_run(nbsp(part[1:-1])), TNR, size, base_bold, True)
         else:
-            set_font(p.add_run(part), TNR, size, base_bold)
+            set_font(p.add_run(nbsp(part)), TNR, size, base_bold)
 
 
 def setup(doc):
@@ -93,8 +101,21 @@ def setup(doc):
     # page number header (not on first page)
     hp = s.header.paragraphs[0]
     pf(hp, AL.RIGHT, left=0, first=0, line=1.0)
-    r = hp.add_run(); set_font(r, ARIAL, 11)
-    for t, txt in (("begin", None), (None, " PAGE "), ("end", None)):
+    hs = hp.style
+    hs.font.name = ARIAL; hs.font.size = Pt(11)
+    hrf = hs.element.get_or_add_rPr().find(qn("w:rFonts"))
+    for a in ("w:ascii", "w:hAnsi", "w:eastAsia", "w:cs"): hrf.set(qn(a), ARIAL)
+    ppr = hp._p.get_or_add_pPr(); mrpr = OxmlElement("w:rPr")
+    mrf = OxmlElement("w:rFonts")
+    for a in ("w:ascii", "w:hAnsi", "w:eastAsia", "w:cs"): mrf.set(qn(a), ARIAL)
+    mrpr.append(mrf)
+    for tag in ("w:sz", "w:szCs"):
+        e = OxmlElement(tag); e.set(qn("w:val"), "22"); mrpr.append(e)
+    ppr.append(mrpr)
+    for t, txt in (("begin", None), (None, " PAGE "), ("separate", None), ("res", "2"), ("end", None)):
+        r = hp.add_run(); set_font(r, ARIAL, 11)
+        if t == "res":
+            r.text = txt; continue
         if t:
             e = OxmlElement("w:fldChar"); e.set(qn("w:fldCharType"), t)
         else:
@@ -194,6 +215,12 @@ def bullet(doc, text):
     add_inline(p, DASH + "\t" + text, 14); return p
 
 
+def numbered(doc, num, text):
+    p = doc.add_paragraph(); pf(p, AL.JUSTIFY, left=1.25, first=-0.6)
+    p.paragraph_format.tab_stops.add_tab_stop(Cm(1.25))
+    add_inline(p, f"{num}.\t" + text, 14); return p
+
+
 def code_block(doc, lines):
     n = len(lines)
     for i, ln in enumerate(lines):
@@ -216,7 +243,7 @@ def table_caption(doc, text):
 
 
 def figure_caption(doc, text):
-    p = doc.add_paragraph(); pf(p, AL.CENTER, left=0, first=0, before=5, after=6, line=1.0)
+    p = doc.add_paragraph(); pf(p, AL.CENTER, left=0, first=0, before=5, after=6, line=1.0, kt=True)
     add_inline(p, text, 13); return p
 
 
@@ -456,7 +483,10 @@ def convert(md_text, mdir, doc, pz, theme):
             else:
                 for r in rows: body(doc, " | ".join(r))
             first = False; continue
-        m = re.match(r"^[-*]\s+(.*)$", s) or re.match(r"^\d+[.)]\s+(.*)$", s)
+        m = re.match(r"^(\d+)[.)]\s+(.*)$", s)
+        if m:
+            flush(); numbered(doc, m.group(1), m.group(2)); first = False; i += 1; continue
+        m = re.match(r"^[-*]\s+(.*)$", s)
         if m:
             flush(); bullet(doc, m.group(1)); first = False; i += 1; continue
         para.append(s); i += 1

@@ -1,2 +1,0 @@
-n_stream_rows,n_stream_scored,n_stream_unscored_flat,n_unscored_flat_offline_same_ts,n_compared,max_abs_diff_z_ret,max_abs_diff_z_vol,max_abs_diff_sigma,n_anomalies_stream,n_anomalies_offline,flag_mismatches,scored_mismatches,k,zv_min
-30240,30016,224,224,30016,0.0,0.0,0.0,272,272,0,0,9,0.0
