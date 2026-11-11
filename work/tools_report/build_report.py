@@ -16,6 +16,7 @@ TNR, ARIAL, COUR = "Times New Roman", "Arial", "Courier New"
 _FONT = next((p for p in ("/usr/share/fonts/truetype/liberation/LiberationSerif-Regular.ttf",
                           "/usr/share/fonts/truetype/msttcorefonts/Times_New_Roman.ttf") if os.path.exists(p)), "")
 TEXT_W = 21.0 - 2.5 - 2.4  # 16.1 cm
+IMG_W = 16.0  # max image width (cm), slightly inside the text width
 MAX_IMG_H = 10.0  # cm
 MAX_IMG_H_TERM = 9.0  # cm, terminal screenshots
 DASH = "–"
@@ -44,6 +45,8 @@ def pf(p, align=None, left=None, first=None, before=0, after=0, line=1.5, kwn=Fa
     f.keep_with_next = kwn
     f.keep_together = kt
     f.page_break_before = pbb
+    if left == 0 or first == 0:
+        f.right_indent = Cm(0)
     return p
 
 
@@ -222,19 +225,21 @@ def numbered(doc, num, text):
 
 
 def code_block(doc, lines):
+    """Body code: 9.5 pt; if a line is wider than the text width at 9.5 pt, whole block drops to 9 pt.
+    Lines still too long wrap with a hanging indent."""
     n = len(lines)
+    lines = [ln.replace("\t", "    ") for ln in lines]
+    mx = max((len(ln) for ln in lines), default=0)
+    avail = TEXT_W - 1.0  # left indent 1.0 cm
+    def fits(sz): return mx * sz * 0.6 / 72 * 2.54 <= avail  # Courier advance = 0.6 em
+    size = 9.5 if fits(9.5) else 9.0
     for i, ln in enumerate(lines):
         p = doc.add_paragraph()
         pf(p, AL.LEFT, left=1.0, first=-0.5, line=1.0, before=6 if i == 0 else 0, after=6 if i == n - 1 else 0)
         p.paragraph_format.widow_control = False
-        if ln:
-            r = p.add_run(ln.replace("\t", "    ")); set_font(r, COUR, 9.5)
-        else:
-            r = p.add_run(""); set_font(r, COUR, 9.5)
-            p._p.get_or_add_pPr()
-        # keep empty paragraph height at code size
+        r = p.add_run(ln); set_font(r, COUR, size)
         ppr = p._p.get_or_add_pPr(); rpr = OxmlElement("w:rPr")
-        sz = OxmlElement("w:sz"); sz.set(qn("w:val"), "19"); rpr.append(sz); ppr.append(rpr)
+        sz = OxmlElement("w:sz"); sz.set(qn("w:val"), str(int(size * 2))); rpr.append(sz); ppr.append(rpr)
 
 
 def table_caption(doc, text):
@@ -302,7 +307,7 @@ def figure(doc, path, mdir):
         print(f"WARNING: autocrop failed for {full}: {e}", file=sys.stderr); est = None
     with Image.open(full) as im: w, h = im.size
     mh = MAX_IMG_H_CHART if kind == "chart" else MAX_IMG_H_SHOT
-    wc = TEXT_W if kind != "chart" else min(TEXT_W, 1e9)
+    wc = IMG_W
     hc = wc * h / w
     if hc > mh: hc = mh; wc = hc * w / h
     FIG_LOG.append((os.path.basename(full), kind))
