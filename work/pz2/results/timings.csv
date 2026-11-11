@@ -24,7 +24,7 @@ sql_q2_top_days_range,2.816,
 sql_q3_dow_hour_volume,1.875,
 sql_q4_month_seasonality,2.313,
 sql_q5_max_volume_day_per_year,1.678,
-sql_q6_crash_days_vs_30d_median,2.002,
+sql_q6_crash_days_vs_30d_mean,2.002,
 engine_daily_ohlc_pandas,5.734,медіана з 3 запусків
 engine_daily_ohlc_spark_cached_df,2.19,медіана з 3 запусків
 engine_daily_ohlc_spark_local[*],7.493,медіана з 3 запусків
