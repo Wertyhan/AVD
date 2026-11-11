@@ -1,0 +1,130 @@
+{
+ "explainVersion": "1",
+ "queryPlanner": {
+  "namespace": "bigdata_db.anomalies",
+  "parsedQuery": {
+   "date": {
+    "$eq": {
+     "$date": "2020-03-12T00:00:00Z"
+    }
+   }
+  },
+  "indexFilterSet": false,
+  "queryHash": "C70159A2",
+  "planCacheShapeHash": "C70159A2",
+  "planCacheKey": "1C306698",
+  "optimizationTimeMillis": 0,
+  "maxIndexedOrSolutionsReached": false,
+  "maxIndexedAndSolutionsReached": false,
+  "maxScansToExplodeReached": false,
+  "prunedSimilarIndexes": false,
+  "winningPlan": {
+   "isCached": false,
+   "stage": "SORT",
+   "sortPattern": {
+    "score": -1
+   },
+   "memLimit": 104857600,
+   "type": "simple",
+   "inputStage": {
+    "stage": "COLLSCAN",
+    "filter": {
+     "date": {
+      "$eq": {
+       "$date": "2020-03-12T00:00:00Z"
+      }
+     }
+    },
+    "nss": "bigdata_db.anomalies",
+    "direction": "forward"
+   }
+  },
+  "rejectedPlans": []
+ },
+ "executionStats": {
+  "executionSuccess": true,
+  "nReturned": 5,
+  "executionTimeMillis": 53,
+  "totalKeysExamined": 0,
+  "totalDocsExamined": 108119,
+  "executionStages": {
+   "isCached": false,
+   "stage": "SORT",
+   "nReturned": 5,
+   "executionTimeMillisEstimate": 51,
+   "works": 108126,
+   "advanced": 5,
+   "needTime": 108120,
+   "needYield": 0,
+   "saveState": 2,
+   "restoreState": 2,
+   "isEOF": 1,
+   "sortPattern": {
+    "score": -1
+   },
+   "memLimit": 104857600,
+   "type": "simple",
+   "totalDataSizeSorted": 1210,
+   "usedDisk": false,
+   "spills": 0,
+   "spilledRecords": 0,
+   "spilledBytes": 0,
+   "spilledDataStorageSize": 0,
+   "peakTrackedMemBytes": 1210,
+   "inputStage": {
+    "stage": "COLLSCAN",
+    "filter": {
+     "date": {
+      "$eq": {
+       "$date": "2020-03-12T00:00:00Z"
+      }
+     }
+    },
+    "nReturned": 5,
+    "executionTimeMillisEstimate": 51,
+    "works": 108120,
+    "advanced": 5,
+    "needTime": 108114,
+    "needYield": 0,
+    "saveState": 2,
+    "restoreState": 2,
+    "isEOF": 1,
+    "nss": "bigdata_db.anomalies",
+    "direction": "forward",
+    "docsExamined": 108119
+   }
+  }
+ },
+ "queryShapeHash": "81250EB9C555A4B37165308DB674CB0DD663A008EE9118B1DAB713BC8BA5E866",
+ "command": {
+  "find": "anomalies",
+  "filter": {
+   "date": {
+    "$date": "2020-03-12T00:00:00Z"
+   }
+  },
+  "sort": {
+   "score": -1
+  },
+  "$db": "bigdata_db"
+ },
+ "serverInfo": {
+  "host": "vm",
+  "port": 27017,
+  "version": "8.3.7",
+  "gitVersion": "nogitversion"
+ },
+ "serverParameters": {
+  "internalQueryFacetBufferSizeBytes": 104857600,
+  "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+  "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+  "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+  "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+  "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+  "internalQueryProhibitBlockingMergeOnMongoS": 0,
+  "internalQueryMaxAddToSetBytes": 104857600,
+  "internalQueryFrameworkControl": "trySbeRestricted",
+  "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+ },
+ "ok": 1.0
+}

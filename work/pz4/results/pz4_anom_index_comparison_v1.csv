@@ -1,0 +1,5 @@
+experiment,description,collection,phase,index,executionTimeMillis_explain_median,wall_ms_median,totalDocsExamined,totalKeysExamined,nReturned,winning_plan,explain_ms_runs,wall_ms_runs,index_size_MB,index_build_s
+ANOM1_year_top_score,"аномалії 2021, топ-20 за score",anomalies,до,-,69,61.5,108119,0,20,SORT > COLLSCAN,"[69, 66, 65, 72, 70]","[61.3, 64.4, 60.9, 61.5, 78.2]",0,0
+ANOM1_year_top_score,"аномалії 2021, топ-20 за score",anomalies,після,date_1_score_-1,0,1.0,20,270,20,FETCH > SORT > IXSCAN,"[0, 0, 0, 0, 0]","[1.1, 1.0, 0.9, 1.0, 0.9]",1.95,0.3
+ANOM2_day,"аномалії доби 12.03.2020, за score",anomalies,до,-,55,51.8,108119,0,5,SORT > COLLSCAN,"[52, 72, 56, 55, 53]","[58.7, 47.8, 50.9, 51.8, 53.6]",0,0
+ANOM2_day,"аномалії доби 12.03.2020, за score",anomalies,після,date_1_score_-1,0,0.4,5,5,5,FETCH > IXSCAN,"[0, 0, 0, 0, 0]","[0.6, 0.4, 0.4, 0.4, 0.7]",1.95,0.59
