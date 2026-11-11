@@ -1,0 +1,109 @@
+{
+ "explainVersion": "1",
+ "queryPlanner": {
+  "namespace": "bigdata_db.candles_1m",
+  "parsedQuery": {},
+  "indexFilterSet": false,
+  "queryHash": "19175DF1",
+  "planCacheShapeHash": "19175DF1",
+  "planCacheKey": "1F4DCB46",
+  "optimizationTimeMillis": 0,
+  "maxIndexedOrSolutionsReached": false,
+  "maxIndexedAndSolutionsReached": false,
+  "maxScansToExplodeReached": false,
+  "prunedSimilarIndexes": false,
+  "winningPlan": {
+   "isCached": false,
+   "stage": "SORT",
+   "sortPattern": {
+    "volume": -1
+   },
+   "memLimit": 104857600,
+   "limitAmount": 10,
+   "type": "simple",
+   "inputStage": {
+    "stage": "COLLSCAN",
+    "nss": "bigdata_db.candles_1m",
+    "direction": "forward"
+   }
+  },
+  "rejectedPlans": []
+ },
+ "executionStats": {
+  "executionSuccess": true,
+  "nReturned": 10,
+  "executionTimeMillis": 7064,
+  "totalKeysExamined": 0,
+  "totalDocsExamined": 7816537,
+  "executionStages": {
+   "isCached": false,
+   "stage": "SORT",
+   "nReturned": 10,
+   "executionTimeMillisEstimate": 6522,
+   "works": 7816549,
+   "advanced": 10,
+   "needTime": 7816538,
+   "needYield": 0,
+   "saveState": 366,
+   "restoreState": 366,
+   "isEOF": 1,
+   "sortPattern": {
+    "volume": -1
+   },
+   "memLimit": 104857600,
+   "limitAmount": 10,
+   "type": "simple",
+   "totalDataSizeSorted": 1520,
+   "usedDisk": false,
+   "spills": 0,
+   "spilledRecords": 0,
+   "spilledBytes": 0,
+   "spilledDataStorageSize": 0,
+   "peakTrackedMemBytes": 1520,
+   "inputStage": {
+    "stage": "COLLSCAN",
+    "nReturned": 7816537,
+    "executionTimeMillisEstimate": 3794,
+    "works": 7816538,
+    "advanced": 7816537,
+    "needTime": 0,
+    "needYield": 0,
+    "saveState": 366,
+    "restoreState": 366,
+    "isEOF": 1,
+    "nss": "bigdata_db.candles_1m",
+    "direction": "forward",
+    "docsExamined": 7816537
+   }
+  }
+ },
+ "queryShapeHash": "F34029C4DFBE61B7FA1FEBC7DFB6D0E456AA6BC385704A7375BDDF9DE5D4CAD8",
+ "command": {
+  "find": "candles_1m",
+  "filter": {},
+  "sort": {
+   "volume": -1
+  },
+  "limit": 10,
+  "$db": "bigdata_db"
+ },
+ "serverInfo": {
+  "host": "vm",
+  "port": 27017,
+  "version": "8.3.7",
+  "gitVersion": "nogitversion"
+ },
+ "serverParameters": {
+  "internalQueryFacetBufferSizeBytes": 104857600,
+  "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+  "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+  "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+  "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+  "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+  "internalQueryProhibitBlockingMergeOnMongoS": 0,
+  "internalQueryMaxAddToSetBytes": 104857600,
+  "internalQueryFrameworkControl": "trySbeRestricted",
+  "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+ },
+ "ok": 1.0
+}

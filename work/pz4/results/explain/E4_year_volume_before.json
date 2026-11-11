@@ -1,0 +1,152 @@
+{
+ "explainVersion": "1",
+ "queryPlanner": {
+  "namespace": "bigdata_db.candles_1d",
+  "parsedQuery": {
+   "$and": [
+    {
+     "year": {
+      "$eq": 2021
+     }
+    },
+    {
+     "volume": {
+      "$gt": 9483.33
+     }
+    }
+   ]
+  },
+  "indexFilterSet": false,
+  "queryHash": "B40AAA51",
+  "planCacheShapeHash": "B40AAA51",
+  "planCacheKey": "935BE9A1",
+  "optimizationTimeMillis": 0,
+  "maxIndexedOrSolutionsReached": false,
+  "maxIndexedAndSolutionsReached": false,
+  "maxScansToExplodeReached": false,
+  "prunedSimilarIndexes": false,
+  "winningPlan": {
+   "isCached": false,
+   "stage": "SORT",
+   "sortPattern": {
+    "volume": -1
+   },
+   "memLimit": 104857600,
+   "type": "simple",
+   "inputStage": {
+    "stage": "COLLSCAN",
+    "filter": {
+     "$and": [
+      {
+       "year": {
+        "$eq": 2021
+       }
+      },
+      {
+       "volume": {
+        "$gt": 9483.33
+       }
+      }
+     ]
+    },
+    "nss": "bigdata_db.candles_1d",
+    "direction": "forward"
+   }
+  },
+  "rejectedPlans": []
+ },
+ "executionStats": {
+  "executionSuccess": true,
+  "nReturned": 36,
+  "executionTimeMillis": 4,
+  "totalKeysExamined": 0,
+  "totalDocsExamined": 5429,
+  "executionStages": {
+   "isCached": false,
+   "stage": "SORT",
+   "nReturned": 36,
+   "executionTimeMillisEstimate": 0,
+   "works": 5467,
+   "advanced": 36,
+   "needTime": 5430,
+   "needYield": 0,
+   "saveState": 0,
+   "restoreState": 0,
+   "isEOF": 1,
+   "sortPattern": {
+    "volume": -1
+   },
+   "memLimit": 104857600,
+   "type": "simple",
+   "totalDataSizeSorted": 6336,
+   "usedDisk": false,
+   "spills": 0,
+   "spilledRecords": 0,
+   "spilledBytes": 0,
+   "spilledDataStorageSize": 0,
+   "peakTrackedMemBytes": 6336,
+   "inputStage": {
+    "stage": "COLLSCAN",
+    "filter": {
+     "$and": [
+      {
+       "year": {
+        "$eq": 2021
+       }
+      },
+      {
+       "volume": {
+        "$gt": 9483.33
+       }
+      }
+     ]
+    },
+    "nReturned": 36,
+    "executionTimeMillisEstimate": 0,
+    "works": 5430,
+    "advanced": 36,
+    "needTime": 5393,
+    "needYield": 0,
+    "saveState": 0,
+    "restoreState": 0,
+    "isEOF": 1,
+    "nss": "bigdata_db.candles_1d",
+    "direction": "forward",
+    "docsExamined": 5429
+   }
+  }
+ },
+ "queryShapeHash": "893C0B851200B342664DD50C23D4FD6EB5268068D493208DB1C4984F16DC3108",
+ "command": {
+  "find": "candles_1d",
+  "filter": {
+   "year": 2021,
+   "volume": {
+    "$gt": 9483.33
+   }
+  },
+  "sort": {
+   "volume": -1
+  },
+  "$db": "bigdata_db"
+ },
+ "serverInfo": {
+  "host": "vm",
+  "port": 27017,
+  "version": "8.3.7",
+  "gitVersion": "nogitversion"
+ },
+ "serverParameters": {
+  "internalQueryFacetBufferSizeBytes": 104857600,
+  "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+  "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+  "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+  "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+  "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+  "internalQueryProhibitBlockingMergeOnMongoS": 0,
+  "internalQueryMaxAddToSetBytes": 104857600,
+  "internalQueryFrameworkControl": "trySbeRestricted",
+  "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+ },
+ "ok": 1.0
+}

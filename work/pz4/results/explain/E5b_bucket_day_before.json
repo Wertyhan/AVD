@@ -1,0 +1,95 @@
+{
+ "explainVersion": "1",
+ "queryPlanner": {
+  "namespace": "bigdata_db.candles_1d_buckets",
+  "parsedQuery": {
+   "date": {
+    "$eq": {
+     "$date": "2021-05-19T00:00:00Z"
+    }
+   }
+  },
+  "indexFilterSet": false,
+  "queryHash": "8E516101",
+  "planCacheShapeHash": "8E516101",
+  "planCacheKey": "44CFB9C3",
+  "optimizationTimeMillis": 0,
+  "maxIndexedOrSolutionsReached": false,
+  "maxIndexedAndSolutionsReached": false,
+  "maxScansToExplodeReached": false,
+  "prunedSimilarIndexes": false,
+  "winningPlan": {
+   "isCached": false,
+   "stage": "COLLSCAN",
+   "filter": {
+    "date": {
+     "$eq": {
+      "$date": "2021-05-19T00:00:00Z"
+     }
+    }
+   },
+   "nss": "bigdata_db.candles_1d_buckets",
+   "direction": "forward"
+  },
+  "rejectedPlans": []
+ },
+ "executionStats": {
+  "executionSuccess": true,
+  "nReturned": 1,
+  "executionTimeMillis": 2,
+  "totalKeysExamined": 0,
+  "totalDocsExamined": 5429,
+  "executionStages": {
+   "isCached": false,
+   "stage": "COLLSCAN",
+   "filter": {
+    "date": {
+     "$eq": {
+      "$date": "2021-05-19T00:00:00Z"
+     }
+    }
+   },
+   "nReturned": 1,
+   "executionTimeMillisEstimate": 0,
+   "works": 5430,
+   "advanced": 1,
+   "needTime": 5428,
+   "needYield": 0,
+   "saveState": 0,
+   "restoreState": 0,
+   "isEOF": 1,
+   "nss": "bigdata_db.candles_1d_buckets",
+   "direction": "forward",
+   "docsExamined": 5429
+  }
+ },
+ "queryShapeHash": "28708398C5C2EE75FBAA73B9799F220DEDE5B86593A0E3843F9CE92A4FCFD919",
+ "command": {
+  "find": "candles_1d_buckets",
+  "filter": {
+   "date": {
+    "$date": "2021-05-19T00:00:00Z"
+   }
+  },
+  "$db": "bigdata_db"
+ },
+ "serverInfo": {
+  "host": "vm",
+  "port": 27017,
+  "version": "8.3.7",
+  "gitVersion": "nogitversion"
+ },
+ "serverParameters": {
+  "internalQueryFacetBufferSizeBytes": 104857600,
+  "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+  "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+  "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+  "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+  "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+  "internalQueryProhibitBlockingMergeOnMongoS": 0,
+  "internalQueryMaxAddToSetBytes": 104857600,
+  "internalQueryFrameworkControl": "trySbeRestricted",
+  "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+ },
+ "ok": 1.0
+}

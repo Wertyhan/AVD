@@ -1,0 +1,9 @@
+query,description,collection,returned,wall_ms
+q1_close_gt_60000_2021,дні 2021 із close>60000 (сортування за датою),candles_1d,39,3.3
+q2_top10_volume_days,топ-10 діб за обсягом,candles_1d,10,3.8
+q3_covid_hour,"12.03.2020 12:00-13:00 UTC, 5 найнижчих low",candles_1m,5,1.0
+q4_top5_volume_minutes,5 хвилин з найбільшим обсягом,candles_1m,5,0.6
+q5_worst_days_spark,"повні доби з ret_1d<-0,10 (результати Spark)",spark_daily_features,10,4.7
+q6_incomplete_days,неповні доби (n_minutes<1440),candles_1d,2,2.9
+q7_zero_volume_count,кількість хвилин з нульовим обсягом,candles_1m,1,421.9
+q8_in_or,доби листопада-грудня 2022 з flat_share=0 ($in + $and),spark_daily_features,2,12.6

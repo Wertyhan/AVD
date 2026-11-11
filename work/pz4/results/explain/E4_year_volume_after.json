@@ -1,0 +1,159 @@
+{
+ "explainVersion": "1",
+ "queryPlanner": {
+  "namespace": "bigdata_db.candles_1d",
+  "parsedQuery": {
+   "$and": [
+    {
+     "year": {
+      "$eq": 2021
+     }
+    },
+    {
+     "volume": {
+      "$gt": 9483.33
+     }
+    }
+   ]
+  },
+  "indexFilterSet": false,
+  "queryHash": "B40AAA51",
+  "planCacheShapeHash": "B40AAA51",
+  "planCacheKey": "6A74BDA1",
+  "optimizationTimeMillis": 0,
+  "maxIndexedOrSolutionsReached": false,
+  "maxIndexedAndSolutionsReached": false,
+  "maxScansToExplodeReached": false,
+  "prunedSimilarIndexes": false,
+  "winningPlan": {
+   "isCached": false,
+   "stage": "FETCH",
+   "nss": "bigdata_db.candles_1d",
+   "inputStage": {
+    "stage": "IXSCAN",
+    "nss": "bigdata_db.candles_1d",
+    "keyPattern": {
+     "year": 1,
+     "volume": -1
+    },
+    "indexName": "year_1_volume_-1",
+    "isMultiKey": false,
+    "multiKeyPaths": {
+     "year": [],
+     "volume": []
+    },
+    "isUnique": false,
+    "isSparse": false,
+    "isPartial": false,
+    "indexVersion": 2,
+    "direction": "forward",
+    "indexBounds": {
+     "year": [
+      "[2021, 2021]"
+     ],
+     "volume": [
+      "[inf, 9483.33)"
+     ]
+    }
+   }
+  },
+  "rejectedPlans": []
+ },
+ "executionStats": {
+  "executionSuccess": true,
+  "nReturned": 36,
+  "executionTimeMillis": 0,
+  "totalKeysExamined": 36,
+  "totalDocsExamined": 36,
+  "executionStages": {
+   "isCached": false,
+   "stage": "FETCH",
+   "nReturned": 36,
+   "executionTimeMillisEstimate": 0,
+   "works": 37,
+   "advanced": 36,
+   "needTime": 0,
+   "needYield": 0,
+   "saveState": 0,
+   "restoreState": 0,
+   "isEOF": 1,
+   "nss": "bigdata_db.candles_1d",
+   "docsExamined": 36,
+   "alreadyHasObj": 0,
+   "inputStage": {
+    "stage": "IXSCAN",
+    "nReturned": 36,
+    "executionTimeMillisEstimate": 0,
+    "works": 37,
+    "advanced": 36,
+    "needTime": 0,
+    "needYield": 0,
+    "saveState": 0,
+    "restoreState": 0,
+    "isEOF": 1,
+    "nss": "bigdata_db.candles_1d",
+    "keyPattern": {
+     "year": 1,
+     "volume": -1
+    },
+    "indexName": "year_1_volume_-1",
+    "isMultiKey": false,
+    "multiKeyPaths": {
+     "year": [],
+     "volume": []
+    },
+    "isUnique": false,
+    "isSparse": false,
+    "isPartial": false,
+    "indexVersion": 2,
+    "direction": "forward",
+    "indexBounds": {
+     "year": [
+      "[2021, 2021]"
+     ],
+     "volume": [
+      "[inf, 9483.33)"
+     ]
+    },
+    "keysExamined": 36,
+    "seeks": 1,
+    "dupsTested": 0,
+    "dupsDropped": 0,
+    "peakTrackedMemBytes": 0
+   }
+  }
+ },
+ "queryShapeHash": "893C0B851200B342664DD50C23D4FD6EB5268068D493208DB1C4984F16DC3108",
+ "command": {
+  "find": "candles_1d",
+  "filter": {
+   "year": 2021,
+   "volume": {
+    "$gt": 9483.33
+   }
+  },
+  "sort": {
+   "volume": -1
+  },
+  "$db": "bigdata_db"
+ },
+ "serverInfo": {
+  "host": "vm",
+  "port": 27017,
+  "version": "8.3.7",
+  "gitVersion": "nogitversion"
+ },
+ "serverParameters": {
+  "internalQueryFacetBufferSizeBytes": 104857600,
+  "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+  "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+  "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+  "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+  "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+  "internalQueryProhibitBlockingMergeOnMongoS": 0,
+  "internalQueryMaxAddToSetBytes": 104857600,
+  "internalQueryFrameworkControl": "trySbeRestricted",
+  "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+ },
+ "ok": 1.0
+}

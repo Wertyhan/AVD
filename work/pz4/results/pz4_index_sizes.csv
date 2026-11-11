@@ -1,0 +1,13 @@
+collection,index,size_MB
+candles_1h,_id_,1.242
+candles_1h,ts_1,1.48
+candles_1d,_id_,0.066
+candles_1d,year_1_volume_-1,0.109
+candles_1d,date_1,0.078
+candles_1m,_id_,82.23
+candles_1m,volume_-1,107.414
+candles_1m,ts_1,90.426
+candles_1d_buckets,_id_,0.066
+candles_1d_buckets,date_1,0.078
+spark_daily_features,_id_,0.066
+spark_daily_features,date_1,0.078

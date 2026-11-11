@@ -14,3 +14,45 @@ Hadoop Streaming       daily_ohlc       run2:    41.48 s  in-mapper combining+1 
 Hadoop Streaming       daily_ohlc       run3:    38.27 s  in-mapper combining+1 reduce, YARN
 Hive (MR)              yearly           run1:   108.95 s  hive -f: старт CLI + компіляція + MR-задачі
 Hive (MR)              yearly           run2:   103.30 s  hive -f: старт CLI + компіляція + MR-задачі
+Hive (MR)              yearly           run3:   105.29 s  hive -f: старт CLI + компіляція + MR-задачі
+Hive (MR)              daily_ohlc       run1:    81.38 s  CTAS daily_ohlc (min/max над struct(ts,значення))
+Hive (MR)              daily_ohlc       run2:    71.84 s  CTAS daily_ohlc (min/max над struct(ts,значення))
+Hive (MR)              daily_ohlc       run3:    78.30 s  CTAS daily_ohlc (min/max над struct(ts,значення))
+Pandas                 read_csv         run1:    10.76 s  read_csv+dropna (частина обох задач)
+Pandas                 yearly_agg       run1:     0.60 s  лише groupby, без читання
+Pandas                 daily_agg        run1:     0.78 s  лише sort+groupby, без читання
+Pandas                 yearly           run1:    11.36 s  читання CSV + агрегація
+Pandas                 daily_ohlc       run1:    11.54 s  читання CSV + агрегація
+Pandas                 read_csv         run2:     9.82 s  read_csv+dropna (частина обох задач)
+Pandas                 yearly_agg       run2:     0.87 s  лише groupby, без читання
+Pandas                 daily_agg        run2:     0.74 s  лише sort+groupby, без читання
+Pandas                 yearly           run2:    10.69 s  читання CSV + агрегація
+Pandas                 daily_ohlc       run2:    10.56 s  читання CSV + агрегація
+Pandas                 read_csv         run3:     9.71 s  read_csv+dropna (частина обох задач)
+Pandas                 yearly_agg       run3:     0.56 s  лише groupby, без читання
+Pandas                 daily_agg        run3:     0.60 s  лише sort+groupby, без читання
+Pandas                 yearly           run3:    10.27 s  читання CSV + агрегація
+Pandas                 daily_ohlc       run3:    10.31 s  читання CSV + агрегація
+WARNING: Using incubator modules: jdk.incubator.vector
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+26/11/11 14:14:23 WARN Utils: Your hostname, vm, resolves to a loopback address: 127.0.0.1; using 192.0.2.2 instead (on interface eth0)
+26/11/11 14:14:23 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+/usr/local/lib/python3.13/site-packages/pyspark/testing/utils.py:127: FutureWarning: PySpark does not yet fully support pandas >= 3.0.0. Some features may not work correctly. It is recommended to use pandas < 3.0.0 for now.
+  require_minimum_pandas_version()
+26/11/11 14:14:24 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+PySpark (local[*])     session_start    run1:    14.52 s  pyspark 4.3.0
+/usr/local/lib/python3.13/site-packages/pyspark/sql/pandas/conversion.py:324: FutureWarning: PySpark does not yet fully support pandas >= 3.0.0. Some features may not work correctly. It is recommended to use pandas < 3.0.0 for now.
+  require_minimum_pandas_version()
+[Stage 0:>                                                          (0 + 4) / 4][Stage 0:=============================>                             (2 + 2) / 4][Stage 0:============================================>              (3 + 1) / 4]                                                                                PySpark (local[*])     yearly           run1:    23.90 s  читання CSV + агрегація + toPandas
+/usr/local/lib/python3.13/site-packages/pyspark/sql/pandas/conversion.py:324: FutureWarning: PySpark does not yet fully support pandas >= 3.0.0. Some features may not work correctly. It is recommended to use pandas < 3.0.0 for now.
+  require_minimum_pandas_version()
+[Stage 8:>                                                          (0 + 4) / 4][Stage 8:=============================>                             (2 + 2) / 4][Stage 8:============================================>              (3 + 1) / 4]                                                                                PySpark (local[*])     yearly           run2:     7.34 s  читання CSV + агрегація + toPandas
+/usr/local/lib/python3.13/site-packages/pyspark/sql/pandas/conversion.py:324: FutureWarning: PySpark does not yet fully support pandas >= 3.0.0. Some features may not work correctly. It is recommended to use pandas < 3.0.0 for now.
+  require_minimum_pandas_version()
+[Stage 16:>                                                         (0 + 4) / 4][Stage 16:==============>                                           (1 + 3) / 4][Stage 16:=============================>                            (2 + 2) / 4][Stage 16:===========================================>              (3 + 1) / 4]                                                                                PySpark (local[*])     yearly           run3:    10.83 s  читання CSV + агрегація + toPandas
+/usr/local/lib/python3.13/site-packages/pyspark/sql/pandas/conversion.py:324: FutureWarning: PySpark does not yet fully support pandas >= 3.0.0. Some features may not work correctly. It is recommended to use pandas < 3.0.0 for now.
+  require_minimum_pandas_version()
+[Stage 24:>                                                         (0 + 4) / 4]

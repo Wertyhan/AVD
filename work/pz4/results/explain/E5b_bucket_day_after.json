@@ -1,0 +1,138 @@
+{
+ "explainVersion": "1",
+ "queryPlanner": {
+  "namespace": "bigdata_db.candles_1d_buckets",
+  "parsedQuery": {
+   "date": {
+    "$eq": {
+     "$date": "2021-05-19T00:00:00Z"
+    }
+   }
+  },
+  "indexFilterSet": false,
+  "queryHash": "8E516101",
+  "planCacheShapeHash": "8E516101",
+  "planCacheKey": "B2F75B97",
+  "optimizationTimeMillis": 0,
+  "maxIndexedOrSolutionsReached": false,
+  "maxIndexedAndSolutionsReached": false,
+  "maxScansToExplodeReached": false,
+  "prunedSimilarIndexes": false,
+  "winningPlan": {
+   "isCached": false,
+   "stage": "FETCH",
+   "nss": "bigdata_db.candles_1d_buckets",
+   "inputStage": {
+    "stage": "IXSCAN",
+    "nss": "bigdata_db.candles_1d_buckets",
+    "keyPattern": {
+     "date": 1
+    },
+    "indexName": "date_1",
+    "isMultiKey": false,
+    "multiKeyPaths": {
+     "date": []
+    },
+    "isUnique": false,
+    "isSparse": false,
+    "isPartial": false,
+    "indexVersion": 2,
+    "direction": "forward",
+    "indexBounds": {
+     "date": [
+      "[new Date(1621382400000), new Date(1621382400000)]"
+     ]
+    }
+   }
+  },
+  "rejectedPlans": []
+ },
+ "executionStats": {
+  "executionSuccess": true,
+  "nReturned": 1,
+  "executionTimeMillis": 0,
+  "totalKeysExamined": 1,
+  "totalDocsExamined": 1,
+  "executionStages": {
+   "isCached": false,
+   "stage": "FETCH",
+   "nReturned": 1,
+   "executionTimeMillisEstimate": 0,
+   "works": 2,
+   "advanced": 1,
+   "needTime": 0,
+   "needYield": 0,
+   "saveState": 0,
+   "restoreState": 0,
+   "isEOF": 1,
+   "nss": "bigdata_db.candles_1d_buckets",
+   "docsExamined": 1,
+   "alreadyHasObj": 0,
+   "inputStage": {
+    "stage": "IXSCAN",
+    "nReturned": 1,
+    "executionTimeMillisEstimate": 0,
+    "works": 2,
+    "advanced": 1,
+    "needTime": 0,
+    "needYield": 0,
+    "saveState": 0,
+    "restoreState": 0,
+    "isEOF": 1,
+    "nss": "bigdata_db.candles_1d_buckets",
+    "keyPattern": {
+     "date": 1
+    },
+    "indexName": "date_1",
+    "isMultiKey": false,
+    "multiKeyPaths": {
+     "date": []
+    },
+    "isUnique": false,
+    "isSparse": false,
+    "isPartial": false,
+    "indexVersion": 2,
+    "direction": "forward",
+    "indexBounds": {
+     "date": [
+      "[new Date(1621382400000), new Date(1621382400000)]"
+     ]
+    },
+    "keysExamined": 1,
+    "seeks": 1,
+    "dupsTested": 0,
+    "dupsDropped": 0,
+    "peakTrackedMemBytes": 0
+   }
+  }
+ },
+ "queryShapeHash": "28708398C5C2EE75FBAA73B9799F220DEDE5B86593A0E3843F9CE92A4FCFD919",
+ "command": {
+  "find": "candles_1d_buckets",
+  "filter": {
+   "date": {
+    "$date": "2021-05-19T00:00:00Z"
+   }
+  },
+  "$db": "bigdata_db"
+ },
+ "serverInfo": {
+  "host": "vm",
+  "port": 27017,
+  "version": "8.3.7",
+  "gitVersion": "nogitversion"
+ },
+ "serverParameters": {
+  "internalQueryFacetBufferSizeBytes": 104857600,
+  "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+  "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+  "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+  "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+  "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+  "internalQueryProhibitBlockingMergeOnMongoS": 0,
+  "internalQueryMaxAddToSetBytes": 104857600,
+  "internalQueryFrameworkControl": "trySbeRestricted",
+  "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+ },
+ "ok": 1.0
+}

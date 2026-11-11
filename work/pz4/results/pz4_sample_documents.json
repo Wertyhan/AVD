@@ -1,0 +1,125 @@
+{
+  "candles_1m": {
+    "_id": {
+      "$oid": "6af475ae426db41c0efb3ed1"
+    },
+    "ts": {
+      "$date": "2012-01-01T00:01:00Z"
+    },
+    "unix": 1325376060,
+    "open": 4.58,
+    "high": 4.58,
+    "low": 4.58,
+    "close": 4.58,
+    "volume": 0.0
+  },
+  "candles_1m_ts": {
+    "ts": {
+      "$date": "2012-01-01T00:01:00Z"
+    },
+    "meta": {
+      "symbol": "BTCUSD"
+    },
+    "volume": 0.0,
+    "high": 4.58,
+    "_id": {
+      "$oid": "6af47625426db41c0e72842a"
+    },
+    "unix": 1325376060,
+    "low": 4.58,
+    "close": 4.58,
+    "open": 4.58
+  },
+  "candles_1h": {
+    "_id": {
+      "$oid": "6af47689426db41c0ee9c983"
+    },
+    "ts": {
+      "$date": "2012-01-01T00:00:00Z"
+    },
+    "open": 4.58,
+    "high": 4.58,
+    "low": 4.58,
+    "close": 4.58,
+    "volume": 0.0
+  },
+  "candles_1d": {
+    "_id": {
+      "$oid": "6af4768b426db41c0eebc667"
+    },
+    "date": {
+      "$date": "2012-01-01T00:00:00Z"
+    },
+    "year": 2012,
+    "month": 1,
+    "open": 4.58,
+    "high": 5.0,
+    "low": 4.58,
+    "close": 5.0,
+    "volume": 21.602,
+    "n_minutes": 1439
+  },
+  "candles_1d_buckets": {
+    "_id": {
+      "$oid": "6af47693426db41c0eebdb9c"
+    },
+    "date": {
+      "$date": "2012-01-01T00:00:00Z"
+    },
+    "year": 2012,
+    "month": 1,
+    "n_hours": 24,
+    "hours": [
+      {
+        "hour": 0,
+        "open": 4.58,
+        "high": 4.58,
+        "low": 4.58,
+        "close": 4.58,
+        "volume": 0.0
+      },
+      {
+        "hour": 1,
+        "open": 4.58,
+        "high": 4.58,
+        "low": 4.58,
+        "close": 4.58,
+        "volume": 0.0
+      },
+      {
+        "...": "ще 22 годин"
+      }
+    ]
+  },
+  "spark_daily_features": {
+    "_id": {
+      "$oid": "6af47694426db41c0eebf0d1"
+    },
+    "date": {
+      "$date": "2012-01-01T00:00:00Z"
+    },
+    "open": 4.58,
+    "high": 5.0,
+    "low": 4.58,
+    "close": 5.0,
+    "volume": 21.602,
+    "n_minutes": 1439,
+    "n_flat": 1436,
+    "rv": 0.06408224419624328,
+    "std_ret_1m": 0.0016893750149423543,
+    "vol60_mean": 0.0004729455169509112,
+    "max_rel_range_1m": 0.0,
+    "ret_1d": null,
+    "hl_rel": 0.09170305676855893,
+    "flat_share": 0.9979152189020153,
+    "is_complete": 0,
+    "log_volume": 3.118038397937959,
+    "vol_7d": null,
+    "vol_30d": null,
+    "ma_7": 5.0,
+    "ma_30": 5.0,
+    "dow": 1,
+    "year": 2012,
+    "month": 1
+  }
+}
