@@ -1,4 +1,4 @@
-$ mongosh bigdata_db --quiet --eval 'db.candles_1m.aggregate([{$limit:1},{$project:{ts:{$type:'$ts'},unix:{$type:'$unix'},open:{$type:'$open'}}}]) ...'
+$ mongosh --quiet --eval 'printjson(db.candles_1m.aggregate([{$limit:1},{$project:{_id:0,ts:{$type:"$ts"},unix:{$type:"$unix"},open:{$type:"$open"},volume:{$type:"$volume"}}}]).toArray()[0]); printjson(db.candles_1d.aggregate([{$limit:1},{$project:{_id:0,date:{$type:"$date"},year:{$type:"$year"},n_minutes:{$type:"$n_minutes"}}}]).toArray()[0])' bigdata_db
 {
   ts: 'date',
   unix: 'long',

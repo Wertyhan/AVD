@@ -673,3 +673,15 @@ $ hive -S -f /home/user/AVD/work/pz1/code/hive_03b_monthly.hql
 $ hive -S -f /home/user/AVD/work/pz1/code/hive_04_daily_struct.hql
 
 $ hive -S -f /home/user/AVD/work/pz1/code/hive_06_daily_count.hql
+  [скріншот/screenshot] 23_hive_daily_table.png
+daily_rows
+5429
+trade_date	open	high	low	close	volume	candles
+2012-01-01	4.58	5.0	4.58	5.0	21.602	1439
+2012-01-02	5.0	5.0	5.0	5.0	19.048	1440
+2012-01-03	5.0	5.32	5.0	5.29	88.03728091999999	1440
+2012-01-04	5.29	5.57	4.93	5.57	107.23326023	1440
+2012-01-05	5.57	6.65	5.57	6.65	94.80182926	1440
+
+
+$ hive -S -f /home/user/AVD/work/pz1/code/hive_05a_top_volume.hql

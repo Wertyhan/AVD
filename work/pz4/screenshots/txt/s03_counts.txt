@@ -1,4 +1,4 @@
-$ mongosh bigdata_db --quiet --eval 'db.getCollectionNames()...forEach(n => print(n, db[n].countDocuments({})))'
+$ mongosh --quiet --eval 'db.getCollectionNames().filter(n=>!n.startsWith("system.")).forEach(n => print(n.padEnd(22), db[n].countDocuments({})))' bigdata_db
 anomalies              108119
 candles_1h             130276
 candles_1d             5429

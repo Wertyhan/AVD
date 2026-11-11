@@ -1,4 +1,5 @@
-$ python3 code/pz4_load.py  (фрагмент виводу)
+$ grep -E '^\{|^DONE|7200000| 0s$' results/load.log | tail -c 4000
+# журнал завантаження results/load.log (відфільтровані ключові рядки)
 candles_1m 0 7816537 0s
 candles_1m 7200000 7816537 92s
 {'collection': 'candles_1m', 'docs': 7816537, 'batch_size': 20000, 'build_docs_s': 18.17, 'insert_s': 99.57, 'insert_docs_per_s': 78504, 'total_s': 117.74}

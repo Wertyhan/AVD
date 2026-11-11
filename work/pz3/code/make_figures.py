@@ -8,47 +8,10 @@ import matplotlib.dates as mdates
 P = "/home/user/AVD/work/pz3"; R = P + "/results"; F = P + "/figures"
 os.makedirs(F, exist_ok=True)
 sys.path.insert(0, P + "/code")
-from anomaly_rule import K_SEL, KV_SEL
 plt.rcParams.update({"font.size": 10, "axes.grid": True, "grid.alpha": .3, "axes.spines.top": False, "axes.spines.right": False})
 C1, C2, C3 = "#1f77b4", "#d62728", "#2ca02c"
 
-# 1. ціна та аномалії для кожного періоду
-st = pd.read_parquet(R + "/stream/scored.parquet"); st["dt"] = pd.to_datetime(st["ts"], unit="s", utc=True)
-names = {"2020-03": "9–16 березня 2020 (обвал COVID-19)", "2021-05": "17–22 травня 2021 (обвал 19.05)", "2022-11": "6–12 листопада 2022 (крах FTX)"}
-st["period"] = st["dt"].dt.strftime("%Y-%m")
-for p, g in st.groupby("period"):
-    fig, (a1, a2) = plt.subplots(2, 1, figsize=(9, 5.6), sharex=True, gridspec_kw={"height_ratios": [3, 1.3]})
-    a1.plot(g["dt"], g["close"], lw=.8, color=C1, label="ціна закриття (потік)")
-    an = g[g["anomaly"]]
-    a1.scatter(an["dt"], an["close"], s=22, c=C2, zorder=3, label=f"аномалії (k={K_SEL}, k_v={KV_SEL}): {len(an)}")
-    a1.set_ylabel("Close, USD"); a1.set_title(f"Потік і виявлені аномалії: {names.get(p, p)}"); a1.legend(loc="best")
-    a2.plot(g["dt"], g["z_ret"], lw=.6, color="gray", label="z = |r|/(1,4826·MAD)")
-    a2.axhline(K_SEL, color=C2, ls="--", lw=1, label=f"поріг k={K_SEL}")
-    a2.set_ylabel("z"); a2.set_xlabel("час UTC"); a2.legend(loc="upper right")
-    a2.xaxis.set_major_formatter(mdates.DateFormatter("%d.%m %H:%M")); fig.autofmt_xdate(); fig.tight_layout()
-    fig.savefig(f"{F}/pz3_price_anomalies_{p}.png", dpi=150); plt.close(fig)
-
-# 2. k проти кількості спрацювань
-sel = pd.read_csv(R + "/pz3_threshold_selection.csv")
-fig, ax = plt.subplots(1, 2, figsize=(10, 4))
-for a, rule, ttl, ksel in ((ax[0], "return", "Правило за дохідністю: z > k", K_SEL), (ax[1], "volume", "Правило за обсягом: V/медіана > k_v", KV_SEL)):
-    s = sel[sel.rule == rule]
-    a.plot(s.k, s.share_2018plus_pct, "o-", color=C1, label="2018+ (ліквідна ера)")
-    a.plot(s.k, s.share_full_pct, "s--", color="gray", label="уся історія")
-    a.axhline(0.15, color=C2, ls=":", label="бюджет 0,15 %")
-    a.axvline(ksel, color=C3, ls="--", label=f"обране = {ksel}")
-    a.set_xscale("log"); a.set_yscale("log"); a.set_xlabel("поріг k" if rule == "return" else "поріг k_v")
-    a.set_ylabel("частка позначених хвилин, %"); a.set_title(ttl, fontsize=10); a.legend(fontsize=8)
-fig.tight_layout(); fig.savefig(F + "/pz3_k_vs_triggers.png", dpi=150); plt.close(fig)
-# 2b. k = k_v ∈ {3,5,7,10}: офлайн та потік
-off = pd.read_csv(R + "/pz3_trigger_counts_offline.csv"); sc = pd.read_csv(R + "/pz3_trigger_counts_stream.csv")
-sc = sc[sc.k == sc.k_v]
-fig, ax = plt.subplots(1, 2, figsize=(10, 4)); x = np.arange(4); w = .27
-for a, d, ttl in ((ax[0], off, "Уся історія (7,1 млн оцінених хвилин)"), (ax[1], sc, "Відтворений потік (30 240 хв)")):
-    a.bar(x - w, d.n_return_rule, w, label="за дохідністю", color=C1); a.bar(x, d.n_volume_rule, w, label="за обсягом", color="#ff7f0e")
-    a.bar(x + w, d.n_union, w, label="об'єднання (АБО)", color=C3)
-    a.set_xticks(x); a.set_xticklabels([f"k={k}" for k in d.k]); a.set_yscale("log"); a.set_ylabel("кількість хвилин"); a.set_title(ttl, fontsize=10); a.legend(fontsize=8)
-fig.tight_layout(); fig.savefig(F + "/pz3_trigger_counts_grid.png", dpi=150); plt.close(fig)
+# Рисунки аномалій (правило v2) – у make_figures_anomaly.py; версія v1 – make_figures_v1.py.
 
 # 3. тривалість мікробатчів і швидкість обробки
 pg = pd.read_csv(R + "/stream/progress.csv", parse_dates=["timestamp"])
@@ -92,11 +55,4 @@ ax[2].xaxis_date(); ax[2].xaxis.set_major_formatter(mdates.DateFormatter("%d.%m 
 for a in ax: plt.setp(a.get_xticklabels(), rotation=30, ha="right")
 fig.tight_layout(); fig.savefig(F + "/pz3_window_ohlc.png", dpi=150); plt.close(fig)
 
-# 5. закономірності: день тижня, година, роки
-wd = pd.read_csv(R + "/pz3_anomalies_by_weekday_2018plus.csv"); hr = pd.read_csv(R + "/pz3_anomalies_by_hour_2018plus.csv"); yr = pd.read_csv(R + "/pz3_anomalies_by_year.csv")
-fig, ax = plt.subplots(1, 3, figsize=(12, 3.8))
-ax[0].bar(["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"], wd.share_pct, color=C1); ax[0].set_title("За днем тижня (2018+)", fontsize=10); ax[0].set_ylabel("частка позначених хвилин, %")
-ax[1].bar(hr.hour, hr.share_pct, color=C1); ax[1].set_title("За годиною доби UTC (2018+)", fontsize=10); ax[1].set_xlabel("година UTC")
-ax[2].bar(yr.year.astype(str), yr.share_pct, color="#ff7f0e"); ax[2].set_title("За роками (уся історія)", fontsize=10); plt.setp(ax[2].get_xticklabels(), rotation=60)
-fig.tight_layout(); fig.savefig(F + "/pz3_patterns.png", dpi=150); plt.close(fig)
 print("figures done", os.listdir(F))

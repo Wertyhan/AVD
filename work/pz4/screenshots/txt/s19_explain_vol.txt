@@ -1,8 +1,8 @@
-$ mongosh bigdata_db --quiet --eval 'q = db.candles_1m.find().sort({volume:-1}).limit(10); q.hint({$natural:1}).explain('executionStats') vs q.explain('executionStats')'
+$ mongosh --quiet bigdata_db --file code/s19_explain_vol.js
 BEFORE (hint $natural):
 {
   stage: 'COLLSCAN <- SORT',
-  executionTimeMillis: 3937,
+  executionTimeMillis: 4153,
   totalDocsExamined: 7816537,
   totalKeysExamined: 0,
   nReturned: 10
@@ -10,7 +10,7 @@ BEFORE (hint $natural):
 AFTER (index):
 {
   stage: 'IXSCAN <- FETCH <- LIMIT',
-  executionTimeMillis: 1,
+  executionTimeMillis: 0,
   totalDocsExamined: 10,
   totalKeysExamined: 10,
   nReturned: 10

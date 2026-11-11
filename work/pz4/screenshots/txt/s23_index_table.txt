@@ -1,4 +1,4 @@
-$ python3 -c "print(pd.read_csv('results/pz4_index_comparison.csv')[[...]])"
+$ python3 -c "import pandas as pd; pd.set_option('display.width',200); t=pd.read_csv('results/pz4_index_comparison.csv'); print(t[['experiment','phase','executionTimeMillis_explain_median','totalDocsExamined','totalKeysExamined','nReturned','winning_plan']].to_string(index=False))"
     experiment phase  executionTimeMillis_explain_median  totalDocsExamined  totalKeysExamined  nReturned           winning_plan
   E1_range_day    до                                5939            7816537                  0       1440        SORT > COLLSCAN
   E1_range_day після                                   1               1440               1440       1440         FETCH > IXSCAN

@@ -56,7 +56,7 @@ for i, (lvl, nm, col) in enumerate((("minute", "хвилини", C2), ("15m_wind
     for xi, val in zip(x + (i - 1) * w, d["lift"]):
         ax.text(xi, val, dec(val, 1), ha="center", va="bottom", fontsize=6.5)
 ax.axhline(1, color="k", lw=.8, ls=":")
-ax.set_xticks(x); ax.set_xticklabels([g.replace(" (", "\n(") for g in groups], fontsize=7.5)
+ax.set_xticks(x); ax.set_xticklabels([g.split(" (")[0].replace("період ", "період\n").replace("усі 5 днів подій", "усі 5 днів\nподій") for g in groups], fontsize=8)
 ax.set_ylabel("lift (база: дні 2018+ без подій)"); ax.set_title(f"Концентрація аномалій у днях відомих подій (k={K_SEL})", fontsize=10); ax.legend(fontsize=8)
 fig.tight_layout(); fig.savefig(F + "/pz3_lift.png", dpi=150); plt.close(fig)
 

@@ -1,8 +1,9 @@
-$ mongosh bigdata_db --quiet --eval 'q = db.anomalies.find({date:{...2021}}).sort({score:-1}).limit(20); q.hint({$natural:1}).explain('executionStats') vs q.explain('executionStats')'
+$ mongosh --quiet bigdata_db --file code/s20_explain_anom.js
+# anomalies = v1 (залежить від перезапуску ПЗ3)
 BEFORE (hint $natural):
 {
   stage: 'COLLSCAN <- SORT',
-  executionTimeMillis: 65,
+  executionTimeMillis: 79,
   totalDocsExamined: 108119,
   totalKeysExamined: 0,
   nReturned: 20
