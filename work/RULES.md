@@ -16,6 +16,7 @@
 1. Every number in a report comes from real program output and exists in `work/pzN/results/`. Nothing invented.
 2. Screenshots are REAL: actual command output rendered to PNG as a terminal image (dark background, monospace, the command line shown with a `$` prompt followed by its actual output), or real web UIs (Spark UI :4040, NameNode :9870, YARN :8088) captured via headless Chromium/playwright. No imitations, no edited output.
 2a. Screenshot legibility (printed at 16 cm width, text must be ≥ 8 pt): terminal PNGs wrap/trim lines to ≤ 90 characters and ≤ 35 lines, monospace font sized so that 90 columns span the full image width (e.g. 1600 px wide with ~30 px font, i.e. image width ≈ 90 × char width + padding); no empty right area. Web UI screenshots: viewport 1280×800, device_scale_factor 2, and capture only the relevant region (element/clip screenshot of the table/chart, not the whole page with empty space).
+2b. Chart legibility: matplotlib figures are made at their print size — figsize=(6.3, 3.4) inches (16 × 8,5 cm) or (6.3, 4.7) for two-panel — with font sizes ≥ 9 pt (ticks 9, labels/legend 10, title 11), dpi 200; Ukrainian labels; decimal comma in tick labels and annotations (use a FuncFormatter).
 3. Anything that could not be run here = placeholder `[СКРІНШОТ: опис]` or `[ЗАПОВНИТИ ПІСЛЯ ЗАПУСКУ]`. Never fill placeholders with guesses.
 4. If something failed or did not beat a baseline, say so and explain why.
 

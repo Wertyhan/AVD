@@ -612,7 +612,7 @@ def ui_screens():
             pg.wait_for_timeout(500)
             snap(pg, sel, f"{SHOTS}/spark_ui_{k}.png")
         # деталі SQL-запиту: DAG знімається як елемент графа
-        for label, fn in (("lazy_action_noop_write_run1", "spark_ui_sql_detail"), ("sql_q5_max_volume_day_per_year", "spark_ui_sql_detail_q5")):
+        for label, fn in (("lazy_action_noop_write_run1", "spark_ui_sql_detail"), ("sql_q1_year_stats", "spark_ui_sql_detail_q1")):
             i = exec_id(label)
             if i is None: print("SQL execution not found:", label); continue
             pg.goto(f"{sc.uiWebUrl}/SQL/execution/?id={i}", wait_until="load")

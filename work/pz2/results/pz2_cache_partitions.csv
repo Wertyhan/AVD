@@ -1,7 +1,0 @@
-round,rdd_name,numPartitions,numCachedPartitions,memoryUsed_bytes,diskUsed_bytes
-1,"AdaptiveSparkPlan isFinalPlan=false
-+- W",16,16,378135828,0
-2,"AdaptiveSparkPlan isFinalPlan=false
-+- W",16,16,378135828,0
-3,"AdaptiveSparkPlan isFinalPlan=false
-+- W",16,16,378135828,0

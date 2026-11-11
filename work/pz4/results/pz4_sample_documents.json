@@ -85,15 +85,12 @@
         "low": 4.58,
         "close": 4.58,
         "volume": 0.0
-      },
-      {
-        "...": "ще 22 годин"
       }
     ]
   },
   "spark_daily_features": {
     "_id": {
-      "$oid": "6af47694426db41c0eebf0d1"
+      "$oid": "6af4f534303cc092a44bc378"
     },
     "date": {
       "$date": "2012-01-01T00:00:00Z"

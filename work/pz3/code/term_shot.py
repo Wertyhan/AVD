@@ -9,6 +9,7 @@ ap.add_argument("out"); ap.add_argument("--cmd", required=True); ap.add_argument
 ap.add_argument("--head", type=int, default=0); ap.add_argument("--tail", type=int, default=0)
 ap.add_argument("--grep", default=""); ap.add_argument("--width", type=int, default=125)
 ap.add_argument("--comment", default="")
+ap.add_argument("--save", default="", help="зберегти сирий вивід команди у файл")
 ap.add_argument("--run", action="store_true", help="виконати --cmd у shell і зняти вивід")
 a = ap.parse_args()
 if a.from_file:
@@ -17,6 +18,8 @@ else:
     env = dict(os.environ); env.pop("JAVA_TOOL_OPTIONS", None)
     txt = subprocess.run(a.cmd, shell=True, capture_output=True, text=True, env=env, timeout=120, executable="/bin/bash")
     txt = txt.stdout + txt.stderr
+if a.save:
+    open(a.save, "w").write(txt)
 lines = txt.replace("\t", "    ").splitlines()
 if a.grep:
     import re

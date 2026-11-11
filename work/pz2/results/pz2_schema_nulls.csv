@@ -1,7 +1,0 @@
-field,spark_type_inferred,spark_type_explicit,null_count,nan_count
-Timestamp,int,bigint,0,0
-Open,double,double,0,0
-High,double,double,0,0
-Low,double,double,0,0
-Close,double,double,0,0
-Volume,double,double,0,0

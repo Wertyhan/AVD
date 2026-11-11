@@ -1,0 +1,23 @@
+object,metric,bytes,MiB,MB,ratio_to_csv_bytes,loadavg_1m
+CSV btcusd_1-min_data.csv,файл,396849494,378.47,396.85,1.0,7.39
+candles_1m,size (BSON без стиснення; для TS - бакети),937984440,894.53,937.98,2.364,7.39
+candles_1m,storageSize (на диску),401653760,383.05,401.65,1.012,7.39
+candles_1m,totalIndexSize,293675008,280.07,293.68,0.74,7.39
+candles_1m_ts,size (BSON без стиснення; для TS - бакети),80672930,76.94,80.67,0.203,7.39
+candles_1m_ts,storageSize (на диску),72679424,69.31,72.68,0.183,7.39
+candles_1m_ts,totalIndexSize,466944,0.45,0.47,0.001,7.39
+candles_1h,size (BSON без стиснення; для TS - бакети),13809256,13.17,13.81,0.035,7.39
+candles_1h,storageSize (на диску),6877184,6.56,6.88,0.017,7.39
+candles_1h,totalIndexSize,2854912,2.72,2.85,0.007,7.39
+candles_1d,size (BSON без стиснення; для TS - бакети),781776,0.75,0.78,0.002,7.39
+candles_1d,storageSize (на диску),311296,0.3,0.31,0.001,7.39
+candles_1d,totalIndexSize,266240,0.25,0.27,0.001,7.39
+candles_1d_buckets,size (BSON без стиснення; для TS - бакети),12246010,11.68,12.25,0.031,7.39
+candles_1d_buckets,storageSize (на диску),5509120,5.25,5.51,0.014,7.39
+candles_1d_buckets,totalIndexSize,151552,0.14,0.15,0.0,7.39
+spark_daily_features,size (BSON без стиснення; для TS - бакети),2138986,2.04,2.14,0.005,7.39
+spark_daily_features,storageSize (на диску),1007616,0.96,1.01,0.003,7.39
+spark_daily_features,totalIndexSize,151552,0.14,0.15,0.0,7.39
+anomalies,size (BSON без стиснення; для TS - бакети),1669159,1.59,1.67,0.004,7.39
+anomalies,storageSize (на диску),663552,0.63,0.66,0.002,7.39
+anomalies,totalIndexSize,258048,0.25,0.26,0.001,7.39

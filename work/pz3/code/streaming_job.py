@@ -165,7 +165,7 @@ def collect():
                 "query": key, "batch_id": p["batchId"], "timestamp": p["timestamp"],
                 "num_input_rows": p["numInputRows"], "input_rows_per_s": p.get("inputRowsPerSecond"),
                 "processed_rows_per_s": p.get("processedRowsPerSecond"),
-                "trigger_execution_ms": p["durationMs"].get("triggerExecution"),
+                "trigger_execution_ms": p["durationMs"].get("triggerExecution", sum(v for k2, v in p["durationMs"].items() if k2 != "triggerExecution")),   # якщо поля немає – сума фаз
                 "add_batch_ms": p["durationMs"].get("addBatch"),
                 "get_batch_ms": p["durationMs"].get("getBatch"),
                 "watermark": (p.get("eventTime") or {}).get("watermark")}
@@ -214,8 +214,8 @@ pd.DataFrame(list(PROG.values())).sort_values(["query", "batch_id"]).to_csv(os.p
 # сирий прогрес усіх мікробатчів (джерело для watermark, droppedByWatermark, швидкостей) і lastProgress кожного запиту
 with open(os.path.join(a.out, "progress_raw.jsonl"), "w") as f:
     for (k, bid), p in sorted(RAW.items()):
-        f.write(json.dumps({"query": k, **p}, ensure_ascii=False) + "\n")
-json.dump({k: q.lastProgress for k, q in Q.items()}, open(os.path.join(a.out, "lastProgress.json"), "w"), indent=1, ensure_ascii=False)
+        f.write(json.dumps({"query": k, **p}, ensure_ascii=False, default=str) + "\n")
+json.dump({k: q.lastProgress for k, q in Q.items()}, open(os.path.join(a.out, "lastProgress.json"), "w"), indent=1, ensure_ascii=False, default=str)
 if LAT_ALL:
     pd.concat(LAT_ALL, ignore_index=True).to_parquet(os.path.join(a.out, "latency_per_message.parquet"), index=False)
 pd.DataFrame(BATCH_LOG).to_csv(os.path.join(a.out, "batch_stats.csv"), index=False)
