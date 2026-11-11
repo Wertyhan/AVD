@@ -1,4 +1,4 @@
-$ mongosh --quiet --eval 'print('"'"'1m null/missing close:'"'"', db.candles_1m.countDocuments({$or:[{close:null},{close:{$exists:false}}]})); print('"'"'1m volume==0:'"'"', db.candles_1m.countDocuments({volume:0})); print('"'"'spark ret_1d null:'"'"', db.spark_daily_features.countDocuments({ret_1d:null})); print('"'"'spark vol_30d null:'"'"', db.spark_daily_features.countDocuments({vol_30d:null}))' bigdata_db
+$ mongosh --quiet --eval 'print("1m null/missing close:", db.candles_1m.countDocuments({$or:[{close:null},{close:{$exists:false}}]})); print("1m volume==0:", db.candles_1m.countDocuments({volume:0})); print("spark ret_1d null:", db.spark_daily_features.countDocuments({ret_1d:null})); print("spark vol_30d null:", db.spark_daily_features.countDocuments({vol_30d:null}))' bigdata_db
 1m null/missing close: 0
 1m volume==0: 1312419
 spark ret_1d null: 1

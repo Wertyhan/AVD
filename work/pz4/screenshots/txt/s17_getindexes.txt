@@ -1,41 +1,34 @@
-$ mongosh --quiet --eval 'for (const c of ['"'"'candles_1m'"'"','"'"'candles_1h'"'"','"'"'candles_1d'"'"','"'"'candles_1d_buckets'"'"','"'"'spark_daily_features'"'"','"'"'anomalies'"'"']) { print('"'"'// '"'"' + c); printjson(db[c].getIndexes()) }' bigdata_db
+$ mongosh --quiet --eval 'for (const c of ["candles_1m","candles_1h","candles_1d","candles_1d_buckets","spark_daily_features","anomalies"]) { print("// " + c); console.log(db[c].getIndexes()) }' bigdata_db
 // candles_1m
 [
-  {
-    v: 2,
-    key: {
-      _id: 1
-    },
-    name: '_id_'
-  },
-  {
-    v: 2,
-    key: {
-      volume: -1
-    },
-    name: 'volume_-1'
-  },
-  {
-    v: 2,
-    key: {
-      ts: 1
-    },
-    name: 'ts_1'
-  }
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { volume: -1 }, name: 'volume_-1' },
+  { v: 2, key: { ts: 1 }, name: 'ts_1' }
 ]
 // candles_1h
 [
-  {
-    v: 2,
-    key: {
-      _id: 1
-    },
-    name: '_id_'
-  },
-  {
-    v: 2,
-    key: {
-      ts: 1
-    },
-    name: 'ts_1'
-… (ще 86 рядків)
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { ts: 1 }, name: 'ts_1' }
+]
+// candles_1d
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { year: 1, volume: -1 }, name: 'year_1_volume_-1' },
+  { v: 2, key: { date: 1 }, name: 'date_1' }
+]
+// candles_1d_buckets
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { date: 1 }, name: 'date_1' }
+]
+// spark_daily_features
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { date: 1 }, name: 'date_1' }
+]
+// anomalies
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { date: 1, score: -1 }, name: 'date_1_score_-1' },
+  { v: 2, key: { year: 1 }, name: 'year_1' }
+]
