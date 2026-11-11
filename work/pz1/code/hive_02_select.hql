@@ -14,5 +14,8 @@ WHERE volume > 1000
 ORDER BY volume DESC
 LIMIT 10;
 
+-- контроль пропуску заголовка: рядків у самій таблиці (без подання)
+SELECT COUNT(*) AS raw_rows FROM candles;
+
 -- кількість свічок
 SELECT COUNT(*) AS total_candles FROM candles_v;

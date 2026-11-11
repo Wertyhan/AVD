@@ -42,12 +42,12 @@ with sync_playwright() as p:
     shot(b, f'{nn}/explorer.html#/user/root/btc', '33_ui_namenode_browse_btc', '.page-header', '#table-explorer')
     shot(b, f'{nn}/explorer.html#/user/root/btc/raw', '34_ui_namenode_browse_raw', '.page-header', '#table-explorer')
     if ONLY_JH: pass
-    else: shot(b, f'{rm}/cluster/apps', '36_ui_yarn_applications', 'table.metricsoverview', 'table#apps', hide_apps=True)
-    shot(b, f'{rm}/cluster/nodes', '37_ui_yarn_nodes', 'table.metricsoverview', 'table#nodes')
+    else: shot(b, f'{rm}/cluster/apps', '36_ui_yarn_applications', 'table#metricsoverview', 'table#apps', hide_apps=True)
+    shot(b, f'{rm}/cluster/nodes', '37_ui_yarn_nodes', 'table#metricsoverview', 'table#nodes')
     for k, (n1, n2, n3) in {'word': (38, 39, 40), 'mr_daily_ohlc': (41, 42, 43), 'mr_yearly': (44, 45, 46)}.items():
         i = APP[k]
-        if not ONLY_JH: shot(b, f'{rm}/cluster/app/application_{i}', f'{n1}_ui_yarn_app_{k}', 'table.info', 'table.attempts')
-        shot(b, f'{jh}/jobhistory/job/job_{i}', f'{n2}_ui_jobhistory_{k}', 'table.info', 'table.job', nth_last=True)
-        shot(b, f'{jh}/jobhistory/jobcounters/job_{i}', f'{n3}_ui_jobhistory_counters_{k}', 'table.counters')
-    shot(b, f'{jh}/jobhistory', '47_ui_jobhistory_list', 'table.jobs')
+        if not ONLY_JH: shot(b, f'{rm}/cluster/app/application_{i}', f'{n1}_ui_yarn_app_{k}', 'table#info', 'table#attempts')
+        shot(b, f'{jh}/jobhistory/job/job_{i}', f'{n2}_ui_jobhistory_{k}', 'table#info', 'table#job', nth_last=True)
+        shot(b, f'{jh}/jobhistory/jobcounters/job_{i}', f'{n3}_ui_jobhistory_counters_{k}', 'table#counters')
+    shot(b, f'{jh}/jobhistory', '47_ui_jobhistory_list', 'table#jobs')
     b.close()

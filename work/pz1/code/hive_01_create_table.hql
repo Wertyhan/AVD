@@ -18,7 +18,7 @@ CREATE EXTERNAL TABLE candles (
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
 STORED AS TEXTFILE
 LOCATION '/user/root/btc/raw'
-TBLPROPERTIES ('skip.header.line.number'='1');   -- пропустити рядок із назвами стовпців
+TBLPROPERTIES ("skip.header.line.count"="1");   -- пропустити рядок із назвами стовпців (властивість Hive)
 
 -- Подання з датою UTC (без залежності від часового поясу сесії Hive)
 -- та фільтром пропущених значень (аналог dropna у Pandas).
@@ -29,4 +29,3 @@ FROM candles
 WHERE ts IS NOT NULL AND open IS NOT NULL AND high IS NOT NULL
   AND low IS NOT NULL AND close IS NOT NULL AND volume IS NOT NULL;
 
-DESCRIBE FORMATTED candles;

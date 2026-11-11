@@ -1,0 +1,2 @@
+check,rows_hive,rows_mr,match
+hive_yearly_vs_mapreduce,15,15,True
