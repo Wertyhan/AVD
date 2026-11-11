@@ -1,0 +1,8 @@
+$ mongosh bigdata_db --quiet --eval 'db.getCollectionNames()...forEach(n => print(n, db[n].countDocuments({})))'
+anomalies              108119
+candles_1h             130276
+candles_1d             5429
+candles_1m             7816537
+candles_1m_ts          7816537
+candles_1d_buckets     5429
+spark_daily_features   5429

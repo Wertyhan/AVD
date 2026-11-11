@@ -1,0 +1,4 @@
+index,key
+_id_,"[('_id', 1)]"
+date_1_score_-1,"[('date', 1), ('score', -1)]"
+year_1,"[('year', 1)]"

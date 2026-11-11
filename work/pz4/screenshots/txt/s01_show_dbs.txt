@@ -1,0 +1,6 @@
+$ mongosh admin --quiet --eval 'show dbs'
+admin        40.00 KiB
+bigdata_db  761.01 MiB
+config      108.00 KiB
+local        72.00 KiB
+t            60.00 KiB

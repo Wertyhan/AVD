@@ -1,0 +1,171 @@
+{
+ "explainVersion": "1",
+ "queryPlanner": {
+  "namespace": "bigdata_db.anomalies",
+  "parsedQuery": {
+   "$and": [
+    {
+     "date": {
+      "$lt": {
+       "$date": "2022-01-01T00:00:00Z"
+      }
+     }
+    },
+    {
+     "date": {
+      "$gte": {
+       "$date": "2021-01-01T00:00:00Z"
+      }
+     }
+    }
+   ]
+  },
+  "indexFilterSet": false,
+  "queryHash": "9824B24E",
+  "planCacheShapeHash": "9824B24E",
+  "planCacheKey": "97DE7DD4",
+  "optimizationTimeMillis": 0,
+  "maxIndexedOrSolutionsReached": false,
+  "maxIndexedAndSolutionsReached": false,
+  "maxScansToExplodeReached": false,
+  "prunedSimilarIndexes": false,
+  "winningPlan": {
+   "isCached": false,
+   "stage": "SORT",
+   "sortPattern": {
+    "score": -1
+   },
+   "memLimit": 104857600,
+   "limitAmount": 20,
+   "type": "simple",
+   "inputStage": {
+    "stage": "COLLSCAN",
+    "filter": {
+     "$and": [
+      {
+       "date": {
+        "$lt": {
+         "$date": "2022-01-01T00:00:00Z"
+        }
+       }
+      },
+      {
+       "date": {
+        "$gte": {
+         "$date": "2021-01-01T00:00:00Z"
+        }
+       }
+      }
+     ]
+    },
+    "nss": "bigdata_db.anomalies",
+    "direction": "forward"
+   }
+  },
+  "rejectedPlans": []
+ },
+ "executionStats": {
+  "executionSuccess": true,
+  "nReturned": 20,
+  "executionTimeMillis": 70,
+  "totalKeysExamined": 0,
+  "totalDocsExamined": 108119,
+  "executionStages": {
+   "isCached": false,
+   "stage": "SORT",
+   "nReturned": 20,
+   "executionTimeMillisEstimate": 63,
+   "works": 108141,
+   "advanced": 20,
+   "needTime": 108120,
+   "needYield": 0,
+   "saveState": 3,
+   "restoreState": 3,
+   "isEOF": 1,
+   "sortPattern": {
+    "score": -1
+   },
+   "memLimit": 104857600,
+   "limitAmount": 20,
+   "type": "simple",
+   "totalDataSizeSorted": 4847,
+   "usedDisk": false,
+   "spills": 0,
+   "spilledRecords": 0,
+   "spilledBytes": 0,
+   "spilledDataStorageSize": 0,
+   "peakTrackedMemBytes": 4854,
+   "inputStage": {
+    "stage": "COLLSCAN",
+    "filter": {
+     "$and": [
+      {
+       "date": {
+        "$lt": {
+         "$date": "2022-01-01T00:00:00Z"
+        }
+       }
+      },
+      {
+       "date": {
+        "$gte": {
+         "$date": "2021-01-01T00:00:00Z"
+        }
+       }
+      }
+     ]
+    },
+    "nReturned": 270,
+    "executionTimeMillisEstimate": 63,
+    "works": 108120,
+    "advanced": 270,
+    "needTime": 107849,
+    "needYield": 0,
+    "saveState": 3,
+    "restoreState": 3,
+    "isEOF": 1,
+    "nss": "bigdata_db.anomalies",
+    "direction": "forward",
+    "docsExamined": 108119
+   }
+  }
+ },
+ "queryShapeHash": "88F869DC7317C73F3A7B1D4337B15D1C7A217158898551EB6C262F3464CC4F05",
+ "command": {
+  "find": "anomalies",
+  "filter": {
+   "date": {
+    "$gte": {
+     "$date": "2021-01-01T00:00:00Z"
+    },
+    "$lt": {
+     "$date": "2022-01-01T00:00:00Z"
+    }
+   }
+  },
+  "sort": {
+   "score": -1
+  },
+  "limit": 20,
+  "$db": "bigdata_db"
+ },
+ "serverInfo": {
+  "host": "vm",
+  "port": 27017,
+  "version": "8.3.7",
+  "gitVersion": "nogitversion"
+ },
+ "serverParameters": {
+  "internalQueryFacetBufferSizeBytes": 104857600,
+  "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+  "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+  "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+  "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+  "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+  "internalQueryProhibitBlockingMergeOnMongoS": 0,
+  "internalQueryMaxAddToSetBytes": 104857600,
+  "internalQueryFrameworkControl": "trySbeRestricted",
+  "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+ },
+ "ok": 1.0
+}

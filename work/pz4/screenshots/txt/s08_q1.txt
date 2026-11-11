@@ -1,0 +1,43 @@
+$ mongosh bigdata_db --quiet --eval 'db.candles_1d.find({date:{$gte:ISODate('2021-01-01'),$lt:ISODate('2022-01-01')},close:{$gt:60000}},{_id:0,date:1,close:1,volume:1}).sort({date:1}).limit(8)'
+[
+  {
+    date: ISODate('2021-03-13T00:00:00.000Z'),
+    close: 61165.19,
+    volume: 6187.83400169
+  },
+  {
+    date: ISODate('2021-04-13T00:00:00.000Z'),
+    close: 63564.48,
+    volume: 5711.52676941
+  },
+  {
+    date: ISODate('2021-04-14T00:00:00.000Z'),
+    close: 62986.09,
+    volume: 6002.89354304
+  },
+  {
+    date: ISODate('2021-04-15T00:00:00.000Z'),
+    close: 63239.19,
+    volume: 3433.44934498
+  },
+  {
+    date: ISODate('2021-04-16T00:00:00.000Z'),
+    close: 61436.24,
+    volume: 5778.81668659
+  },
+  {
+    date: ISODate('2021-04-17T00:00:00.000Z'),
+    close: 60032.29,
+    volume: 3091.48365756
+  },
+  {
+    date: ISODate('2021-10-15T00:00:00.000Z'),
+    close: 61657.35,
+    volume: 4205.4230703
+  },
+  {
+    date: ISODate('2021-10-16T00:00:00.000Z'),
+    close: 60870.26,
+    volume: 1263.44800176
+  }
+]

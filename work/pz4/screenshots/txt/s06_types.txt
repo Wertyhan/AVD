@@ -1,0 +1,12 @@
+$ mongosh bigdata_db --quiet --eval 'db.candles_1m.aggregate([{$limit:1},{$project:{ts:{$type:'$ts'},unix:{$type:'$unix'},open:{$type:'$open'}}}]) ...'
+{
+  ts: 'date',
+  unix: 'long',
+  open: 'double',
+  volume: 'double'
+}
+{
+  date: 'date',
+  year: 'int',
+  n_minutes: 'int'
+}

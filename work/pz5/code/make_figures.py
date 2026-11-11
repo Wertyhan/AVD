@@ -25,7 +25,7 @@ ax[1].plot(m30.index, m30.values, color="C1"); ax[1].axhline(s.label.mean(), ls=
 ax[1].set_ylabel("Частка класу 1 (30 діб)"); ax[1].legend(); ax[1].set_xlabel("Дата (UTC)")
 fig_save("fig01_target_over_time")
 
-# 2. ACF
+# 2. Автокореляційна функція (ACF)
 a = pd.read_csv(f"{R}/pz5_acf.csv"); lags = a.lag_h.values
 fig, ax = plt.subplots(1, 2, figsize=(10, 3.8), sharey=True)
 for x, col, t in ((ax[0], "acf_ret", "ACF годинних дохідностей"), (ax[1], "acf_abs_ret", "ACF модуля дохідностей |r|")):
@@ -51,7 +51,7 @@ M = pd.read_csv(f"{R}/pz5_metrics_test.csv")
 fig, ax = plt.subplots(1, 2, figsize=(10, 4.3))
 for k, sc in scores.items():
     fpr, tpr, rc, pr = roc_pr(sc, y)
-    auc = float(np.trapezoid(tpr, fpr)); ap = float(-np.sum(np.diff(rc) * pr[1:]))
+    auc = float(np.trapezoid(tpr, fpr)); ap = float(np.sum(np.diff(rc) * pr[1:]))
     ax[0].plot(fpr, tpr, color=cols[k], label=f"{k} (AUC={auc:.3f})"); ax[1].plot(rc, pr, color=cols[k], label=f"{k} (AP={ap:.3f})")
 ax[0].plot([0, 1], [0, 1], "k--", lw=.8); ax[0].set_xlabel("FPR"); ax[0].set_ylabel("TPR"); ax[0].set_title("ROC-криві (test)"); ax[0].legend()
 ax[1].axhline(y.mean(), ls="--", color="k", lw=.8, label=f"частка класу 1 = {y.mean():.3f}"); ax[1].set_xlabel("Recall"); ax[1].set_ylabel("Precision")

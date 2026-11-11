@@ -10,7 +10,7 @@ from pz4_common import *
 from pz4_common import experiment, drop_secondary
 
 db = get_db()
-SRC = f"{W}/pz3/results/pz3_anomalies.csv"
+SRC = sys.argv[1] if len(sys.argv) > 1 else f"{W}/pz3/results/pz3_anomalies.csv"   # шлях до CSV можна передати аргументом
 U = lambda *a: dt.datetime(*a, tzinfo=dt.timezone.utc)
 
 # ---------- 1. завантаження ----------

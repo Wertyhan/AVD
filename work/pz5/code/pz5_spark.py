@@ -122,7 +122,7 @@ nulls_after = m.select([F.sum(F.col(c).isNull().cast("int")).alias(c) for c in N
 nulls_after.columns = ["column", "nulls_model_rows"]
 save(nulls_before.merge(nulls_after, on="column"), "pz5_missing_values")
 
-# ---------- Chronological split 80/20 ----------
+# ---------- Хронологічний поділ 80/20 ----------
 n_train = int(N * 0.8)
 bounds = m.filter(F.col("rn").isin(1, n_train, n_train + 1, N)).select("rn", "datetime_utc").orderBy("rn").toPandas()
 train = m.filter(F.col("rn") <= n_train - EMB).cache()      # ембарго: останні 24 год навчальної частини вилучено

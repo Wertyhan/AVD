@@ -1,0 +1,5 @@
+$ mongosh bigdata_db --quiet --eval 'db.candles_1m.countDocuments({close:null}); db.candles_1m.countDocuments({volume:0}); db.spark_daily_features.countDocuments({ret_1d:null}) ...'
+1m null/missing close: 0
+1m volume==0: 1312419
+spark ret_1d null: 1
+spark vol_30d null: 2

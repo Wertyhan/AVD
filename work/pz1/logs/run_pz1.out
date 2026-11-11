@@ -17,3 +17,454 @@ OpenJDK Runtime Environment (Zulu 8.90.0.19-CA-linux64) (build 1.8.0_472-b08)
 OpenJDK 64-Bit Server VM (Zulu 8.90.0.19-CA-linux64) (build 25.472-b08, mixed mode)
 
 $ hadoop version
+Hadoop 3.3.6
+Source code repository https://github.com/apache/hadoop.git -r 1be78238728da9266a4f88195058f08fd012bf9c
+Compiled by ubuntu on 2023-06-18T08:22Z
+Compiled on platform linux-x86_64
+Compiled with protoc 3.7.1
+From source with checksum 5652179ad55f76cb287d9c633bb53bbd
+This command was run using /home/user/AVD/work/tools/hadoop-3.3.6/share/hadoop/common/hadoop-common-3.3.6.jar
+--- [install] завершено за 33.9 с / done in 33.9 s ---
+
+==============================================================================
+== [daemons] Запуск HDFS + YARN (pseudo-distributed)
+==============================================================================
+921 Jps
+
+$ hdfs --daemon start namenode
+
+$ hdfs --daemon start datanode
+
+$ yarn --daemon start resourcemanager
+
+$ yarn --daemon start nodemanager
+
+$ mapred --daemon start historyserver
+report: Call From vm/127.0.0.1 to localhost:9000 failed on connection exception: java.net.ConnectException: Connection refused; For more details see:  http://wiki.apache.org/hadoop/ConnectionRefused
+2026-11-11 17:34:39,441 INFO client.DefaultNoHARMFailoverProxyProvider: Connecting to ResourceManager at localhost/127.0.0.1:8032
+2026-11-11 17:34:41,218 INFO ipc.Client: Retrying connect to server: localhost/127.0.0.1:8032. Already tried 0 time(s); retry policy is RetryUpToMaximumCountWithFixedSleep(maxRetries=10, sleepTime=1000 MILLISECONDS)
+2026-11-11 17:34:42,224 INFO ipc.Client: Retrying connect to server: localhost/127.0.0.1:8032. Already tried 1 time(s); retry policy is RetryUpToMaximumCountWithFixedSleep(maxRetries=10, sleepTime=1000 MILLISECONDS)
+2026-11-11 17:34:43,225 INFO ipc.Client: Retrying connect to server: localhost/127.0.0.1:8032. Already tried 2 time(s); retry policy is RetryUpToMaximumCountWithFixedSleep(maxRetries=10, sleepTime=1000 MILLISECONDS)
+Total Nodes:1
+         Node-Id	     Node-State	Node-Http-Address	Number-of-Running-Containers
+ localhost:44655	        RUNNING	   localhost:8042	                           0
+Safe mode is ON
+Configured Capacity: 270553174016 (251.97 GB)
+Present Capacity: 18099437568 (16.86 GB)
+DFS Remaining: 17632681984 (16.42 GB)
+DFS Used: 466755584 (445.13 MB)
+DFS Used%: 2.58%
+Replicated Blocks:
+	Under replicated blocks: 4
+	Blocks with corrupt replicas: 0
+	Missing blocks: 0
+	Missing blocks (with replication factor 1): 0
+	Low redundancy blocks with highest priority to recover: 4
+	Pending deletion blocks: 0
+Erasure Coded Block Groups: 
+	Low redundancy block groups: 0
+	Block groups with corrupt internal blocks: 0
+	Missing block groups: 0
+	Low redundancy blocks with highest priority to recover: 0
+	Pending deletion blocks: 0
+
+-------------------------------------------------
+Live datanodes (1):
+
+Name: 127.0.0.1:9866 (localhost)
+Hostname: localhost
+Decommission Status : Normal
+Configured Capacity: 270553174016 (251.97 GB)
+DFS Used: 466755584 (445.13 MB)
+Non DFS Used: 23184097280 (21.59 GB)
+DFS Remaining: 17632681984 (16.42 GB)
+DFS Used%: 0.17%
+DFS Remaining%: 6.52%
+Configured Cache Capacity: 0 (0 B)
+Cache Used: 0 (0 B)
+Cache Remaining: 0 (0 B)
+Cache Used%: 100.00%
+Cache Remaining%: 0.00%
+Xceivers: 0
+Last contact: Wed Nov 11 17:34:44 UTC 2026
+Last Block Report: Wed Nov 11 17:34:42 UTC 2026
+Num of Blocks: 125
+
+
+2026-11-11 17:34:48,193 INFO client.DefaultNoHARMFailoverProxyProvider: Connecting to ResourceManager at localhost/127.0.0.1:8032
+Total Nodes:1
+         Node-Id	     Node-State	Node-Http-Address	Number-of-Running-Containers
+ localhost:44655	        RUNNING	   localhost:8042	                           0
+
+$ hdfs dfsadmin -safemode wait
+Safe mode is OFF
+1410 NodeManager
+1075 DataNode
+1739 JobHistoryServer
+1181 ResourceManager
+989 NameNode
+2302 Kafka
+4975 Jps
+
+$ jps
+4992 Jps
+1410 NodeManager
+1075 DataNode
+1739 JobHistoryServer
+1181 ResourceManager
+989 NameNode
+2302 Kafka
+  [скріншот/screenshot] 01_jps_daemons.png
+
+$ hdfs dfs -mkdir -p /user/root/btc/raw /user/root/btc/wc_in /user/root/btc/out /tmp /user/hive/warehouse && hdfs dfs -chmod -R 777 /tmp /user/hive
+
+$ yarn node -list
+2026-11-11 17:35:20,797 INFO client.DefaultNoHARMFailoverProxyProvider: Connecting to ResourceManager at localhost/127.0.0.1:8032
+Total Nodes:1
+         Node-Id	     Node-State	Node-Http-Address	Number-of-Running-Containers
+ localhost:44655	        RUNNING	   localhost:8042	                           0
+  [скріншот/screenshot] 02_yarn_node_list.png
+--- [daemons] завершено за 64.9 с / done in 64.9 s ---
+
+==============================================================================
+== [arch] Конфігурація кластера: dfsadmin -report, getconf
+==============================================================================
+
+$ hdfs dfsadmin -report
+Configured Capacity: 270553174016 (251.97 GB)
+Present Capacity: 18094366720 (16.85 GB)
+DFS Remaining: 17627611136 (16.42 GB)
+DFS Used: 466755584 (445.13 MB)
+DFS Used%: 2.58%
+Replicated Blocks:
+	Under replicated blocks: 4
+	Blocks with corrupt replicas: 0
+	Missing blocks: 0
+	Missing blocks (with replication factor 1): 0
+	Low redundancy blocks with highest priority to recover: 4
+	Pending deletion blocks: 0
+Erasure Coded Block Groups: 
+	Low redundancy block groups: 0
+	Block groups with corrupt internal blocks: 0
+	Missing block groups: 0
+	Low redundancy blocks with highest priority to recover: 0
+	Pending deletion blocks: 0
+
+-------------------------------------------------
+Live datanodes (1):
+
+Name: 127.0.0.1:9866 (localhost)
+Hostname: localhost
+Decommission Status : Normal
+Configured Capacity: 270553174016 (251.97 GB)
+DFS Used: 466755584 (445.13 MB)
+Non DFS Used: 23189168128 (21.60 GB)
+DFS Remaining: 17627611136 (16.42 GB)
+DFS Used%: 0.17%
+DFS Remaining%: 6.52%
+Configured Cache Capacity: 0 (0 B)
+Cache Used: 0 (0 B)
+Cache Remaining: 0 (0 B)
+Cache Used%: 100.00%
+Cache Remaining%: 0.00%
+Xceivers: 0
+Last contact: Wed Nov 11 17:35:20 UTC 2026
+Last Block Report: Wed Nov 11 17:34:42 UTC 2026
+Num of Blocks: 125
+
+
+  [скріншот/screenshot] 03_hdfs_dfsadmin_report.png
+
+$ for k in fs.defaultFS dfs.replication dfs.blocksize dfs.namenode.name.dir; do echo -n "$k = "; hdfs getconf -confKey $k; done
+fs.defaultFS = hdfs://localhost:9000
+dfs.replication = 1
+dfs.blocksize = 134217728
+dfs.namenode.name.dir = file:///home/user/AVD/work/hadoop_runtime/nn
+  [скріншот/screenshot] 04_hdfs_getconf.png
+
+$ yarn node -list -all
+2026-11-11 17:35:27,162 INFO client.DefaultNoHARMFailoverProxyProvider: Connecting to ResourceManager at localhost/127.0.0.1:8032
+Total Nodes:1
+         Node-Id	     Node-State	Node-Http-Address	Number-of-Running-Containers
+ localhost:44655	        RUNNING	   localhost:8042	                           0
+  [скріншот/screenshot] 05_yarn_nodes.png
+Configured Capacity: 270553174016 (251.97 GB)
+Present Capacity: 18091442176 (16.85 GB)
+DFS Remaining: 17624686592 (16.41 GB)
+DFS Used: 466755584 (445.13 MB)
+DFS Used%: 2.58%
+Replicated Blocks:
+	Under replicated blocks: 4
+	Blocks with corrupt replicas: 0
+	Missing blocks: 0
+	Missing blocks (with replication factor 1): 0
+	Low redundancy blocks with highest priority to recover: 4
+	Pending deletion blocks: 0
+Erasure Coded Block Groups: 
+	Low redundancy block groups: 0
+	Block groups with corrupt internal blocks: 0
+	Missing block groups: 0
+	Low redundancy blocks with highest priority to recover: 0
+	Pending deletion blocks: 0
+
+-------------------------------------------------
+Live datanodes (1):
+
+Name: 127.0.0.1:9866 (localhost)
+Hostname: localhost
+Decommission Status : Normal
+Configured Capacity: 270553174016 (251.97 GB)
+DFS Used: 466755584 (445.13 MB)
+Non DFS Used: 23192092672 (21.60 GB)
+DFS Remaining: 17624686592 (16.41 GB)
+DFS Used%: 0.17%
+DFS Remaining%: 6.51%
+Configured Cache Capacity: 0 (0 B)
+Cache Used: 0 (0 B)
+Cache Remaining: 0 (0 B)
+Cache Used%: 100.00%
+Cache Remaining%: 0.00%
+Xceivers: 0
+Last contact: Wed Nov 11 17:35:26 UTC 2026
+Last Block Report: Wed Nov 11 17:34:42 UTC 2026
+Num of Blocks: 125
+
+
+hdfs://localhost:9000
+1
+134217728
+  [csv] hdfs_cluster_config.csv: 5 рядків / rows
+--- [arch] завершено за 11.4 с / done in 11.4 s ---
+
+==============================================================================
+== [hdfs] HDFS: каталоги, put, ls, du, cat, fsck
+==============================================================================
+
+$ hdfs dfs -mkdir -p /user/root/btc/raw /user/root/btc/wc_in /user/root/btc/out && hdfs dfs -ls -R /user/root
+drwxr-xr-x   - root supergroup          0 2026-11-11 13:36 /user/root/btc
+drwxr-xr-x   - root supergroup          0 2026-11-11 14:18 /user/root/btc/out
+drwxr-xr-x   - root supergroup          0 2026-11-11 14:04 /user/root/btc/out/bench_daily
+-rw-r--r--   1 root supergroup          0 2026-11-11 14:04 /user/root/btc/out/bench_daily/_SUCCESS
+-rw-r--r--   1 root supergroup     348911 2026-11-11 14:04 /user/root/btc/out/bench_daily/part-00000
+drwxr-xr-x   - root supergroup          0 2026-11-11 14:02 /user/root/btc/out/bench_yearly
+-rw-r--r--   1 root supergroup          0 2026-11-11 14:02 /user/root/btc/out/bench_yearly/_SUCCESS
+-rw-r--r--   1 root supergroup        453 2026-11-11 14:02 /user/root/btc/out/bench_yearly/part-00000
+drwxr-xr-x   - root supergroup          0 2026-11-11 14:19 /user/root/btc/out/mr_daily_ohlc
+-rw-r--r--   1 root supergroup          0 2026-11-11 14:19 /user/root/btc/out/mr_daily_ohlc/_SUCCESS
+-rw-r--r--   1 root supergroup     348911 2026-11-11 14:19 /user/root/btc/out/mr_daily_ohlc/part-00000
+drwxr-xr-x   - root supergroup          0 2026-11-11 14:18 /user/root/btc/out/mr_yearly
+-rw-r--r--   1 root supergroup          0 2026-11-11 14:18 /user/root/btc/out/mr_yearly/_SUCCESS
+-rw-r--r--   1 root supergroup        453 2026-11-11 14:18 /user/root/btc/out/mr_yearly/part-00000
+drwxr-xr-x   - root supergroup          0 2026-11-11 14:17 /user/root/btc/out/wordcount
+-rw-r--r--   1 root supergroup          0 2026-11-11 14:17 /user/root/btc/out/wordcount/_SUCCESS
+-rw-r--r--   1 root supergroup      10901 2026-11-11 14:17 /user/root/btc/out/wordcount/part-r-00000
+drwxr-xr-x   - root supergroup          0 2026-11-11 14:16 /user/root/btc/raw
+-rw-r--r--   1 root supergroup  396849494 2026-11-11 14:16 /user/root/btc/raw/btcusd_1-min_data.csv
+drwxr-xr-x   - root supergroup          0 2026-11-11 14:17 /user/root/btc/wc_in
+-rw-r--r--   1 root supergroup      15217 2026-11-11 14:17 /user/root/btc/wc_in/LICENSE.txt
+-rw-r--r--   1 root supergroup       1541 2026-11-11 14:17 /user/root/btc/wc_in/NOTICE.txt
+  [скріншот/screenshot] 06_hdfs_mkdir_ls.png
+
+$ hdfs dfs -put -f "/home/user/AVD/work/data/raw/btcusd_1-min_data.csv" /user/root/btc/raw/btcusd_1-min_data.csv
+hdfs put: 3.7 с
+
+$ hdfs dfs -ls -h /user/root/btc/raw
+Found 1 items
+-rw-r--r--   1 root supergroup    378.5 M 2026-11-11 17:35 /user/root/btc/raw/btcusd_1-min_data.csv
+  [скріншот/screenshot] 07_hdfs_ls_raw.png
+
+$ hdfs dfs -du -h /user/root/btc
+693.0 K  693.0 K  /user/root/btc/out
+378.5 M  378.5 M  /user/root/btc/raw
+16.4 K   16.4 K   /user/root/btc/wc_in
+  [скріншот/screenshot] 08_hdfs_du.png
+
+$ hdfs dfs -cat /user/root/btc/raw/btcusd_1-min_data.csv | head -n 6
+Timestamp,Open,High,Low,Close,Volume
+1325376060,4.58,4.58,4.58,4.58,0.0
+1325376120,4.58,4.58,4.58,4.58,0.0
+1325376180,4.58,4.58,4.58,4.58,0.0
+1325376240,4.58,4.58,4.58,4.58,0.0
+1325376300,4.58,4.58,4.58,4.58,0.0
+cat: Unable to write to output stream.
+  [скріншот/screenshot] 09_hdfs_cat_head.png
+
+$ hdfs dfs -tail /user/root/btc/raw/btcusd_1-min_data.csv
+73724.51,73689.80,73724.51,0.18599458
+1794367260,73724.51,73732.87,73724.51,73732.86,0.15423271
+1794367320,73711.92,73727.94,73711.92,73721.68,0.09917356
+1794367380,73720.46,73720.46,73678.54,73678.55,0.07216467
+1794367440,73671.10,73723.70,73670.86,73709.72,0.30930095
+1794367500,73709.72,73709.72,73661.35,73668.83,0.12510119
+1794367560,73668.84,73702.61,73658.47,73700.86,0.34866325
+1794367620,73699.60,73711.07,73699.60,73711.06,0.09461094
+1794367680,73711.06,73711.06,73671.61,73671.61,0.02937193
+1794367740,73677.47,73683.92,73677.47,73677.48,0.07967093
+1794367800,73683.91,73690.02,73650.00,73667.51,0.16987690
+1794367860,73651.77,73656.47,73621.88,73621.88,0.04323504
+1794367920,73613.77,73637.53,73610.00,73637.53,0.07710301
+1794367980,73637.53,73642.49,73616.13,73642.49,0.16929401
+1794368040,73642.49,73668.66,73630.55,73657.93,0.11864145
+1794368100,73657.93,73687.75,73646.52,73680.74,0.14034717
+1794368160,73685.37,73713.61,73685.37,73700.82,0.16051845
+1794368220,73705.59,73705.59,73670.29,73671.15,0.30068415
+  [скріншот/screenshot] 10_hdfs_tail.png
+
+$ hdfs fsck /user/root/btc/raw -files -blocks -locations
+Connecting to namenode via http://localhost:9870/fsck?ugi=root&files=1&blocks=1&locations=1&path=%2Fuser%2Froot%2Fbtc%2Fraw
+FSCK started by root (auth:SIMPLE) from /127.0.0.1 for path /user/root/btc/raw at Wed Nov 11 17:35:49 UTC 2026
+
+/user/root/btc/raw <dir>
+/user/root/btc/raw/btcusd_1-min_data.csv 396849494 bytes, replicated: replication=1, 3 block(s):  OK
+0. BP-1832236554-127.0.0.1-1794404160092:blk_1073742503_1679 len=134217728 Live_repl=1  [DatanodeInfoWithStorage[127.0.0.1:9866,DS-a6bc67e1-de65-4d51-97f1-239b796dafe7,DISK]]
+1. BP-1832236554-127.0.0.1-1794404160092:blk_1073742504_1680 len=134217728 Live_repl=1  [DatanodeInfoWithStorage[127.0.0.1:9866,DS-a6bc67e1-de65-4d51-97f1-239b796dafe7,DISK]]
+2. BP-1832236554-127.0.0.1-1794404160092:blk_1073742505_1681 len=128414038 Live_repl=1  [DatanodeInfoWithStorage[127.0.0.1:9866,DS-a6bc67e1-de65-4d51-97f1-239b796dafe7,DISK]]
+
+
+Status: HEALTHY
+ Number of data-nodes:	1
+ Number of racks:		1
+ Total dirs:			1
+ Total symlinks:		0
+
+Replicated Blocks:
+ Total size:	396849494 B
+ Total files:	1
+ Total blocks (validated):	3 (avg. block size 132283164 B)
+ Minimally replicated blocks:	3 (100.0 %)
+ Over-replicated blocks:	0 (0.0 %)
+ Under-replicated blocks:	0 (0.0 %)
+ Mis-replicated blocks:		0 (0.0 %)
+ Default replication factor:	1
+ Average block replication:	1.0
+ Missing blocks:		0
+ Corrupt blocks:		0
+ Missing replicas:		0 (0.0 %)
+ Blocks queued for replication:	0
+
+Erasure Coded Block Groups:
+ Total size:	0 B
+ Total files:	0
+ Total block groups (validated):	0
+ Minimally erasure-coded block groups:	0
+ Over-erasure-coded block groups:	0
+ Under-erasure-coded block groups:	0
+ Unsatisfactory placement block groups:	0
+ Average block group size:	0.0
+ Missing block groups:		0
+ Corrupt block groups:		0
+ Missing internal blocks:	0
+ Blocks queued for replication:	0
+FSCK ended at Wed Nov 11 17:35:49 UTC 2026 in 11 milliseconds
+
+
+The filesystem under path '/user/root/btc/raw' is HEALTHY
+  [скріншот/screenshot] 11_hdfs_fsck.png
+396849494
+  [csv] hdfs_file_info.csv: 1 рядків / rows
+--- [hdfs] завершено за 20.2 с / done in 20.2 s ---
+
+==============================================================================
+== [selftest] Локальна перевірка mapper/reducer на вибірці (cat | mapper | sort | reducer)
+==============================================================================
+
+$ cat /home/user/AVD/work/hadoop_runtime/sample_200k.csv | python3 /home/user/AVD/work/pz1/code/mapper_year.py | LC_ALL=C sort -t $'\t' -k1,1 -s | python3 /home/user/AVD/work/pz1/code/reducer_year.py
+2012	200000	43515.58643506999
+
+$ cat /home/user/AVD/work/hadoop_runtime/sample_200k.csv | python3 /home/user/AVD/work/pz1/code/mapper_ohlc.py | LC_ALL=C sort -t $'\t' -k1,1 -s | python3 /home/user/AVD/work/pz1/code/reducer_ohlc.py
+2012-05-16	4.95	5.04	4.95	5.04	178.0332215	1440
+2012-05-17	5.04	5.04	5.01	5.02	611.21283218	1440
+2012-05-18	5.02	5.06	5.02	5.05	898.5893585099999	1281
+Selftest OK: роки=1, доби=139
+--- [selftest] завершено за 2.3 с / done in 2.3 s ---
+
+==============================================================================
+== [wordcount] WordCount (hadoop-mapreduce-examples) - перевірка кластера
+==============================================================================
+
+$ hdfs dfs -put -f /home/user/AVD/work/tools/hadoop-3.3.6/LICENSE.txt /home/user/AVD/work/tools/hadoop-3.3.6/NOTICE.txt /user/root/btc/wc_in/
+
+$ hdfs dfs -rm -r -f /user/root/btc/out/wordcount
+Deleted /user/root/btc/out/wordcount
+
+$ hadoop jar /home/user/AVD/work/tools/hadoop-3.3.6/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.3.6.jar wordcount /user/root/btc/wc_in /user/root/btc/out/wordcount
+		Total vcore-milliseconds taken by all map tasks=6263
+		Total vcore-milliseconds taken by all reduce tasks=2708
+		Total megabyte-milliseconds taken by all map tasks=6413312
+		Total megabyte-milliseconds taken by all reduce tasks=4159488
+	Map-Reduce Framework
+		Map input records=304
+		Map output records=1879
+		Map output bytes=23115
+		Map output materialized bytes=14478
+		Input split bytes=235
+		Combine input records=1879
+		Combine output records=798
+		Reduce input groups=748
+		Reduce shuffle bytes=14478
+		Reduce input records=798
+		Reduce output records=748
+		Spilled Records=1596
+		Shuffled Maps =2
+		Failed Shuffles=0
+		Merged Map outputs=2
+		GC time elapsed (ms)=271
+		CPU time spent (ms)=1480
+		Physical memory (bytes) snapshot=825503744
+		Virtual memory (bytes) snapshot=7743225856
+		Total committed heap usage (bytes)=872415232
+		Peak Map Physical memory (bytes)=290619392
+		Peak Map Virtual memory (bytes)=2487857152
+		Peak Reduce Physical memory (bytes)=244432896
+		Peak Reduce Virtual memory (bytes)=2770505728
+	Shuffle Errors
+		BAD_ID=0
+		CONNECTION=0
+		IO_ERROR=0
+		WRONG_LENGTH=0
+		WRONG_MAP=0
+		WRONG_REDUCE=0
+	File Input Format Counters 
+		Bytes Read=16758
+	File Output Format Counters 
+		Bytes Written=10901
+  [скріншот/screenshot] 12_wordcount_run.png
+
+$ hdfs dfs -ls /user/root/btc/out/wordcount
+Found 2 items
+-rw-r--r--   1 root supergroup          0 2026-11-11 17:36 /user/root/btc/out/wordcount/_SUCCESS
+-rw-r--r--   1 root supergroup      10901 2026-11-11 17:36 /user/root/btc/out/wordcount/part-r-00000
+  [скріншот/screenshot] 13_wordcount_ls.png
+
+$ hdfs dfs -cat /user/root/btc/out/wordcount/part-r-00000 | sort -k2 -nr | head -n 20
+the	107
+of	68
+or	64
+and	48
+to	41
+any	29
+in	24
+You	23
+that	22
+for	22
+by	22
+a	20
+Work	20
+this	19
+such	17
+Derivative	17
+as	16
+shall	15
+on	13
+with	12
+  [скріншот/screenshot] 14_wordcount_top20.png
+  [csv] wordcount_top50.csv: 50 рядків / rows
+Унікальних слів / distinct words: 748  Усього / total: 1879
+--- [wordcount] завершено за 40.8 с / done in 40.8 s ---
+
+==============================================================================
+== [mr_year] Hadoop Streaming: кількість свічок і сумарний обсяг за роками
+==============================================================================
+Deleted /user/root/btc/out/mr_yearly
+
+$ hadoop jar /home/user/AVD/work/tools/hadoop-3.3.6/share/hadoop/tools/lib/hadoop-streaming-3.3.6.jar -D mapreduce.job.name=mr_yearly -D mapreduce.job.reduces=1 -files /home/user/AVD/work/pz1/code/mapper_year.py,/home/user/AVD/work/pz1/code/reducer_year.py -mapper 'python3 mapper_year.py' -combiner 'python3 reducer_year.py' -reducer 'python3 reducer_year.py' -input /user/root/btc/raw -output /user/r ...

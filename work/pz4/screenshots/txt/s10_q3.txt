@@ -1,0 +1,33 @@
+$ mongosh bigdata_db --quiet --eval 'db.candles_1m.find({ts:{$gte:ISODate('2020-03-12T12:00:00Z'),$lt:ISODate('2020-03-12T13:00:00Z')}},{_id:0,ts:1,low:1,close:1,volume:1}).sort({low:1}).limit(5)'
+[
+  {
+    ts: ISODate('2020-03-12T12:49:00.000Z'),
+    low: 5850,
+    close: 5880.53,
+    volume: 90.04944064
+  },
+  {
+    ts: ISODate('2020-03-12T12:52:00.000Z'),
+    low: 5868.46,
+    close: 5868.46,
+    volume: 76.24465087
+  },
+  {
+    ts: ISODate('2020-03-12T12:50:00.000Z'),
+    low: 5874.02,
+    close: 5958.8,
+    volume: 71.67622341
+  },
+  {
+    ts: ISODate('2020-03-12T12:54:00.000Z'),
+    low: 5883.72,
+    close: 5924.93,
+    volume: 66.28042093
+  },
+  {
+    ts: ISODate('2020-03-12T12:53:00.000Z'),
+    low: 5887.69,
+    close: 5933.88,
+    volume: 108.59743688
+  }
+]

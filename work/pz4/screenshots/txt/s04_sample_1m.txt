@@ -1,0 +1,11 @@
+$ mongosh bigdata_db --quiet --eval 'db.candles_1m.findOne()'
+{
+  _id: ObjectId('6af475ae426db41c0efb3ed1'),
+  ts: ISODate('2012-01-01T00:01:00.000Z'),
+  unix: Long('1325376060'),
+  open: 4.58,
+  high: 4.58,
+  low: 4.58,
+  close: 4.58,
+  volume: 0
+}

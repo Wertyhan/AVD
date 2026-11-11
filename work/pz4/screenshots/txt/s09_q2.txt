@@ -1,0 +1,53 @@
+$ mongosh bigdata_db --quiet --eval 'db.candles_1d.find({},{_id:0,date:1,volume:1,close:1}).sort({volume:-1}).limit(10)'
+[
+  {
+    date: ISODate('2013-12-18T00:00:00.000Z'),
+    close: 520,
+    volume: 137070.17833806
+  },
+  {
+    date: ISODate('2015-01-14T00:00:00.000Z'),
+    close: 171.41,
+    volume: 124188.88508262
+  },
+  {
+    date: ISODate('2014-02-25T00:00:00.000Z'),
+    close: 535,
+    volume: 115761.98662156
+  },
+  {
+    date: ISODate('2015-11-04T00:00:00.000Z'),
+    close: 408,
+    volume: 105959.25914077
+  },
+  {
+    date: ISODate('2015-01-15T00:00:00.000Z'),
+    close: 210.98,
+    volume: 83488.41618527
+  },
+  {
+    date: ISODate('2013-12-07T00:00:00.000Z'),
+    close: 693.3,
+    volume: 79852.423783
+  },
+  {
+    date: ISODate('2015-11-03T00:00:00.000Z'),
+    close: 404.06,
+    volume: 77212.78172074
+  },
+  {
+    date: ISODate('2014-02-10T00:00:00.000Z'),
+    close: 687.81,
+    volume: 71860.53695222
+  },
+  {
+    date: ISODate('2013-11-19T00:00:00.000Z'),
+    close: 536.01,
+    volume: 71560.94596711
+  },
+  {
+    date: ISODate('2018-02-06T00:00:00.000Z'),
+    close: 7737.37,
+    volume: 70961.36965826
+  }
+]

@@ -1,0 +1,11 @@
+$ mongosh bigdata_db --quiet --eval 'db.spark_daily_features.findOne({is_complete:1},{_id:0,date:1,close:1,volume:1,rv:1,hl_rel:1,ret_1d:1,year:1,dow:1})'
+{
+  date: ISODate('2012-01-02T00:00:00.000Z'),
+  close: 5,
+  volume: 19.048,
+  rv: 0,
+  ret_1d: 0,
+  hl_rel: 0,
+  dow: 2,
+  year: 2012
+}

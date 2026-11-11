@@ -8,3 +8,8 @@ agg_A2_volume_by_hour,65.931,"candles_1m, 24 рядків"
 agg_A3_yearly_volatility,0.107,"spark_daily_features, 15 рядків"
 agg_A4_bucket_close,0.106,"candles_1d, 7 рядків"
 agg_A5_yearly_volume,0.090,"candles_1d, 15 рядків"
+load_anomalies,3.065,108119 docs з /home/user/AVD/work/pz3/results/pz3_anomalies_v1.csv
+agg_ANOM_per_year,1.550,"anomalies, 15 рядків"
+agg_ANOM_lookup_features,2.026,"anomalies, 4015 рядків"
+agg_ANOM_by_rule,1.515,"anomalies, 3 рядків"
+agg_ANOM_top_dates,1.204,"anomalies, 10 рядків"

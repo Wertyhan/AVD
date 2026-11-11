@@ -1,0 +1,14 @@
+field,bson_type,docs
+ts,date,108119
+close,double,108119
+log_return,double,108119
+volume,double,108119
+z_ret,double,108119
+vol_ratio,double,108119
+score,double,108119
+rule,string,108119
+k,int,108119
+k_v,int,108119
+date,date,108119
+in_stream_replay,bool,108119
+year,int,108119
