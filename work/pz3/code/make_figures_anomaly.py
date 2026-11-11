@@ -8,6 +8,7 @@ import matplotlib.dates as mdates
 P = "/home/user/AVD/work/pz3"; R = P + "/results"; F = P + "/figures"
 sys.path.insert(0, P + "/code")
 from anomaly_rule import K_SEL
+import sys as _s; _s.path.insert(0, '/home/user/AVD/work/tools_report'); import plotstyle  # правило 2b
 plt.rcParams.update({"font.size": 10, "axes.grid": True, "grid.alpha": .3, "axes.spines.top": False, "axes.spines.right": False})
 C1, C2, C3, C4 = "#1f77b4", "#d62728", "#2ca02c", "#ff7f0e"
 dec = lambda x, n=2: f"{x:.{n}f}".replace(".", ",")

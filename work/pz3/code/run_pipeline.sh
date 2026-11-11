@@ -87,4 +87,4 @@ cp $L/term_06b_topic_offsets_final.out $L/topic_offsets_final.log
 kill $LOADPID
 echo "pipeline_wall_s,$(python3 -c "print(round($(ts)-$T0,1))")" > $L/wall.csv
 echo "PIPELINE_DONE"
-bash $P/code/run_post.sh
+echo "далі: bash code/run_post.sh"

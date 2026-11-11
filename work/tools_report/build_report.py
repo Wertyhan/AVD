@@ -16,7 +16,7 @@ TNR, ARIAL, COUR = "Times New Roman", "Arial", "Courier New"
 _FONT = next((p for p in ("/usr/share/fonts/truetype/liberation/LiberationSerif-Regular.ttf",
                           "/usr/share/fonts/truetype/msttcorefonts/Times_New_Roman.ttf") if os.path.exists(p)), "")
 TEXT_W = 21.0 - 2.5 - 2.4  # 16.1 cm
-IMG_W = 16.0  # max image width (cm), slightly inside the text width
+IMG_W = 16.0
 MAX_IMG_H = 10.0  # cm
 MAX_IMG_H_TERM = 9.0  # cm, terminal screenshots
 DASH = "–"
@@ -317,7 +317,9 @@ def figure(doc, path, mdir):
         if hn < hc: wc *= hn / hc; hc = hn
     if est: print(f"  {os.path.basename(full)}: terminal text ~{est:.1f} pt at full width; placed {wc:.1f}x{hc:.1f} cm")
     p = doc.add_paragraph(); pf(p, AL.CENTER, left=0, first=0, line=1.0, kwn=True)
-    p.add_run().add_picture(full, width=Cm(wc), height=Cm(hc))
+    shp = p.add_run().add_picture(full, width=Cm(wc), height=Cm(hc))
+    for a in ("distT", "distB", "distL", "distR"):  # LibreOffice defaults to 0.32 cm side gaps otherwise
+        shp._inline.set(a, "0")
 
 
 def placeholder(doc, text):

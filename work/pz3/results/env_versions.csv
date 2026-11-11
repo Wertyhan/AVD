@@ -1,0 +1,18 @@
+component,value
+OS,Ubuntu 24.04.5 LTS / kernel 6.18.44-fc-v378
+CPU,4 vCPU
+RAM,15.7 GiB
+Python,3.13.18
+Java,"openjdk version ""21.0.12.1"" 2026-08-18"
+Apache Kafka,"3.7.0 (Scala 2.13), KRaft combined broker+controller, 1 broker"
+Spark/PySpark,4.3.0
+Spark Kafka connector,org.apache.spark:spark-sql-kafka-0-10_2.13:4.3.0 (Maven Central)
+confluent-kafka (producer),2.16.1 (librdkafka)
+pandas,3.0.5
+numpy,2.5.3
+pyarrow,26.0.1
+matplotlib,3.11.2
+playwright,1.65.0 / Chromium 153
+Spark master,"local[2], driver 2g, shuffle.partitions=4, session timezone UTC"
+Seed,42 (конвеєр детермінований; випадковість лише у скриптах перевірки)
+Load note,"хост спільний з іншими завданнями: loadavg під час запуску – results/load_during_run.csv, results/load_summary.csv"

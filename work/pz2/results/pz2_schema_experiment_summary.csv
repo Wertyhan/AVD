@@ -1,0 +1,3 @@
+variant,median,min,max,ratio_vs_explicit
+explicit,11.422,6.414,12.568,1.0
+inferSchema,22.516,21.24,27.977,1.971283488005603

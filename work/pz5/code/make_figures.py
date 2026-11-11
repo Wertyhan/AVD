@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 BASE = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 R, FG = f"{BASE}/results", f"{BASE}/figures"
 os.makedirs(FG, exist_ok=True)
+import sys as _s; _s.path.insert(0, '/home/user/AVD/work/tools_report'); import plotstyle  # правило 2b
 plt.rcParams.update({"font.size": 10, "axes.grid": True, "grid.alpha": .3, "figure.dpi": 150, "savefig.dpi": 150,
                      "axes.spines.top": False, "axes.spines.right": False})
 C = {"LR": "#1f77b4", "RF": "#2ca02c", "GBT": "#d62728", "persist": "#7f7f7f"}

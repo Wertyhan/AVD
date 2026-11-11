@@ -26,6 +26,8 @@ ev = np.isin(date, EV)
 r_act = np.where(act, r, np.nan); ra = pd.Series(np.abs(r_act))
 lv = pd.Series(np.where(act, np.log(np.where(act, v, 1.0)), np.nan))
 rows = []
+DAILY = []   # денні лічильники (variant, date, n_ok, n_flag за k на 2018+, n_flag_train за k на 2013–2019) для out-of-sample аналізу
+tr_mask = (y >= 2013) & (y <= 2019)
 
 
 def evaluate(name, W, scale, comb, sc, extra_ok=None):
@@ -35,6 +37,10 @@ def evaluate(name, W, scale, comb, sc, extra_ok=None):
     m18 = ok & (y >= 2018)
     k = float(np.nanquantile(sc[m18], 1 - RATE))
     f = ok & (sc > k)
+    k_tr = float(np.nanquantile(sc[ok & tr_mask], 1 - RATE))          # k за тим самим бюджетом 0,10 %, але лише на 2013–2019
+    f_tr = ok & (sc > k_tr)
+    DAILY.append(pd.DataFrame({"n_ok": pd.Series(ok).groupby(date).sum(), "n_flag": pd.Series(f).groupby(date).sum(),
+                               "n_flag_train": pd.Series(f_tr).groupby(date).sum()}).reset_index(names="date").assign(variant=name, k_all=k, k_train=k_tr))
     b18 = m18 & ~ev
     r18, rev = f[b18].mean(), f[ok & ev].mean()
     cnt = pd.Series(f[ok]).groupby(date[ok]).sum()
@@ -87,4 +93,5 @@ if a.v1_cache and os.path.exists(a.v1_cache):
     sc1 = np.where(o["scored"], np.fmax(o["z_ret"] / 10, o["vol_ratio"] / 500), np.nan)
     evaluate("v1_W60_MAD_k10_or_kv500 (k at 0.1%)", 60, "1,4826·MAD (60 хв); V/median", "max (OR)", sc1)
 pd.DataFrame(rows).to_csv(os.path.join(a.out, "pz3_design_comparison.csv"), index=False)
+pd.concat(DAILY, ignore_index=True).to_parquet(os.path.join(a.out, "pz3_design_daily_counts.parquet"), index=False)
 print("DESIGN_EVAL_DONE", round(time.time() - t0), "s", flush=True)
