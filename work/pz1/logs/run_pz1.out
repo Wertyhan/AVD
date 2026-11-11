@@ -720,3 +720,91 @@ trade_date      high       low  price_range       volume
 ==============================================================================
 == [pandas] Pandas: ті самі агрегації + звірка з MapReduce/Hive
 ==============================================================================
+Pandas: читання 7.7 с, річна агрегація 0.4 с, добові OHLC 0.5 с
+  [csv] pandas_yearly_stats.csv: 15 рядків / rows
+  [csv] pandas_daily_ohlc_full.csv: 5429 рядків / rows
+  [csv] pandas_top10_volume_days.csv: 10 рядків / rows
+  [csv] pandas_top10_range_days.csv: 10 рядків / rows
+  [скріншот/screenshot] 26_pandas_yearly.png
+  [csv] crosscheck_mr_hive_vs_pandas.csv: 6 рядків / rows
+                           check  left_rows  right_rows  match                                                                                     note
+      mapreduce_vs_pandas_yearly         15          15   True                                                             max_rel_diff_volume=1.00e-13
+  mapreduce_vs_pandas_daily_ohlc       5429        5429   True mismatch_OHLC={'open': 0, 'high': 0, 'low': 0, 'close': 0}; max_rel_diff_volume=8.13e-15
+           hive_vs_pandas_yearly         15          15   True                                                                                         
+       hive_vs_pandas_daily_rows       5429        5429   True                                                                                         
+hive_vs_pandas_top10_volume_days         10          10   True                                                                                         
+ hive_vs_pandas_top10_range_days         10        5429   True                                                                                         
+--- [pandas] завершено за 8.6 с / done in 8.6 s ---
+
+==============================================================================
+== [save] versions.txt, логи, runtimes.csv
+==============================================================================
+/home/user/AVD/work/pz1/code/run_pz1.py:677: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  'Date UTC': datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'),
+openjdk version "1.8.0_472"
+OpenJDK Runtime Environment (Zulu 8.90.0.19-CA-linux64) (build 1.8.0_472-b08)
+OpenJDK 64-Bit Server VM (Zulu 8.90.0.19-CA-linux64) (build 25.472-b08, mixed mode)
+Hadoop 3.3.6
+Source code repository https://github.com/apache/hadoop.git -r 1be78238728da9266a4f88195058f08fd012bf9c
+Compiled by ubuntu on 2023-06-18T08:22Z
+Compiled on platform linux-x86_64
+Compiled with protoc 3.7.1
+From source with checksum 5652179ad55f76cb287d9c633bb53bbd
+This command was run using /home/user/AVD/work/tools/hadoop-3.3.6/share/hadoop/common/hadoop-common-3.3.6.jar
+Hive 3.1.3
+Version: 4.3.0
+Intel(R) Xeon(R) Processor @ 2.10GHz
+4
+15Gi
+/dev/vda        252G   23G   17G  58% /
+4
+               total        used        free      shared  buff/cache   available
+Mem:            15Gi       5.4Gi       8.2Gi        16Mi       2.4Gi        10Gi
+Swap:             0B          0B          0B
+  [csv] env_versions.csv: 14 рядків / rows
+Java: openjdk version "1.8.0_472"
+Hadoop: Hadoop 3.3.6
+Hive: Hive 3.1.3
+Python: 3.13.18
+pandas: 3.0.5
+numpy: 2.5.3
+pyspark: Version: 4.3.0
+Hadoop JAVA_HOME: /home/user/AVD/work/mamba/envs/jdk8
+OS: Linux-6.18.44-fc-v378-x86_64-with-glibc2.39
+CPU: Intel(R) Xeon(R) Processor @ 2.10GHz
+nproc: 4
+RAM: 15Gi
+Disk: /dev/vda        252G   23G   17G  58% /
+Date UTC: 2026-11-11 17:44:14
+
+--- nproc / free -h ---
+4
+               total        used        free      shared  buff/cache   available
+Mem:            15Gi       5.4Gi       8.2Gi        16Mi       2.4Gi        10Gi
+Swap:             0B          0B          0B
+
+--- [save] завершено за 6.0 с / done in 6.0 s ---
+
+==============================================================================
+== ПІДСУМКОВИЙ ЧЕКЛІСТ / FINAL CHECKLIST
+==============================================================================
+[OK  ] Дані: archive.zip -> CSV (Data prepared)
+[OK  ] Завдання 1: архітектура Hadoop / HDFS (dfsadmin, fsck, jps)
+[OK  ] Завдання 2: Java 8 + Hadoop 3.3 встановлено і налаштовано
+[OK  ] Завдання 2: NameNode/DataNode/ResourceManager/NodeManager запущено
+[OK  ] Завдання 3: CSV завантажено в HDFS (ls/du/cat/fsck)
+[OK  ] Попередня перевірка mapper/reducer на вибірці (vs Pandas)
+[OK  ] Завдання 4: WordCount (hadoop-mapreduce-examples)
+[OK  ] Завдання 4: власна Streaming-задача, свічки та обсяг за роками
+[OK  ] Завдання 4: власна Streaming-задача, добові OHLC
+[OK  ] Завдання 5: Hive 3.1.3 + Derby metastore
+[OK  ] Завдання 5: зовнішня таблиця Hive над CSV у HDFS
+[OK  ] Завдання 6: вибірка, групування за роком/місяцем
+[OK  ] Завдання 6: добова таблиця, топ-10 за обсягом і за High-Low
+[OK  ] Завдання 7: Pandas (ті самі агрегації) + звірка з MapReduce
+[OK  ] Збереження версій, логів, runtimes
+
+Разом: 15 з 15 OK. Результати: /home/user/AVD/work/pz1
+Скріншоти: 26 файлів; CSV: 29
+
+Результати збережено у /home/user/AVD/work/pz1

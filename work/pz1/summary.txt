@@ -14,5 +14,5 @@
 [OK  ] Завдання 7: Pandas (ті самі агрегації) + звірка з MapReduce
 [OK  ] Збереження версій, логів, runtimes
 
-Разом: 15 з 15 OK. Результати: /nonexistent_drive/colab_results/pz1
-Скріншоти: 26 файлів; CSV: 23
+Разом: 15 з 15 OK. Результати: /home/user/AVD/work/pz1
+Скріншоти: 26 файлів; CSV: 29
