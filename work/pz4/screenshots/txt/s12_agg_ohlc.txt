@@ -1,4 +1,4 @@
-$ mongosh bigdata_db --quiet --eval 'db.candles_1m.aggregate([{$sort:{ts:1}},{$group:{_id:{y:{$year:'$ts'},m:{$month:'$ts'}},open:{$first:'$open'},high:{$max:'$high'},low:{$min:'$low'},close:{$last:'$close'},volume:{$sum:'$volume'}}},{$sort:{_id:1}},{$match:{'_id.y':2021,'_id.m':{$lte:4}}}],{allowDiskUse:true})'
+$ mongosh --quiet --eval 'db.candles_1m.aggregate([{$sort:{ts:1}},{$group:{_id:{y:{$year:"$ts"},m:{$month:"$ts"}},open:{$first:"$open"},high:{$max:"$high"},low:{$min:"$low"},close:{$last:"$close"},volume:{$sum:"$volume"}}},{$sort:{_id:1}},{$match:{"_id.y":2021,"_id.m":{$lte:4}}}],{allowDiskUse:true})' bigdata_db
 [
   {
     _id: { y: 2021, m: 1 },

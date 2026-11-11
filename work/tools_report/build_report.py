@@ -198,7 +198,7 @@ def code_block(doc, lines):
     n = len(lines)
     for i, ln in enumerate(lines):
         p = doc.add_paragraph()
-        pf(p, AL.LEFT, left=0.5, first=0, line=1.0, before=6 if i == 0 else 0, after=6 if i == n - 1 else 0)
+        pf(p, AL.LEFT, left=1.0, first=-0.5, line=1.0, before=6 if i == 0 else 0, after=6 if i == n - 1 else 0)
         p.paragraph_format.widow_control = False
         if ln:
             r = p.add_run(ln.replace("\t", "    ")); set_font(r, COUR, 9.5)
@@ -220,16 +220,62 @@ def figure_caption(doc, text):
     add_inline(p, text, 13); return p
 
 
+IMG_CACHE = None  # set in main(): build cache dir for cropped copies
+MAX_IMG_H_CHART = 9.0   # cm
+MAX_IMG_H_SHOT = 12.0   # cm, terminal / web UI screenshots
+
+
+def classify(bn):
+    if bn.startswith("term_") or re.match(r"^s\d\d_", bn): return "term"
+    if bn.startswith(("spark_ui", "namenode", "yarn", "hdfs", "web_", "ui_")) or "screenshot" in bn: return "web"
+    return "chart"
+
+
+def autocrop(full, kind, pad=14):
+    """Crop uniform margins (and, for terminals, empty trailing columns). Returns (path, text_pt_estimate)."""
+    import numpy as np
+    with Image.open(full) as im0:
+        im = im0.convert("RGB")
+    a = np.asarray(im).astype(int)
+    corners = [tuple(a[0, 0]), tuple(a[0, -1]), tuple(a[-1, 0]), tuple(a[-1, -1])]
+    bg = max(set(corners), key=corners.count)
+    diff = np.abs(a - np.array(bg)).sum(axis=2) > 40
+    ys, xs = np.where(diff)
+    if len(ys) == 0: return full, None
+    x0, x1 = max(xs.min() - pad, 0), min(xs.max() + pad + 1, im.width)
+    y0, y1 = max(ys.min() - pad, 0), min(ys.max() + pad + 1, im.height)
+    cr = im.crop((x0, y0, x1, y1))
+    os.makedirs(IMG_CACHE, exist_ok=True)
+    out = os.path.join(IMG_CACHE, os.path.splitext(os.path.basename(full))[0] + "_crop.png")
+    cr.save(out)
+    est = None
+    if kind == "term":  # estimate text height: median pitch of text rows
+        rows = diff[y0:y1, x0:x1].any(axis=1); runs = []; st = None
+        for i, v in enumerate(rows):
+            if v and st is None: st = i
+            if not v and st is not None: runs.append(st); st = None
+        if len(runs) > 2:
+            pitch = float(np.median(np.diff(runs)))
+            est = pitch / 1.25 * (TEXT_W / 2.54 * 72) / cr.width  # font px -> pt at full text width
+    return out, est
+
+
 def figure(doc, path, mdir):
     full = path if os.path.isabs(path) else os.path.join(mdir, path)
     if not os.path.exists(full):
         print(f"WARNING: image not found: {full}", file=sys.stderr)
         return placeholder(doc, f"[ЗОБРАЖЕННЯ НЕ ЗНАЙДЕНО: {path}]")
+    kind = classify(os.path.basename(full).lower())
+    try:
+        full, est = autocrop(full, kind)
+    except Exception as e:
+        print(f"WARNING: autocrop failed for {full}: {e}", file=sys.stderr); est = None
     with Image.open(full) as im: w, h = im.size
-    wc = TEXT_W; hc = wc * h / w
-    bn = os.path.basename(full).lower()
-    mh = MAX_IMG_H_TERM if (bn.startswith("term_") or "screenshot" in bn) else MAX_IMG_H
+    mh = MAX_IMG_H_CHART if kind == "chart" else MAX_IMG_H_SHOT
+    wc = TEXT_W if kind != "chart" else min(TEXT_W, 1e9)
+    hc = wc * h / w
     if hc > mh: hc = mh; wc = hc * w / h
+    if est: print(f"  {os.path.basename(full)}: terminal text ~{est:.1f} pt at full width; placed {wc:.1f}x{hc:.1f} cm")
     p = doc.add_paragraph(); pf(p, AL.CENTER, left=0, first=0, line=1.0, kwn=True)
     p.add_run().add_picture(full, width=Cm(wc), height=Cm(hc))
 
@@ -252,55 +298,87 @@ def split_row(line):
     return [c.strip().replace("\\|", "|") for c in re.split(r"(?<!\\)\|", s)]
 
 
+NUMRE = re.compile(r"^[\s\d.,:;%±+\-−–—/()*×x<>=~\u00a0\u2011\u202f]*$")
+_FONTCACHE = {}
+
+
+def tw(word, sz, bold=False):
+    from PIL import ImageFont
+    try:
+        f = _FONTCACHE.setdefault("f", ImageFont.truetype(_FONT, 100))
+        return f.getlength(word) / 100 * sz / 72 * 2.54
+    except Exception:
+        return len(word) * sz * 0.5 / 72 * 2.54
+
+
 def pipe_table(doc, rows):
     hdr = rows[0]; data = rows[2:]
     n = len(hdr)
     data = [r + [""] * (n - len(r)) if len(r) < n else r[:n] for r in data]
     allr = [hdr] + data
-    from PIL import ImageFont
-    def tw(word, sz):
-        try:
-            f = ImageFont.truetype(_FONT, 100)
-            return f.getlength(word) / 100 * sz / 72 * 2.54
-        except Exception:
-            return len(word) * sz * 0.5 / 72 * 2.54
-    PAD = 2 * 0.19 + 0.12
-    def minw(sz):
-        return [max(tw(w, sz) for w in (hdr[j].replace("`", "").split() or ["x"])) + PAD for j in range(n)]
-    def need(j):
-        mx = max(len(r[j].replace("`", "")) for r in allr)
-        mw = max((len(w) for r in allr for w in r[j].replace("`", "").split()), default=1)
-        return max(min(mx, 40), mw + 2, 4)
-    ns = [need(j) for j in range(n)]
-    size = 10.5 if n >= 8 else 11
-    mins = minw(size)
-    if sum(mins) > TEXT_W and size > 10:
-        size = 10; mins = minw(size)
-    tot = sum(ns); ws = [max(1.6, TEXT_W * x / tot) for x in ns]
-    k = TEXT_W / sum(ws); ws = [w * k for w in ws]
-    if n <= 3 and tot < 30:  # narrow table
-        ws = [w * min(1.0, 12.0 / TEXT_W) for w in ws]
-    ws = [max(w, m) for w, m in zip(ws, mins)]
-    for _ in range(20):  # shrink columns above their minimum until total fits
-        ex = sum(ws) - TEXT_W
-        if ex <= 0.001: break
-        room = [w - m for w, m in zip(ws, mins)]
-        tr = sum(room)
-        if tr <= 0: break
-        ws = [w - ex * r / tr if r > 0 else w for w, r in zip(ws, room)]
+    clean = lambda t: t.replace("`", "").replace("**", "")
+    NB, NBH = "\u00a0", "\u2011"
+    # numeric column: every body cell is a number-like; such cells never wrap
+    numeric = [all(NUMRE.match(clean(r[j])) for r in data if clean(r[j])) and any(clean(r[j]) for r in data)
+               for j in range(n)]
+    PAD = 2 * 0.19 + 0.10
+
+    def tokens(txt, j, hyph_ok, is_hdr):
+        t = clean(txt)
+        if numeric[j] and not is_hdr: return [t.replace(" ", NB)]
+        out = []
+        for w in t.split():
+            if hyph_ok and not (numeric[j] and not is_hdr): out += [x for x in re.split(r"(?<=-)", w) if x]
+            else: out.append(w)
+        return out or ["x"]
+
+    def minw(sz, hyph_ok):
+        return [max(tw(tk, sz) for r_i, r in enumerate(allr) for tk in tokens(r[j], j, hyph_ok, r_i == 0)) + PAD
+                for j in range(n)]
+    def full(sz):  # width needed to keep each column on one line
+        return [max(tw(clean(r[j]).replace(" ", NB) if numeric[j] and i else clean(r[j]), sz)
+                    for i, r in enumerate(allr)) + PAD for j in range(n)]
+
+    size = 11; hyph_ok = False
+    for size in (11, 10, 9):
+        mins = minw(size, False)
+        if sum(mins) <= TEXT_W: break
+    else:
+        size = 9; hyph_ok = True; mins = minw(size, True)
+        if sum(mins) > TEXT_W:
+            print(f"WARNING: table too wide even at 9 pt ({sum(mins):.1f} cm)", file=sys.stderr)
+    if sum(mins) > TEXT_W:
+        k = TEXT_W / sum(mins); mins = [m * k for m in mins]
+    fw = full(size)
+    cap = [min(f, max(m, 5.5)) if not numeric[j] else f for j, (f, m) in enumerate(zip(fw, mins))]
+    cap = [max(c, m) for c, m in zip(cap, mins)]
+    narrow = n <= 3 and sum(cap) < 12.0
+    target = min(TEXT_W, 12.0) if narrow else TEXT_W
+    if sum(cap) <= target:
+        ws = [c * target / sum(cap) for c in cap]
+    else:  # distribute spare width above minima by wish
+        spare = max(target - sum(mins), 0); wish = [c - m for c, m in zip(cap, mins)]
+        tw_ = sum(wish) or 1
+        ws = [m + spare * x / tw_ for m, x in zip(mins, wish)]
+    # in sizes below 11 keep font; hyphen-protect in header/body unless hyph_ok
     t = doc.add_table(rows=len(allr), cols=n); t.alignment = WD_TABLE_ALIGNMENT.CENTER
     grid_borders(t); fix_layout(t, ws)
+    N = len(allr)
     for i, r in enumerate(allr):
         row = t.rows[i]
         trPr = row._tr.get_or_add_trPr()
-        e = OxmlElement("w:cantSplit"); trPr.append(e)
-        if i == 0:
-            e = OxmlElement("w:tblHeader"); trPr.append(e)
+        trPr.append(OxmlElement("w:cantSplit"))
+        if i == 0: trPr.append(OxmlElement("w:tblHeader"))
+        if N <= 15: kwn = i < N - 1
+        else: kwn = i < 2 or i >= N - 3 and i < N - 1
         for j, txt in enumerate(r):
             c = row.cells[j]; c.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
             p = c.paragraphs[0]
             al = AL.CENTER if (i == 0 or j > 0) else AL.LEFT
-            pf(p, al, left=0, first=0, line=1.0, kwn=(i == 0))
+            pf(p, al, left=0, first=0, line=1.0, kwn=kwn)
+            if not hyph_ok or (numeric[j] and i):
+                if numeric[j] and i: txt = txt.replace(" ", NB)
+                txt = re.sub(r"(?<=\w)-(?=\w)", NBH, txt) if not (hyph_ok) else txt
             add_inline(p, txt, size)
 
 
@@ -380,6 +458,8 @@ def main():
     a = ap.parse_args()
     out = re.sub(r"\.(docx|pdf)$", "", a.out)
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
+    global IMG_CACHE
+    IMG_CACHE = os.path.join(os.path.dirname(os.path.abspath(out)), "imgcache")
     doc = Document(); setup(doc)
     # drop python-docx default empty first paragraph if any
     for p in list(doc.paragraphs):
