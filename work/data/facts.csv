@@ -1,0 +1,38 @@
+metric,value
+raw_file,btcusd_1-min_data.csv
+raw_csv_size_MB,396.8
+archive_size_MB,111.9
+raw_rows,7816537
+raw_columns_dtypes,Timestamp:int64; Open:float64; High:float64; Low:float64; Close:float64; Volume:float64
+raw_nan_cells,0
+raw_sorted,True
+duplicate_timestamps,0
+rows_with_nan,0
+off_minute_timestamps,0
+first_timestamp_utc,2012-01-01 00:01:00+00:00
+last_timestamp_utc,2026-11-11 03:37:00+00:00
+grid_minutes_expected,7816537
+missing_minutes,0
+gap_count,0
+zero_volume_candles,1312419
+zero_volume_share_pct,16.79
+invalid_high_lt_max_oc,0
+invalid_low_gt_min_oc,0
+invalid_high_lt_low,0
+negative_values,0
+nonpositive_price_rows,0
+invalid_candles_total,0
+final_rows_1min,7816537
+sample_rows,44640
+final_rows_1h,130276
+final_rows_1d,5429
+incomplete_1h_bins(n<60),2
+incomplete_1d_bins(n<1440),2
+max_close,126202.0 at 2025-10-06 18:57:00+00:00
+min_close,3.8 at 2012-01-27 01:58:00+00:00
+top1_daily_abs_logret,2013-04-11 logret=-0.6639 close=83.4 n_minutes=1440
+top2_daily_abs_logret,2020-03-12 logret=-0.4940 close=4841.67 n_minutes=1440
+top3_daily_abs_logret,2012-08-19 logret=-0.3589 close=8.06 n_minutes=1440
+top4_daily_abs_logret,2013-04-10 logret=-0.3461 close=162.0 n_minutes=1440
+top5_daily_abs_logret,2013-11-18 logret=+0.3375 close=669.01 n_minutes=1440
+daily_logret_note,log(Close_d/Close_{d-1}) between consecutive available daily bins; includes gap days

@@ -4,3 +4,4 @@ work/data/*.parquet
 work/mongo_data/
 work/format/
 *.zip
+!work/data/facts.csv
