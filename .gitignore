@@ -1,0 +1,6 @@
+work/data/raw/
+work/data/*.csv
+work/data/*.parquet
+work/mongo_data/
+work/format/
+*.zip
