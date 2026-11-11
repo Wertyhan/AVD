@@ -16,3 +16,8 @@ spark.sql.shuffle.partitions,16
 spark.sql.session.timeZone,UTC
 spark.ui.url,http://192.0.2.2:4040
 seed,42
+Jupyter_notebook,7.6.5
+JupyterLab,4.6.6
+jupyter_core,5.9.1
+ipykernel,7.4.0
+IPython,9.18.1

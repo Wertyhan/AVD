@@ -1,0 +1,9 @@
+$ pip show pyspark | head -8
+Name: pyspark
+Version: 4.3.0
+Summary: Apache Spark Python API
+Home-page: https://github.com/apache/spark/tree/master/python
+Author: Spark Developers
+Author-email: dev@spark.apache.org
+License: Apache-2.0
+Location: /usr/local/lib/python3.13/site-packages
