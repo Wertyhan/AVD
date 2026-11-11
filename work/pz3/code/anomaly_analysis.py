@@ -156,8 +156,7 @@ s2["date"] = s2["datetime_utc"].str[:10]
 s2["period"] = s2["date"].str[:7]
 # кількість спрацювань у потоці за сіткою k (k=k_v), як вимагає завдання
 rows = []
-for k in (3, 5, 7, 10, K_SEL):
-    kv = k if k != K_SEL else KV_SEL
+for k, kv in ((3, 3), (5, 5), (7, 7), (10, 10), (K_SEL, KV_SEL)):
     ur, uv = (s2["z_ret"] > k), (s2["vol_ratio"] > kv)
     row = {"k": k, "k_v": kv, "n_scored": len(s2), "n_return_rule": int(ur.sum()), "n_volume_rule": int(uv.sum()), "n_union": int((ur | uv).sum()),
            "share_union_pct": round(100 * (ur | uv).mean(), 3)}
@@ -179,8 +178,9 @@ out[cols].to_csv(os.path.join(a.out, "pz3_anomalies_stream.csv"), index=False)
 out[cols].to_parquet(os.path.join(a.out, "pz3_anomalies_stream.parquet"), index=False)
 # файл для ПЗ4: повна історія (офлайн), з позначкою про потрапляння у відтворений потік
 full = pd.read_csv(os.path.join(a.out, "pz3_anomalies_offline_full.csv"))
-full["in_stream_replay"] = full["date"].str[:7].isin(PERIODS.keys()) & full["date"].between("2020-03-09", "2020-03-16") | \
-    full["date"].between("2021-05-17", "2021-05-22") | full["date"].between("2022-11-06", "2022-11-12")
+full["in_stream_replay"] = False
+for d0, d1 in PERIODS.values():
+    full["in_stream_replay"] |= full["date"].between(d0, d1)
 full.to_csv(os.path.join(a.out, "pz3_anomalies.csv"), index=False)
 full.to_parquet(os.path.join(a.out, "pz3_anomalies.parquet"), index=False)
 print(f"[analysis] pz3_anomalies.csv: {len(full)} рядків; у відтворених періодах {int(full.in_stream_replay.sum())}", flush=True)

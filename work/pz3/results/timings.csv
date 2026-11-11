@@ -1,0 +1,8 @@
+stage,seconds
+broker_start,10.11
+topic_create,13.38
+producer,336.98
+spark_job,395.67
+offline_score_full_history_7.8M_rows,127.2
+spark_job_total_s_wall,372.0
+producer_send_loop_s,327.041

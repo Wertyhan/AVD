@@ -18,13 +18,17 @@ for name, rule in (("win15m", "15min"), ("win1h", "1h")):
         {"Open": "first", "High": "max", "Low": "min", "Close": "last", "Volume": "sum", "Timestamp": "count"}).dropna(subset=["Open"])
     ref.columns = ["open", "high", "low", "close", "volume", "n_candles"]
     sp = pd.read_csv(os.path.join(R, f"{name}_all.csv"), parse_dates=["win_start", "win_end"])
+    # memory-приймач в режимі update зберігає усі проміжні оновлення вікна: лишаємо останнє (з найбільшим n_candles)
+    n_raw = len(sp)
+    sp = sp.sort_values(["win_start", "n_candles"]).drop_duplicates("win_start", keep="last")
+    sp.to_csv(os.path.join(R, f"{name}_final.csv"), index=False)
     sp["win_start"] = pd.to_datetime(sp["win_start"]).dt.tz_localize(None) if sp["win_start"].dt.tz is None else sp["win_start"].dt.tz_convert("UTC").dt.tz_localize(None)
     sp = sp.set_index("win_start").sort_index()
     j = ref.join(sp, how="outer", lsuffix="_pd", rsuffix="_sp")
     only_pd = int(j["open_sp"].isna().sum()); only_sp = int(j["open_pd"].isna().sum())
     both = j.dropna(subset=["open_pd", "open_sp"])
     diffs = {c: float(np.max(np.abs(both[c + "_pd"] - both[c + "_sp"]))) for c in ["open", "high", "low", "close", "volume", "n_candles"]}
-    row = {"window": name, "n_pandas": len(ref), "n_spark": len(sp), "only_in_pandas": only_pd, "only_in_spark": only_sp,
+    row = {"window": name, "n_pandas": len(ref), "n_spark_raw_updates": n_raw, "n_spark": len(sp), "only_in_pandas": only_pd, "only_in_spark": only_sp,
            "n_compared": len(both), **{"max_abs_diff_" + k: v for k, v in diffs.items()},
            "all_match": bool(only_pd == 0 and only_sp == 0 and max(diffs.values()) < 1e-6)}
     # вікна, записані parquet-приймачем у режимі append (лише закриті водяною позначкою)

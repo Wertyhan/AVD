@@ -1,0 +1,2 @@
+n_stream_rows,n_stream_scored,n_warmup_unscored,n_compared,max_abs_diff_z,max_abs_diff_q,n_anomalies_stream,n_anomalies_offline,flag_mismatches,k,k_v
+30240,30057,183,30057,0.0,0.0,36,36,0,10,500

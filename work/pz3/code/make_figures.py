@@ -42,7 +42,7 @@ for a, rule, ttl, ksel in ((ax[0], "return", "Правило за дохідні
 fig.tight_layout(); fig.savefig(F + "/pz3_k_vs_triggers.png", dpi=150); plt.close(fig)
 # 2b. k = k_v ∈ {3,5,7,10}: офлайн та потік
 off = pd.read_csv(R + "/pz3_trigger_counts_offline.csv"); sc = pd.read_csv(R + "/pz3_trigger_counts_stream.csv")
-sc = sc[sc.k.isin([3, 5, 7, 10])]
+sc = sc[sc.k == sc.k_v]
 fig, ax = plt.subplots(1, 2, figsize=(10, 4)); x = np.arange(4); w = .27
 for a, d, ttl in ((ax[0], off, "Уся історія (7,1 млн оцінених хвилин)"), (ax[1], sc, "Відтворений потік (30 240 хв)")):
     a.bar(x - w, d.n_return_rule, w, label="за дохідністю", color=C1); a.bar(x, d.n_volume_rule, w, label="за обсягом", color="#ff7f0e")
@@ -79,7 +79,7 @@ def candles(ax, d, width, title):
         ax.plot([r.mid, r.mid], [r.low, r.high], color=c, lw=.9)
         ax.add_patch(plt.Rectangle((mdates.date2num(r.mid) - width / 2, min(r.open, r.close)), width, max(abs(r.close - r.open), 1), color=c))
     ax.set_title(title, fontsize=10); ax.set_ylabel("USD"); ax.xaxis_date(); ax.xaxis.set_major_formatter(mdates.DateFormatter("%d.%m %H:%M"))
-w15 = pd.read_csv(R + "/stream/win15m_all.csv", parse_dates=["win_start", "win_end"]); w1h = pd.read_csv(R + "/stream/win1h_all.csv", parse_dates=["win_start", "win_end"])
+w15 = pd.read_csv(R + "/stream/win15m_final.csv", parse_dates=["win_start", "win_end"]); w1h = pd.read_csv(R + "/stream/win1h_final.csv", parse_dates=["win_start", "win_end"])
 fig, ax = plt.subplots(3, 1, figsize=(9, 8))
 for a, d, wd, ttl, lo, hi in ((ax[0], w15, 15 / 1440, "Вікна 15 хв (tumbling), 12.03.2020 UTC", "2020-03-12", "2020-03-13"),
                               (ax[1], w1h, 1 / 24, "Вікна 1 год (tumbling), 9–16.03.2020 UTC", "2020-03-09", "2020-03-17")):

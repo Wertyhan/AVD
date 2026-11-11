@@ -1,0 +1,18 @@
+component,value
+OS,Ubuntu 24.04.5 LTS / kernel 6.18.44-fc-v378
+CPU,4 vCPU
+RAM,15 GiB
+Python,3.13.18
+Java,Picked up JAVA_TOOL_OPTIONS: -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts -Djavax.net.ssl.trustStoreType=JKS -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=34631 -Dhttp.nonProxyHosts=localhost|127.0.0.1|::1|127.*|0.*|::|169.254.*|api.anthropic.com|api-staging.anthropic.com|api-pr-preview.anthropic.com|mcp-proxy.anthropic.com|mcp-proxy-staging.anthropic.com|registry.npmjs.org|jsr.io|npm.jsr.io|pypi.org|files.pythonhosted.org|index.crates.io|proxy.golang.org|host.docker.internal|10.*|172.16.*|172.17.*|172.18.*|172.19.*|172.20.*|172.21.*|172.22.*|172.23.*|172.24.*|172.25.*|172.26.*|172.27.*|172.28.*|172.29.*|172.30.*|172.31.*|192.168.*|100.64.0.0/10|*.svc.cluster.local|*.svc.cluster.local -Djdk.http.auth.tunneling.disabledSchemes= -Djdk.http.auth.proxying.disabledSchemes=
+Apache Kafka,"3.7.0 (Scala 2.13), KRaft combined broker+controller, 1 broker"
+Spark/PySpark,4.3.0
+Spark Kafka connector,org.apache.spark:spark-sql-kafka-0-10_2.13:4.3.0 (Maven Central)
+confluent-kafka (producer),2 / librdkafka 2.16.0
+pandas,3.0.5
+numpy,2.5.3
+pyarrow,26.0.1
+matplotlib,3.11.2
+playwright,1.65.0 / Chromium 153
+Spark master,"local[2], driver 2g, shuffle.partitions=4, session timezone UTC"
+Seed,42 (детермінований конвеєр; випадковість не використовується)
+Load note,хост спільний з іншими завданнями: loadavg під час запуску див. results/load_during_run.csv

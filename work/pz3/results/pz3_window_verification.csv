@@ -1,0 +1,3 @@
+window,n_pandas,n_spark_raw_updates,n_spark,only_in_pandas,only_in_spark,n_compared,max_abs_diff_open,max_abs_diff_high,max_abs_diff_low,max_abs_diff_close,max_abs_diff_volume,max_abs_diff_n_candles,all_match,parquet_sink_windows,parquet_sink_windows_dup,parquet_sink_max_abs_diff,parquet_sink_not_flushed_windows
+win15m,2016,2047,2016,0,0,2016,0.0,0.0,0.0,0.0,4.547473508864641e-13,0.0,True,2015,0,4.547473508864641e-13,1
+win1h,504,537,504,0,0,504,0.0,0.0,0.0,0.0,2.7284841053187847e-12,0.0,True,503,0,2.7284841053187847e-12,1

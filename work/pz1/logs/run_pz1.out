@@ -454,3 +454,220 @@ with	12
 Deleted /user/root/btc/out/mr_yearly
 
 $ hadoop jar /home/user/AVD/work/tools/hadoop-3.3.6/share/hadoop/tools/lib/hadoop-streaming-3.3.6.jar -D mapreduce.job.name=mr_yearly -D mapreduce.job.reduces=1 -files /home/user/AVD/work/pz1/code/mapper_year.py,/home/user/AVD/work/pz1/code/reducer_year.py -mapper 'python3 mapper_year.py' -combiner 'python3 reducer_year.py' -reducer 'python3 reducer_year.py' -input /user/root/btc/raw -output /user/r ...
+		Total vcore-milliseconds taken by all reduce tasks=6362
+		Total megabyte-milliseconds taken by all map tasks=69102592
+		Total megabyte-milliseconds taken by all reduce tasks=9772032
+	Map-Reduce Framework
+		Map input records=7816538
+		Map output records=7816537
+		Map output bytes=127655772
+		Map output materialized bytes=567
+		Input split bytes=339
+		Combine input records=7816537
+		Combine output records=17
+		Reduce input groups=15
+		Reduce shuffle bytes=567
+		Reduce input records=17
+		Reduce output records=15
+		Spilled Records=34
+		Shuffled Maps =3
+		Failed Shuffles=0
+		Merged Map outputs=3
+		GC time elapsed (ms)=1580
+		CPU time spent (ms)=20510
+		Physical memory (bytes) snapshot=1614856192
+		Virtual memory (bytes) snapshot=10234408960
+		Total committed heap usage (bytes)=1735917568
+		Peak Map Physical memory (bytes)=601059328
+		Peak Map Virtual memory (bytes)=2504331264
+		Peak Reduce Physical memory (bytes)=247066624
+		Peak Reduce Virtual memory (bytes)=2771095552
+	Shuffle Errors
+		BAD_ID=0
+		CONNECTION=0
+		IO_ERROR=0
+		WRONG_LENGTH=0
+		WRONG_MAP=0
+		WRONG_REDUCE=0
+	File Input Format Counters 
+		Bytes Read=396857686
+	File Output Format Counters 
+		Bytes Written=453
+2026-11-11 13:51:10,143 INFO streaming.StreamJob: Output directory: /user/root/btc/out/mr_yearly
+  [скріншот/screenshot] 15_mr_yearly_job_output.png
+  [csv] mr_counters_mr_yearly.csv: 9 рядків / rows
+Лічильники / counters: {'Map input records': 7816538, 'Map output records': 7816537, 'Combine input records': 7816537, 'Combine output records': 17, 'Reduce input groups': 15, 'Reduce input records': 17, 'Reduce output records': 15, 'Launched map tasks': 4, 'Launched reduce tasks': 1}
+  [скріншот/screenshot] 16_mr_yearly_result.png
+ year  candles       volume
+ 2012   527039 5.679486e+05
+ 2013   525600 5.031143e+06
+ 2014   525600 5.024184e+06
+ 2015   525600 5.525344e+06
+ 2016   527040 1.992258e+06
+ 2017   525600 4.698753e+06
+ 2018   525600 3.932327e+06
+ 2019   525600 2.994600e+06
+ 2020   527040 3.074321e+06
+ 2021   525600 1.802998e+06
+ 2022   525600 8.338153e+05
+ 2023   525600 6.816873e+05
+ 2024   527040 8.079099e+05
+ 2025   525600 6.399458e+05
+ 2026   452378 6.363713e+05
+  [csv] mr_yearly_stats.csv: 15 рядків / rows
+--- [mr_year] завершено за 51.9 с / done in 51.9 s ---
+
+==============================================================================
+== [mr_ohlc] Hadoop Streaming: добові OHLC зі свічок 1 хв
+==============================================================================
+Deleted /user/root/btc/out/mr_daily_ohlc
+
+$ hadoop jar /home/user/AVD/work/tools/hadoop-3.3.6/share/hadoop/tools/lib/hadoop-streaming-3.3.6.jar -D mapreduce.job.name=mr_daily_ohlc -D mapreduce.job.reduces=1 -files /home/user/AVD/work/pz1/code/mapper_ohlc.py,/home/user/AVD/work/pz1/code/reducer_ohlc.py -mapper 'python3 mapper_ohlc.py'  -reducer 'python3 reducer_ohlc.py' -input /user/root/btc/raw -output /user/root/btc/out/mr_daily_ohlc
+		Total vcore-milliseconds taken by all reduce tasks=4131
+		Total megabyte-milliseconds taken by all map tasks=44343296
+		Total megabyte-milliseconds taken by all reduce tasks=6345216
+	Map-Reduce Framework
+		Map input records=7816538
+		Map output records=5431
+		Map output bytes=490246
+		Map output materialized bytes=501126
+		Input split bytes=339
+		Combine input records=0
+		Combine output records=0
+		Reduce input groups=5429
+		Reduce shuffle bytes=501126
+		Reduce input records=5431
+		Reduce output records=5429
+		Spilled Records=10862
+		Shuffled Maps =3
+		Failed Shuffles=0
+		Merged Map outputs=3
+		GC time elapsed (ms)=1877
+		CPU time spent (ms)=7570
+		Physical memory (bytes) snapshot=1839878144
+		Virtual memory (bytes) snapshot=10228039680
+		Total committed heap usage (bytes)=1988100096
+		Peak Map Physical memory (bytes)=625311744
+		Peak Map Virtual memory (bytes)=2487189504
+		Peak Reduce Physical memory (bytes)=242233344
+		Peak Reduce Virtual memory (bytes)=2768322560
+	Shuffle Errors
+		BAD_ID=0
+		CONNECTION=0
+		IO_ERROR=0
+		WRONG_LENGTH=0
+		WRONG_MAP=0
+		WRONG_REDUCE=0
+	File Input Format Counters 
+		Bytes Read=396857686
+	File Output Format Counters 
+		Bytes Written=348911
+2026-11-11 13:51:54,608 INFO streaming.StreamJob: Output directory: /user/root/btc/out/mr_daily_ohlc
+  [скріншот/screenshot] 17_mr_daily_ohlc_job_output.png
+  [csv] mr_counters_mr_daily_ohlc.csv: 9 рядків / rows
+Лічильники / counters: {'Map input records': 7816538, 'Map output records': 5431, 'Combine input records': 0, 'Combine output records': 0, 'Reduce input groups': 5429, 'Reduce input records': 5431, 'Reduce output records': 5429, 'Launched map tasks': 3, 'Launched reduce tasks': 1}
+  [скріншот/screenshot] 18_mr_daily_ohlc_result.png
+  [csv] mr_daily_ohlc_full.csv: 5429 рядків / rows
+  [csv] mr_daily_ohlc_sample.csv: 30 рядків / rows
+  [csv] mr_daily_ohlc_rowcount.csv: 1 рядків / rows
+       day  open  high  low  close     volume  candles
+2012-01-01  4.58  5.00 4.58   5.00  21.602000     1439
+2012-01-02  5.00  5.00 5.00   5.00  19.048000     1440
+2012-01-03  5.00  5.32 5.00   5.29  88.037281     1440
+2012-01-04  5.29  5.57 4.93   5.57 107.233260     1440
+2012-01-05  5.57  6.65 5.57   6.65  94.801829     1440
+--- [mr_ohlc] завершено за 43.0 с / done in 43.0 s ---
+
+==============================================================================
+== [hive_install] Hive 3.1.3 + Derby (embedded metastore)
+==============================================================================
+guava замінено на / guava replaced with: guava-27.0-jre.jar
+
+$ hive --version 2>/dev/null | head -n 3
+Hive 3.1.3
+Git git://MacBook-Pro.fios-router.home/Users/ngangam/commit/hive -r 4df4d75bf1e16fe0af75aad0b4179c34c07fc975
+Compiled by ngangam on Sun Apr 3 16:58:16 EDT 2022
+--- [hive_install] завершено за 9.5 с / done in 9.5 s ---
+
+==============================================================================
+== [hive_table] Hive: CREATE EXTERNAL TABLE над CSV у HDFS + вибірка
+==============================================================================
+
+$ hive -S -f /home/user/AVD/work/pz1/code/hive_01_create_table.hql
+  [скріншот/screenshot] 19_hive_create_table.png
+
+$ hive -S -f /home/user/AVD/work/pz1/code/hive_02_select.hql
+  [скріншот/screenshot] 20_hive_select.png
+ts	open	high	low	close	volume
+NULL	NULL	NULL	NULL	NULL	NULL
+1.32537606E9	4.58	4.58	4.58	4.58	0.0
+1.32537612E9	4.58	4.58	4.58	4.58	0.0
+1.32537618E9	4.58	4.58	4.58	4.58	0.0
+1.32537624E9	4.58	4.58	4.58	4.58	0.0
+trade_date	ts	open	high	low	close	volume
+2014-10-05	1.41252396E9	306.86	306.86	294.0	299.38	5853.85216588
+2014-10-06	1.41257922E9	300.0	300.0	299.98	300.0	4545.89384565
+2014-04-10	1.3971135E9	413.24	416.0	400.11	405.0	4111.87610626
+2015-01-25	1.4221974E9	250.44	255.0	241.33	250.43	3691.01210311
+2014-12-04	1.41769422E9	365.56	374.32	360.0	369.05	3650.66851047
+2014-02-10	1.39203006E9	570.0	570.0	544.0	544.0	3379.75082937
+2014-02-24	1.39324902E9	547.9	547.9	520.0	520.0	3134.58848401
+2014-10-06	1.41257874E9	300.0	300.0	299.99	299.99	3133.60636042
+2012-11-05	1.35215268E9	10.56	10.56	10.55	10.55	2958.47757418
+2014-04-10	1.39714278E9	401.99	402.0	394.7	394.7	2939.35619442
+total_candles
+7816537
+
+  [csv] hive_count_check.csv: 1 рядків / rows
+--- [hive_table] завершено за 100.2 с / done in 100.2 s ---
+
+==============================================================================
+== [hive_queries] Hive: GROUP BY рік / рік+місяць
+==============================================================================
+
+$ hive -S -f /home/user/AVD/work/pz1/code/hive_03a_yearly.hql
+  [скріншот/screenshot] 21_hive_yearly.png
+  yr  candles  total_volume     avg_close  max_high  min_low
+2012   527039  5.679486e+05      8.234836     16.41     3.80
+2013   525600  5.031143e+06    187.425714   1163.00    12.77
+2014   525600  5.024184e+06    525.570653    995.00   275.00
+2015   525600  5.525344e+06    272.251732    502.00   152.40
+2016   527040  1.992258e+06    565.825705    980.74   352.00
+2017   525600  4.698753e+06   3948.333669  19666.00   751.34
+2018   525600  3.932327e+06   7524.761978  17234.99  3122.28
+2019   525600  2.994600e+06   7352.189603  13880.00  3322.19
+2020   527040  3.074321e+06  11074.628150  29300.00  3850.00
+2021   525600  1.802998e+06  47386.180741  69000.00 27734.00
+2022   525600  8.338153e+05  28228.663903  48234.00 15479.00
+2023   525600  6.816873e+05  28811.760453  44729.00 16496.00
+2024   527040  8.079099e+05  65895.120981 108364.00 38505.00
+2025   525600  6.399458e+05 101639.981764 126272.00 74434.00
+2026   452378  6.363713e+05  74103.969759  97939.00 57734.63
+  [csv] hive_yearly_stats.csv: 15 рядків / rows
+
+$ hive -S -f /home/user/AVD/work/pz1/code/hive_03b_monthly.hql
+  [скріншот/screenshot] 22_hive_monthly.png
+  [csv] hive_monthly_stats.csv: 179 рядків / rows
+місяців / months: 179
+  [csv] crosscheck_hive_vs_mr_yearly.csv: 1 рядків / rows
+--- [hive_queries] завершено за 151.0 с / done in 151.0 s ---
+
+==============================================================================
+== [hive_daily] Hive: добова таблиця OHLC, топ-10 діб за обсягом і за High-Low
+==============================================================================
+
+$ hive -S -f /home/user/AVD/work/pz1/code/hive_04_daily_struct.hql
+
+$ hive -S -f /home/user/AVD/work/pz1/code/hive_06_daily_count.hql
+  [скріншот/screenshot] 23_hive_daily_table.png
+daily_rows
+5429
+trade_date	open	high	low	close	volume	candles
+2012-01-01	4.58	5.0	4.58	5.0	21.602	1439
+2012-01-02	5.0	5.0	5.0	5.0	19.048	1440
+2012-01-03	5.0	5.32	5.0	5.29	88.03728091999999	1440
+2012-01-04	5.29	5.57	4.93	5.57	107.23326023	1440
+2012-01-05	5.57	6.65	5.57	6.65	94.80182926	1440
+
+
+$ hive -S -f /home/user/AVD/work/pz1/code/hive_05a_top_volume.hql
