@@ -1,12 +1,12 @@
 $ df.unpersist(); heavy_query(df) x3; df.cache(); df.count(); heavy_query(df) x3
          mode               run  seconds
-without_cache              run1   21.145
-without_cache              run2   19.343
-without_cache              run3   17.918
-   with_cache materialize_count   81.830
-   with_cache              run1    3.258
-   with_cache              run2    3.022
-   with_cache              run3    3.043
+without_cache              run1   19.774
+without_cache              run2   17.565
+without_cache              run3   18.349
+   with_cache materialize_count   82.293
+   with_cache              run1    3.184
+   with_cache              run2    2.376
+   with_cache              run3    2.329
 
-медіана без кешу: 19.34 с; з кешем: 3.04 с; прискорення x6.4
+медіана без кешу: 18.35 с; з кешем: 2.38 с; прискорення x7.7
 Storage level: Disk Memory Serialized 1x Replicated
