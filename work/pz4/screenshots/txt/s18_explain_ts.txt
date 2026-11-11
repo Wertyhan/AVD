@@ -2,7 +2,7 @@ $ mongosh --quiet bigdata_db --file code/s18_explain_ts.js
 BEFORE (hint $natural):
 {
   stage: 'COLLSCAN <- SORT',
-  executionTimeMillis: 4192,
+  executionTimeMillis: 4172,
   totalDocsExamined: 7816537,
   totalKeysExamined: 0,
   nReturned: 1440
@@ -10,7 +10,7 @@ BEFORE (hint $natural):
 AFTER (index):
 {
   stage: 'IXSCAN <- FETCH',
-  executionTimeMillis: 1,
+  executionTimeMillis: 2,
   totalDocsExamined: 1440,
   totalKeysExamined: 1440,
   nReturned: 1440

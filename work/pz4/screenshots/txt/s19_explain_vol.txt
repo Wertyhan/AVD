@@ -2,7 +2,7 @@ $ mongosh --quiet bigdata_db --file code/s19_explain_vol.js
 BEFORE (hint $natural):
 {
   stage: 'COLLSCAN <- SORT',
-  executionTimeMillis: 4153,
+  executionTimeMillis: 3919,
   totalDocsExamined: 7816537,
   totalKeysExamined: 0,
   nReturned: 10

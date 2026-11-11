@@ -21,8 +21,11 @@ ap.add_argument("--max-offsets", type=int, default=3000)
 ap.add_argument("--k", type=float, default=K_SEL)
 ap.add_argument("--history-parquet", required=True, help="історія для прогріву 7-денної бази (дані ДО кожного періоду відтворення)")
 ap.add_argument("--only-anomaly", action="store_true", help="запустити лише запит аномалій (віконні запити не перезапускаються)")
+ap.add_argument("--ui-port", type=int, default=4040, help="порт Spark UI (якщо зайнятий – Spark бере наступний вільний)")
 ap.add_argument("--max-seconds", type=int, default=1200)
 a = ap.parse_args()
+# Seed: випадкових величин у конвеєрі немає (правило детерміноване), тому seed 42 не потрібен; зафіксовано для відповідності RULES.
+SEED = 42; np.random.seed(SEED)
 
 os.makedirs(a.out, exist_ok=True)
 PARTS = os.path.join(a.out, "scored_parts"); os.makedirs(PARTS, exist_ok=True)
@@ -32,7 +35,7 @@ spark = (SparkSession.builder.appName("PZ3-bitcoin-streaming" + ("-anomaly-v2" i
          .config("spark.sql.shuffle.partitions", "4")
          .config("spark.sql.session.timeZone", "UTC")     # вікна вирівнюються по UTC
          .config("spark.driver.memory", "2g")
-         .config("spark.ui.port", "4040")
+         .config("spark.ui.port", str(a.ui_port))
          .config("spark.sql.streaming.forceDeleteTempCheckpointLocation", "true")
          .getOrCreate())
 spark.sparkContext.setLogLevel("WARN")

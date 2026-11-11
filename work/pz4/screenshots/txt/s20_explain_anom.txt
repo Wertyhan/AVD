@@ -1,10 +1,9 @@
 $ mongosh --quiet bigdata_db --file code/s20_explain_anom.js
-# anomalies = v1 (залежить від перезапуску ПЗ3)
 BEFORE (hint $natural):
 {
   stage: 'COLLSCAN <- SORT',
-  executionTimeMillis: 79,
-  totalDocsExamined: 108119,
+  executionTimeMillis: 3,
+  totalDocsExamined: 5437,
   totalKeysExamined: 0,
   nReturned: 20
 }
@@ -13,6 +12,6 @@ AFTER (index):
   stage: 'IXSCAN <- SORT <- FETCH',
   executionTimeMillis: 0,
   totalDocsExamined: 20,
-  totalKeysExamined: 270,
+  totalKeysExamined: 338,
   nReturned: 20
 }

@@ -1,4 +1,4 @@
-$ mongosh bigdata_db --quiet --eval 'db.spark_daily_features.aggregate([{$match:{is_complete:1}},{$group:{_id:'$year',days:{$sum:1},avg_rv:{$avg:'$rv'},avg_hl:{$avg:'$hl_rel'}}},{$sort:{_id:1}},{$match:{_id:{$gte:2017}}}])'
+$ mongosh --quiet --eval 'db.spark_daily_features.aggregate([{$match:{is_complete:1}},{$group:{_id:"$year",days:{$sum:1},avg_rv:{$avg:"$rv"},avg_hl:{$avg:"$hl_rel"}}},{$sort:{_id:1}},{$match:{_id:{$gte:2017}}}])' bigdata_db
 [
   {
     _id: 2017,
@@ -38,26 +38,4 @@ $ mongosh bigdata_db --quiet --eval 'db.spark_daily_features.aggregate([{$match:
   },
   {
     _id: 2023,
-    days: 365,
-    avg_rv: 0.019970820446410794,
-    avg_hl: 0.03264441884686668
-  },
-  {
-    _id: 2024,
-    days: 366,
-    avg_rv: 0.026026074207172747,
-    avg_hl: 0.041449499194214826
-  },
-  {
-    _id: 2025,
-    days: 365,
-    avg_rv: 0.021112972519840578,
-    avg_hl: 0.033457876567097485
-  },
-  {
-    _id: 2026,
-    days: 314,
-    avg_rv: 0.020635515608348743,
-    avg_hl: 0.032770906228041165
-  }
-]
+… (ще 23 рядків)

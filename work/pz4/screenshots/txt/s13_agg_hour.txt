@@ -1,4 +1,4 @@
-$ mongosh bigdata_db --quiet --eval 'db.candles_1m.aggregate([{$match:{ts:{$gte:ISODate('2018-01-01')}}},{$group:{_id:{$hour:'$ts'},total:{$sum:'$volume'},avg_min:{$avg:'$volume'}}},{$sort:{_id:1}},{$limit:6}])'
+$ mongosh --quiet --eval 'db.candles_1m.aggregate([{$match:{ts:{$gte:ISODate("2018-01-01")}}},{$group:{_id:{$hour:"$ts"},total:{$sum:"$volume"},avg_min:{$avg:"$volume"}}},{$sort:{_id:1}},{$limit:6}])' bigdata_db
 [
   { _id: 0, total: 604838.679816, avg_min: 3.114193593945011 },
   { _id: 1, total: 526142.85206448, avg_min: 2.709004490085882 },

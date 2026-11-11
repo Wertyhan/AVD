@@ -1,0 +1,102 @@
+== Physical Plan ==
+AdaptiveSparkPlan (17)
++- HashAggregate (16)
+   +- Exchange (15)
+      +- HashAggregate (14)
+         +- Project (13)
+            +- Window (12)
+               +- Project (11)
+                  +- Window (10)
+                     +- Sort (9)
+                        +- Exchange (8)
+                           +- Project (7)
+                              +- HashAggregate (6)
+                                 +- Exchange (5)
+                                    +- HashAggregate (4)
+                                       +- Project (3)
+                                          +- Filter (2)
+                                             +- Scan csv  (1)
+
+
+(1) Scan csv 
+Output [6]: [Timestamp#896L, Open#897, High#898, Low#899, Close#900, Volume#901]
+Batched: false
+Location: InMemoryFileIndex [file:/home/user/AVD/work/data/raw/btcusd_1-min_data.csv]
+ReadSchema: struct<Timestamp:bigint,Open:double,High:double,Low:double,Close:double,Volume:double>
+
+(2) Filter
+Input [6]: [Timestamp#896L, Open#897, High#898, Low#899, Close#900, Volume#901]
+Condition : atleastnnonnulls(6, Timestamp#896L, Open#897, High#898, Low#899, Close#900, Volume#901)
+
+(3) Project
+Output [2]: [Timestamp#896L, Close#900]
+Input [6]: [Timestamp#896L, Open#897, High#898, Low#899, Close#900, Volume#901]
+
+(4) HashAggregate
+Input [2]: [Timestamp#896L, Close#900]
+Keys [1]: [Timestamp#896L]
+Functions [1]: [partial_first(Close#900, false)]
+Aggregate Attributes [2]: [first#983, valueSet#984]
+Results [3]: [Timestamp#896L, first#985, valueSet#986]
+
+(5) Exchange
+Input [3]: [Timestamp#896L, first#985, valueSet#986]
+Arguments: hashpartitioning(Timestamp#896L, 16), ENSURE_REQUIREMENTS, [plan_id=1102]
+
+(6) HashAggregate
+Input [3]: [Timestamp#896L, first#985, valueSet#986]
+Keys [1]: [Timestamp#896L]
+Functions [1]: [first(Close#900, false)]
+Aggregate Attributes [1]: [first(Close#900)()#977]
+Results [3]: [Timestamp#896L, first(Close#900)()#977 AS Close#978, timestamp_seconds(Timestamp#896L) AS datetime#903]
+
+(7) Project
+Output [4]: [Timestamp#896L, Close#978, year(cast(datetime#903 as date)) AS year#905, month(cast(datetime#903 as date)) AS month#906]
+Input [3]: [Timestamp#896L, Close#978, datetime#903]
+
+(8) Exchange
+Input [4]: [Timestamp#896L, Close#978, year#905, month#906]
+Arguments: hashpartitioning(year#905, month#906, 16), ENSURE_REQUIREMENTS, [plan_id=1106]
+
+(9) Sort
+Input [4]: [Timestamp#896L, Close#978, year#905, month#906]
+Arguments: [year#905 ASC NULLS FIRST, month#906 ASC NULLS FIRST, Timestamp#896L ASC NULLS FIRST], false, 0
+
+(10) Window
+Input [4]: [Timestamp#896L, Close#978, year#905, month#906]
+Arguments: [lag(Close#978, -1, null) windowspecdefinition(year#905, month#906, Timestamp#896L ASC NULLS FIRST, specifiedwindowframe(RowFrame, -1, -1)) AS _we0#912], [year#905, month#906], [Timestamp#896L ASC NULLS FIRST]
+
+(11) Project
+Output [4]: [Timestamp#896L, year#905, month#906, (ln(Close#978) - ln(_we0#912)) AS log_ret#911]
+Input [5]: [Timestamp#896L, Close#978, year#905, month#906, _we0#912]
+
+(12) Window
+Input [4]: [Timestamp#896L, year#905, month#906, log_ret#911]
+Arguments: [stddev(log_ret#911) windowspecdefinition(year#905, month#906, Timestamp#896L ASC NULLS FIRST, specifiedwindowframe(RowFrame, -59, currentrow$())) AS vol60#913], [year#905, month#906], [Timestamp#896L ASC NULLS FIRST]
+
+(13) Project
+Output [1]: [vol60#913]
+Input [5]: [Timestamp#896L, year#905, month#906, log_ret#911, vol60#913]
+
+(14) HashAggregate
+Input [1]: [vol60#913]
+Keys: []
+Functions [1]: [partial_sum(vol60#913)]
+Aggregate Attributes [1]: [sum#981]
+Results [1]: [sum#982]
+
+(15) Exchange
+Input [1]: [sum#982]
+Arguments: SinglePartition, ENSURE_REQUIREMENTS, [plan_id=1114]
+
+(16) HashAggregate
+Input [1]: [sum#982]
+Keys: []
+Functions [1]: [sum(vol60#913)]
+Aggregate Attributes [1]: [sum(vol60#913)#970]
+Results [1]: [sum(vol60#913)#970 AS sum_vol60#953]
+
+(17) AdaptiveSparkPlan
+Output [1]: [sum_vol60#953]
+Arguments: isFinalPlan=false
+
