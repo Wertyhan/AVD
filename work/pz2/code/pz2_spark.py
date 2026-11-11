@@ -415,7 +415,7 @@ def ui_screens():
     from playwright.sync_api import sync_playwright
     pages = {"jobs": "jobs/", "stages": "stages/", "sql": "SQL/", "executors": "executors/", "storage": "storage/", "environment": "environment/"}
     with sync_playwright() as p:
-        b = p.chromium.launch()
+        b = p.chromium.launch(executable_path="/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell")
         pg = b.new_page(viewport={"width": 1500, "height": 950})
         for k, u in pages.items():
             pg.goto(f"http://localhost:4040/{u}", wait_until="load"); pg.wait_for_timeout(1200)

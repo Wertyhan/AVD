@@ -1,0 +1,36 @@
+step,seconds,note
+load_csv_inferSchema_plus_count,8.69,"inferSchema=True, count()"
+load_csv_explicit_schema_plus_count,0.853,"явна схема, count()"
+missing_values_per_column,8.474,
+dedup_check,9.065,
+lazy_build_transformations,0.296,"лише побудова плану, без обчислень"
+first_action_count_uncached,7.819,count() запускає читання+вікна
+cache_exp_without_cache_run1,21.145,
+cache_exp_without_cache_run2,19.343,
+cache_exp_without_cache_run3,17.918,
+cache_exp_materialize,81.83,
+cache_exp_with_cache_run1,3.258,
+cache_exp_with_cache_run2,3.022,
+cache_exp_with_cache_run3,3.043,
+describe_derived,3.25,
+daily_aggregation,3.654,
+top10_volatile_days,11.377,
+volume_by_hour,2.16,
+hourly_features,4.774,
+skew_kurtosis,4.216,
+minute_return_histogram,1.493,
+sql_q1_year_stats,2.341,
+sql_q2_top_days_range,2.231,
+sql_q3_dow_hour_volume,1.592,
+sql_q4_month_seasonality,1.813,
+sql_q5_max_volume_day_per_year,1.924,
+sql_q6_crash_days_vs_30d_median,2.137,
+engine_daily_ohlc_pandas,6.15,медіана з 3 запусків
+engine_daily_ohlc_spark_cached_df,1.882,медіана з 3 запусків
+engine_daily_ohlc_spark_local[*],4.661,медіана з 3 запусків
+engine_year_count_volume_pandas,4.901,медіана з 3 запусків
+engine_year_count_volume_spark_cached_df,1.405,медіана з 3 запусків
+engine_year_count_volume_spark_local[*],3.677,медіана з 3 запусків
+engine_year_count_volume_hadoop_streaming,,[ЗАПОВНИТИ ПІСЛЯ ЗАПУСКУ]
+engine_daily_ohlc_hadoop_streaming,,[ЗАПОВНИТИ ПІСЛЯ ЗАПУСКУ]
+TOTAL_script_runtime,314.119,

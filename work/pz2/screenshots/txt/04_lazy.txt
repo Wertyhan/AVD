@@ -1,6 +1,6 @@
 $ df = build(); # трансформації (мс)  ->  df.count() # дія; df.explain('formatted')
-Трансформації (read, dropna, dropDuplicates, withColumn x10, Window lag/stddev): 295.6 мс – обчислень немає
-Дія count() = 7816537 рядків за 7.82 с – лише тепер Spark виконує план
+Трансформації (read, dropna, dropDuplicates, withColumn x10, Window lag/stddev): 245.2 мс – обчислень немає
+Дія count() = 7816537 рядків за 7.83 с – лише тепер Spark виконує план
 
 == Physical Plan ==
 AdaptiveSparkPlan (15)

@@ -1,0 +1,21 @@
+task,engine,run,seconds,note
+year_count_volume,spark_local[*],1,3.677,читання CSV + агрегація
+year_count_volume,spark_local[*],2,3.516,читання CSV + агрегація
+year_count_volume,spark_local[*],3,3.77,читання CSV + агрегація
+year_count_volume,pandas,1,4.932,читання CSV + агрегація
+year_count_volume,pandas,2,4.901,читання CSV + агрегація
+year_count_volume,pandas,3,4.795,читання CSV + агрегація
+daily_ohlc,spark_local[*],1,4.661,читання CSV + агрегація
+daily_ohlc,spark_local[*],2,6.232,читання CSV + агрегація
+daily_ohlc,spark_local[*],3,4.24,читання CSV + агрегація
+daily_ohlc,pandas,1,7.259,читання CSV + агрегація
+daily_ohlc,pandas,2,6.15,читання CSV + агрегація
+daily_ohlc,pandas,3,5.642,читання CSV + агрегація
+year_count_volume,spark_cached_df,1,1.653,лише агрегація над кешем
+daily_ohlc,spark_cached_df,1,1.882,лише агрегація над кешем
+year_count_volume,spark_cached_df,2,1.405,лише агрегація над кешем
+daily_ohlc,spark_cached_df,2,1.801,лише агрегація над кешем
+year_count_volume,spark_cached_df,3,1.34,лише агрегація над кешем
+daily_ohlc,spark_cached_df,3,2.484,лише агрегація над кешем
+year_count_volume,hadoop_streaming,,[ЗАПОВНИТИ ПІСЛЯ ЗАПУСКУ],значення з ПЗ1 (Colab)
+daily_ohlc,hadoop_streaming,,[ЗАПОВНИТИ ПІСЛЯ ЗАПУСКУ],значення з ПЗ1 (Colab)
