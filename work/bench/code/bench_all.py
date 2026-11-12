@@ -260,10 +260,7 @@ def main():
             k = rnd % len(order); order = order[k:] + order[:k]
         else:
             order = combos
-        if rnd == 0 or True:   # еталон pandas має бути в REF до перевірки інших
-            pass
         for e, t in order:
-            if t != 'start' and (e != 'pandas') and not REF.get(t) and rnd > 0: pass
             run_once(e, t, rnd, rnd == 0, rows, runs_csv)
     runs = pd.DataFrame(rows)
     if smoke: return
