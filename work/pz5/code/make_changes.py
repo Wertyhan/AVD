@@ -16,7 +16,7 @@ def fm(v, d=4):
 rows = []
 def add(sec, what, o, n, d=4, note=""):
     ov, nv = fm(o, d), fm(n, d)
-    rows.append((sec, what, ov, nv, "=" if ov == nv else "змінилося", note))
+    rows.append((sec, what, ov, nv, "нове" if ov == "–" else ("=" if ov == nv else "змінилося"), note))
 
 # ---- джерела ----
 ospl, nspl = kv(OLD, "pz5_split"), kv(RES, "pz5_split")
