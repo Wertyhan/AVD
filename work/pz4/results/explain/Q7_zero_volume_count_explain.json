@@ -1,0 +1,183 @@
+{
+ "explainVersion": "2",
+ "queryPlanner": {
+  "namespace": "bigdata_db.candles_1m",
+  "parsedQuery": {
+   "volume": {
+    "$eq": 0
+   }
+  },
+  "indexFilterSet": false,
+  "queryHash": "05897ABA",
+  "planCacheShapeHash": "05897ABA",
+  "planCacheKey": "A517A7F7",
+  "optimizationTimeMillis": 0,
+  "optimizedPipeline": true,
+  "maxIndexedOrSolutionsReached": false,
+  "maxIndexedAndSolutionsReached": false,
+  "maxScansToExplodeReached": false,
+  "prunedSimilarIndexes": false,
+  "winningPlan": {
+   "isCached": false,
+   "queryPlan": {
+    "stage": "GROUP",
+    "planNodeId": 2,
+    "inputStage": {
+     "stage": "COUNT_SCAN",
+     "planNodeId": 1,
+     "nss": "bigdata_db.candles_1m",
+     "keyPattern": {
+      "volume": -1
+     },
+     "indexName": "volume_-1",
+     "isMultiKey": false,
+     "multiKeyPaths": {
+      "volume": []
+     },
+     "isUnique": false,
+     "isSparse": false,
+     "isPartial": false,
+     "indexVersion": 2,
+     "indexBounds": {
+      "startKey": {
+       "volume": 0
+      },
+      "startKeyInclusive": true,
+      "endKey": {
+       "volume": 0
+      },
+      "endKeyInclusive": true
+     }
+    }
+   },
+   "slotBasedPlan": {
+    "slots": "$$RESULT=s6 env: {  }",
+    "stages": "[2] project [s6 = newBsonObj(\"_id\", s4, \"n\", s5)] \n[2] project [s4 = 1, s5 = (convert ( s3, int32) ?: s3)] \n[2] group [] [s3 = count()] spillSlots[s2] mergingExprs[sum(s2)] \n[1] ixseek seekKeyLow = KS(D601) seekKeyHigh = KS(D6FE) [s1 = recordId] [] @\"541a1f1d-6e8d-477d-96f4-a733bd479e3e\" @\"volume_-1\" forward "
+   }
+  },
+  "rejectedPlans": []
+ },
+ "executionStats": {
+  "executionSuccess": true,
+  "nReturned": 1,
+  "executionTimeMillis": 298,
+  "totalKeysExamined": 1312419,
+  "totalDocsExamined": 0,
+  "executionStages": {
+   "stage": "project",
+   "planNodeId": 2,
+   "nReturned": 1,
+   "executionTimeMillisEstimate": 295,
+   "opens": 1,
+   "closes": 1,
+   "saveState": 15,
+   "restoreState": 15,
+   "isEOF": 1,
+   "projections": {
+    "6": "newBsonObj(\"_id\", s4, \"n\", s5) "
+   },
+   "inputStage": {
+    "stage": "project",
+    "planNodeId": 2,
+    "nReturned": 1,
+    "executionTimeMillisEstimate": 295,
+    "opens": 1,
+    "closes": 1,
+    "saveState": 15,
+    "restoreState": 15,
+    "isEOF": 1,
+    "projections": {
+     "4": "1 ",
+     "5": "(convert ( s3, int32) ?: s3) "
+    },
+    "inputStage": {
+     "stage": "group",
+     "planNodeId": 2,
+     "nReturned": 1,
+     "executionTimeMillisEstimate": 295,
+     "opens": 1,
+     "closes": 1,
+     "saveState": 15,
+     "restoreState": 15,
+     "isEOF": 1,
+     "groupBySlots": [],
+     "expressions": {
+      "3": "count() ",
+      "initExprs": {
+       "3": null,
+       "mergingExprs": {
+        "2": "sum(s2) "
+       }
+      }
+     },
+     "usedDisk": false,
+     "spills": 0,
+     "spilledBytes": 0,
+     "spilledRecords": 0,
+     "spilledDataStorageSize": 0,
+     "peakTrackedMemBytes": 0,
+     "inputStage": {
+      "stage": "ixseek",
+      "planNodeId": 1,
+      "nReturned": 1312419,
+      "executionTimeMillisEstimate": 189,
+      "opens": 1,
+      "closes": 1,
+      "saveState": 15,
+      "restoreState": 15,
+      "isEOF": 1,
+      "indexName": "volume_-1",
+      "keysExamined": 1312419,
+      "seeks": 1,
+      "numReads": 1312420,
+      "recordIdSlot": 1,
+      "outputSlots": [],
+      "indexKeysToInclude": "00000000000000000000000000000000",
+      "seekKeyLow": "KS(D601) ",
+      "seekKeyHigh": "KS(D6FE) "
+     }
+    }
+   }
+  }
+ },
+ "queryShapeHash": "EE063243E64583C69FE9008CFC53A35801DFA2BC940A73948BC4EC4696A0E26A",
+ "command": {
+  "aggregate": "candles_1m",
+  "pipeline": [
+   {
+    "$match": {
+     "volume": 0
+    }
+   },
+   {
+    "$group": {
+     "_id": 1,
+     "n": {
+      "$sum": 1
+     }
+    }
+   }
+  ],
+  "cursor": {},
+  "$db": "bigdata_db"
+ },
+ "serverInfo": {
+  "host": "vm",
+  "port": 27017,
+  "version": "8.3.7",
+  "gitVersion": "nogitversion"
+ },
+ "serverParameters": {
+  "internalQueryFacetBufferSizeBytes": 104857600,
+  "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+  "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+  "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+  "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+  "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+  "internalQueryProhibitBlockingMergeOnMongoS": 0,
+  "internalQueryMaxAddToSetBytes": 104857600,
+  "internalQueryFrameworkControl": "trySbeRestricted",
+  "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+ },
+ "ok": 1.0
+}

@@ -82,7 +82,7 @@ def win_agg(df, dur):
                     "open", "high", "low", "close", "volume", "n_candles")
 
 w15, w1h = win_agg(events, "15 minutes"), win_agg(events, "1 hour")
-# групування + статистичне агрегування по календарній добі (без вікна)
+# групування + статистичне агрегування по календарній добі UTC (tumbling-вікно 1 день)
 daily = (events.groupBy(F.window("event_time", "1 day").alias("w"))    # доба = tumbling-вікно 1 день: стан витісняється водяною позначкою
          .agg(F.count(F.lit(1)).alias("n"), F.avg("close").alias("avg_close"), F.stddev("close").alias("std_close"),
               F.min("low").alias("min_low"), F.max("high").alias("max_high"), F.sum("volume").alias("volume"))

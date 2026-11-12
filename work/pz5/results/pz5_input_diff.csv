@@ -1,0 +1,25 @@
+item,n_rows_differing_all_years,n_rows_differing_2018plus,max_abs_diff,max_rel_diff
+rows_old,130276,77668,,
+rows_new,130276,77668,,
+same_datetime_index (1=yes),1,1,,
+same_columns (1=yes),1,1,,
+open,0,0,0.0,0.0
+high,0,0,0.0,0.0
+low,0,0,0.0,0.0
+close,0,0,0.0,0.0
+volume,0,0,0.0,0.0
+n_minutes,0,0,0.0,0.0
+n_flat,0,0,0.0,0.0
+rv,137,105,0.0015445635905944142,0.14025003281532536
+std_ret_1m,169,107,0.0001870023084262031,0.1307483999583479
+ret_1h,0,0,0.0,0.0
+range,0,0,0.0,0.0
+rel_range,0,0,0.0,0.0
+flat_share,0,0,0.0,0.0
+log_volume,0,0,0.0,0.0
+vol_24h,0,0,0.0,0.0
+hour,0,0,0.0,0.0
+dow,0,0,0.0,0.0
+year,0,0,0.0,0.0
+rv_diff_rows_at_month_start_00h,137,105,,
+rv_diff_rows_other_hours,0,0,,

@@ -89,7 +89,7 @@ from matplotlib.patches import Patch
 ax.legend(handles=[Patch(color=C2, label=f"обвал: {int((t.day_logret < 0).sum())}"), Patch(color=C3, label=f"зростання: {int((t.day_logret >= 0).sum())}")], fontsize=9)
 save(fig, F + "/pz3_top50_direction.png")
 
-# 7. out-of-sample
+# 7. оцінка поза вибіркою (out-of-sample)
 loo = pd.read_csv(R + "/pz3_oos_loo.csv"); ts = pd.read_csv(R + "/pz3_oos_timesplit.csv")
 fig, ax = plt.subplots(2, 1, figsize=(W, H2 + .6))
 l1 = loo[loo.unit == "день"]; x = np.arange(len(l1)); w = .38

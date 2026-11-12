@@ -1,0 +1,22 @@
+$ python code/pz5_spark.py
+# ACF дохідностей і модуля дохідностей; базові лінії задачі «напрям»
+                               metric        value
+                              n_hours 77666.000000
+                         conf95_bound     0.007033
+                         acf_ret_lag1    -0.021336
+                     acf_abs_ret_lag1     0.295139
+                    acf_abs_ret_lag24     0.198237
+         acf_abs_ret_lag168_not_shown     0.144492
+                   up_share_next_hour     0.506560
+          majority_accuracy_direction     0.506560
+    same_sign_rule_accuracy_all_hours     0.464387
+opposite_sign_rule_accuracy_all_hours     0.535613
+
+lag  ACF(ret)  ACF(|ret|)
+ lag_h  acf_ret  acf_abs_ret  conf95
+     1  -0.0213       0.2951   0.007
+     2  -0.0288       0.2560   0.007
+     3   0.0018       0.2443   0.007
+     4   0.0017       0.2325   0.007
+     5  -0.0062       0.2280   0.007
+     6  -0.0017       0.2177   0.007
