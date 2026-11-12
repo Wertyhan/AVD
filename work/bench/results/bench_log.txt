@@ -9,3 +9,7 @@
 {'poll': 8, 'time': '09:34:30', 'load1': 2.04833984375, 'other_procs': 3, 'streak': 0}
 {'poll': 9, 'time': '09:35:30', 'load1': 1.94140625, 'other_procs': 3, 'streak': 0}
 {'poll': 10, 'time': '09:36:30', 'load1': 2.08837890625, 'other_procs': 3, 'streak': 0}
+{'poll': 11, 'time': '09:37:30', 'load1': 1.92529296875, 'other_procs': 3, 'streak': 0}
+{'poll': 12, 'time': '09:38:30', 'load1': 1.8837890625, 'other_procs': 3, 'streak': 0}
+{'poll': 13, 'time': '09:39:30', 'load1': 1.79931640625, 'other_procs': 3, 'streak': 0}
+{'poll': 14, 'time': '09:40:30', 'load1': 1.50439453125, 'other_procs': 3, 'streak': 0}
