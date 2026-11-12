@@ -1,0 +1,10 @@
+metric,value
+median_without_cache_s,15.484
+median_with_cache_s,1.363
+median_materialize_s,28.95
+speedup,11.360234776228907
+break_even_runs,2.0501380922031016
+cached_partitions_last,16.0
+total_partitions_last,16.0
+cache_memory_bytes_last,378135828.0
+cache_disk_bytes_last,0.0

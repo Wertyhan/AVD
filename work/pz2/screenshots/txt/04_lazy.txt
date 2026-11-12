@@ -1,12 +1,12 @@
 $ python code/pz2_spark.py
 # фрагмент виводу: трансформації (мс) проти дій; explain() для count() і для sum(vol60)
-Трансформації (build): 481.8 мс – обчислень немає
+Трансформації (build): 174.1 мс – обчислень немає
 
                     action  median    min    max
-transformations_build_only   0.482  0.482  0.482
-      agg_sum_vol60_logret  25.258 23.440 31.760
-                     count   8.383  7.438 11.873
-                noop_write  28.561 27.800 33.707
+transformations_build_only   0.174  0.174  0.174
+      agg_sum_vol60_logret  20.301 20.054 23.648
+                     count   6.653  6.414  7.161
+                noop_write  24.537 23.729 26.927
 
 План count() містить Window: False; план sum(vol60): True
 

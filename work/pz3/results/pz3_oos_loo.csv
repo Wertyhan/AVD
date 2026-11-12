@@ -1,0 +1,9 @@
+unit,held_out,chosen_variant,train_lift_of_chosen,heldout_lift_chosen,heldout_flags_chosen,heldout_rank_chosen,n_dates,heldout_lift_production_variant,heldout_rank_production,heldout_lift_best_in_hindsight,best_in_hindsight_variant,heldout_lift_rank_of_chosen_among_variants,insample_lift_chosen_all_5_days
+день,2020-03-12,"W10080_IQR(r)/1,349",37.5,37.5,51,258,5429,61.0,1,61.0,"W10080_Q90|r|/1,6449",7,37.5
+день,2020-03-13,"W10080_Q90|r|/1,6449",33.7,57.4,78,2,5429,57.4,2,63.0,W7d_same_hour_Q90,4,38.4
+день,2021-05-19,"W10080_Q90|r|/1,6449",43.4,18.4,25,25,5429,18.4,25,44.5,W10080_volume_only,5,38.4
+день,2022-11-08,W7d_same_hour_Q90,36.4,31.6,43,11,5429,46.5,4,47.9,"W10080_IQR(r)/1,349",8,35.5
+день,2022-11-09,"W10080_Q90|r|/1,6449",45.8,8.8,12,65,5429,8.8,63,27.2,"W10080_IQR(r)/1,349",4,38.4
+подія,COVID 12–13.03.2020,"W10080_IQR(r)/1,349",29.7,49.2,134,"258, 208",5429,59.2,"1, 2",59.2,"W10080_Q90|r|/1,6449",6,37.5
+подія,19.05.2021,"W10080_Q90|r|/1,6449",43.4,18.4,25,25,5429,18.4,25,44.5,W10080_volume_only,5,38.4
+подія,FTX 08–09.11.2022,"W10080_Q90|r|/1,6449",45.6,27.6,75,"4, 65",5429,27.6,"4, 63",37.5,"W10080_IQR(r)/1,349",3,38.4

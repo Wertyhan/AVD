@@ -1,3 +1,4 @@
-variant,seconds
-з індексом ts_1 ($sort з індексу),116.65
-"без індексу ($natural, зовнішнє сортування)",119.12
+variant,groups,seconds_median,seconds_runs,totalDocsExamined,usedDisk_any,usedDisk_values,spills_values,winning_plan,loadavg_1m,explain_file
+з індексом ts_1,179,103.88,"[104.21, 103.88, 97.34]",7816537,True,"[True, False]","[3908268, 0]","{'isCached': False, 'queryPlan': {'stage': 'GROUP', 'planNodeId': 4, 'inputStage': {'stage': 'FETCH', 'planNodeId': 2, 'nss': 'bigdata_db.candles_1m', 'inputStage': {'stage': 'IXSCAN', 'planNodeId': 1, 'nss': 'bigdata_db.candles_1m', 'keyPattern': {'ts': 1}, 'indexName': 'ts_1', 'isMultiKey': False,",5.50-6.67,explain/A1_monthly_ohlc_explain.json
+без індексу ($natural),179,104.08,"[104.53, 102.79, 104.08]",7816537,True,"[True, True, False]","[3908268, 8, 0]","{'isCached': False, 'queryPlan': {'stage': 'GROUP', 'planNodeId': 4, 'inputStage': {'stage': 'SORT', 'planNodeId': 3, 'sortPattern': {'ts': 1}, 'memLimit': 104857600, 'type': 'simple', 'inputStage': {'stage': 'PROJECTION_SIMPLE', 'planNodeId': 2, 'transformBy': {'close': True, 'high': True, 'low': T",4.96-10.21,explain/A1_monthly_ohlc_natural_explain.json
+"місячний OHLC з candles_1d (5 429 док.), мс",179,0.1084,"[0.1084, 0.1156, 0.1121, 0.1017, 0.1041]",5429,,,,,4.92-4.92,

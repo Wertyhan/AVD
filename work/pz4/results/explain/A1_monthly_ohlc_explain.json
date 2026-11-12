@@ -51,7 +51,7 @@
        }
       },
       "slotBasedPlan": {
-       "slots": "$$RESULT=s34 env: { s5 = {\"ts\" : 1}, s14 = TimeZoneDatabase(America/Indiana/Tell_City...Europe/London) (timeZoneDB) }",
+       "slots": "$$RESULT=s34 env: { s5 = {\"ts\" : 1}, s14 = TimeZoneDatabase(Israel...America/Araguaina) (timeZoneDB) }",
        "stages": "[4] project [s34 = newObj(\"_id\", s29, \"open\", s16, \"high\", s30, \"low\", s31, \"close\", s22, \"volume\", s32, \"n\", s33)] \n[4] project [s29 = newObj(\"y\", s27, \"m\", s28), s30 = (s18 ?: null), s31 = (s20 ?: null), s32 = doubleDoubleSumFinalize(s24), s33 = (convert ( s26, int32) ?: s26)] \n[4] group [s27, s28] [s16 = first((s11 ?: null)), s18 = max(fillType(s9, 1088, Nothing)), s20 = min(fillType(s10, 1088, Nothing)), s22 = last((s8 ?: null)), s24 = aggDoubleDoubleSum(s13), s26 = count()] spillSlots[s15, s17, s19, s21, s23, s25] mergingExprs[first((s15 ?: null)), max(fillType(s17, 1088, Nothing)), min(fillType(s19, 1088, Nothing)), last((s21 ?: null)), aggMergeDoubleDoubleSums(s23), sum(s25)] \n[4] project [s27 = \n    let [\n        l3.0 = year(s12, TimeZone(UTC)) \n    ] \n    in \n        if exists(l3.0) \n        then makeOwn(move(l3.0)) \n        else \n            if (typeMatch(s12, 1088) ?: true) \n            then null \n            else \n                if typeMatch(s12, 131712) \n                then Nothing \n                else fail(5157904, \"year parameter 'date' must be coercible to date\") \n, s28 = \n    let [\n        l4.0 = month(s12, TimeZone(UTC)) \n    ] \n    in \n        if exists(l4.0) \n        then makeOwn(move(l4.0)) \n        else \n            if (typeMatch(s12, 1088) ?: true) \n            then null \n            else \n                if typeMatch(s12, 131712) \n                then Nothing \n                else fail(5157904, \"month parameter 'date' must be coercible to date\") \n] \n[2] fetch s1 = seek, s6 = result, s7 = recordId, s4 = inSnapshotId, s2 = inIndexIdent, s3 = inIndexKey, s5 = inIndexKeyPattern [s8 = close, s9 = high, s10 = low, s11 = open, s12 = ts, s13 = volume] @\"541a1f1d-6e8d-477d-96f4-a733bd479e3e\" \n[1] ixseek seekKeyLow = KS(0A01) seekKeyHigh = KS(F0FE) [s3 = indexKey, s1 = recordId, s4 = snapshotId, s2 = indexIdent] [] @\"541a1f1d-6e8d-477d-96f4-a733bd479e3e\" @\"ts_1\" forward "
       }
      },
@@ -60,18 +60,18 @@
     "executionStats": {
      "executionSuccess": true,
      "nReturned": 179,
-     "executionTimeMillis": 114163,
+     "executionTimeMillis": 106545,
      "totalKeysExamined": 7816537,
      "totalDocsExamined": 7816537,
      "executionStages": {
       "stage": "project",
       "planNodeId": 4,
       "nReturned": 179,
-      "executionTimeMillisEstimate": 114159,
+      "executionTimeMillisEstimate": 103694,
       "opens": 1,
       "closes": 1,
-      "saveState": 9068,
-      "restoreState": 9067,
+      "saveState": 7998,
+      "restoreState": 7997,
       "isEOF": 1,
       "projections": {
        "34": "newObj(\"_id\", s29, \"open\", s16, \"high\", s30, \"low\", s31, \"close\", s22, \"volume\", s32, \"n\", s33) "
@@ -80,11 +80,11 @@
        "stage": "project",
        "planNodeId": 4,
        "nReturned": 179,
-       "executionTimeMillisEstimate": 114159,
+       "executionTimeMillisEstimate": 103694,
        "opens": 1,
        "closes": 1,
-       "saveState": 9068,
-       "restoreState": 9067,
+       "saveState": 7998,
+       "restoreState": 7997,
        "isEOF": 1,
        "projections": {
         "29": "newObj(\"y\", s27, \"m\", s28) ",
@@ -97,11 +97,11 @@
         "stage": "group",
         "planNodeId": 4,
         "nReturned": 179,
-        "executionTimeMillisEstimate": 114159,
+        "executionTimeMillisEstimate": 103694,
         "opens": 1,
         "closes": 1,
-        "saveState": 9068,
-        "restoreState": 9067,
+        "saveState": 7998,
+        "restoreState": 7997,
         "isEOF": 1,
         "groupBySlots": [
          27,
@@ -135,17 +135,17 @@
         "spills": 3908268,
         "spilledBytes": 351744210,
         "spilledRecords": 3908269,
-        "spilledDataStorageSize": 171032576,
+        "spilledDataStorageSize": 166957056,
         "peakTrackedMemBytes": 155,
         "inputStage": {
          "stage": "project",
          "planNodeId": 4,
          "nReturned": 7816537,
-         "executionTimeMillisEstimate": 330,
+         "executionTimeMillisEstimate": 824,
          "opens": 1,
          "closes": 1,
-         "saveState": 9068,
-         "restoreState": 9067,
+         "saveState": 7998,
+         "restoreState": 7997,
          "isEOF": 1,
          "projections": {
           "27": "\n    let [\n        l3.0 = year(s12, TimeZone(UTC)) \n    ] \n    in \n        if exists(l3.0) \n        then makeOwn(move(l3.0)) \n        else \n            if (typeMatch(s12, 1088) ?: true) \n            then null \n            else \n                if typeMatch(s12, 131712) \n                then Nothing \n                else fail(5157904, \"year parameter 'date' must be coercible to date\") \n",
@@ -155,22 +155,22 @@
           "stage": "fetch",
           "planNodeId": 2,
           "nReturned": 7816537,
-          "executionTimeMillisEstimate": 283,
+          "executionTimeMillisEstimate": 802,
           "opens": 1,
           "closes": 1,
-          "saveState": 9068,
-          "restoreState": 9067,
+          "saveState": 7998,
+          "restoreState": 7997,
           "isEOF": 1,
           "numReads": 7816537,
           "inputStage": {
            "stage": "ixseek",
            "planNodeId": 1,
            "nReturned": 7816537,
-           "executionTimeMillisEstimate": 180,
+           "executionTimeMillisEstimate": 654,
            "opens": 1,
            "closes": 1,
-           "saveState": 9068,
-           "restoreState": 9067,
+           "saveState": 7998,
+           "restoreState": 7997,
            "isEOF": 1,
            "indexName": "ts_1",
            "keysExamined": 7816537,
@@ -193,7 +193,7 @@
     }
    },
    "nReturned": 179,
-   "executionTimeMillisEstimate": 114162
+   "executionTimeMillisEstimate": 103697
   },
   {
    "$sort": {
@@ -208,26 +208,11 @@
    "spilledRecords": 0,
    "spilledDataStorageSize": 0,
    "nReturned": 179,
-   "executionTimeMillisEstimate": 114162,
+   "executionTimeMillisEstimate": 104283,
    "peakTrackedMemBytes": 151613
-  },
-  {
-   "$project": {
-    "open": true,
-    "high": true,
-    "low": true,
-    "close": true,
-    "volume": true,
-    "n": true,
-    "year": "$_id.y",
-    "month": "$_id.m",
-    "_id": false
-   },
-   "nReturned": 179,
-   "executionTimeMillisEstimate": 114162
   }
  ],
- "queryShapeHash": "9EF2EC842E8759945D859C31EAA9BB3C8956E96791A83F453DBBAA2803894DBD",
+ "queryShapeHash": "1BCFCB4F12C0DC1ED6438C3DEED30FCADDFF36BB7443479ED5FA026E0A10B27C",
  "peakTrackedMemBytes": 155,
  "serverInfo": {
   "host": "vm",
@@ -288,19 +273,6 @@
    {
     "$sort": {
      "_id": 1
-    }
-   },
-   {
-    "$project": {
-     "_id": 0,
-     "year": "$_id.y",
-     "month": "$_id.m",
-     "open": 1,
-     "high": 1,
-     "low": 1,
-     "close": 1,
-     "volume": 1,
-     "n": 1
     }
    }
   ],

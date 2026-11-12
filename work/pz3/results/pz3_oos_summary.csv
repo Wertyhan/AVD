@@ -1,0 +1,2 @@
+tau_daily_logret,n_train_events,n_test_big_move_days,chosen_on_train,chosen_k_train,chosen_train_lift,chosen_test_lift_5_known,chosen_test_lift_big_days,chosen_test_base_rate_pct,production_variant_train_lift,production_test_lift_5_known,production_test_base_rate_pct,loo_days_mean_heldout_lift,loo_days_same_variant_all_folds,loo_events_mean_heldout_lift
+0.1,118,32,"W10080_Q90|r|/1,6449",8.38,6.719,42.453,11.309,0.094,6.465,41.602,0.097,30.74,False,31.733

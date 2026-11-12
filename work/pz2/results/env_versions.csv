@@ -21,5 +21,5 @@ spark.sql.adaptive.coalescePartitions.enabled,false
 spark.sql.session.timeZone,UTC
 spark.ui.url,http://192.0.2.2:4040
 seed,42
-run_started,2026-11-11 23:11:39
-loadavg_at_start,7.62 7.32 4.50 6/993 787
+run_started,2026-11-11 23:25:01
+loadavg_at_start,8.60 7.66 6.37 5/948 21482

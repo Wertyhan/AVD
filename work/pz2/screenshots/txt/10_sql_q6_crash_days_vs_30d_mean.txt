@@ -1,0 +1,11 @@
+$ python code/pz2_spark.py
+# фрагмент виводу: результат запиту q6_crash_days_vs_30d_mean (spark.sql)
+SELECT * FROM ( SELECT date, ROUND(100*ret_1d,2) AS ret_pct, ROUND(rv,4) AS rv, ROUND(…
+
+      date  ret_pct     rv  volume  volume_x_prev30_mean
+2020-03-12   -49.40 0.2111 58513.0                  9.27
+2020-03-13    14.96 0.2784 54420.0                  6.81
+2021-05-19   -15.34 0.1914 32469.0                  6.12
+2022-06-13   -16.90 0.0938 12622.0                  6.56
+2022-11-08   -10.43 0.0933 12036.0                  8.45
+2022-11-09   -15.56 0.0815  8351.0                  4.63

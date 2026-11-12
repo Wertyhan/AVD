@@ -1,0 +1,21 @@
+task,engine,run,seconds,note
+year_count_volume,spark_local[*],1,3.944,"читання CSV + агрегація; Spark включає toPandas(), pandas – один потік"
+year_count_volume,pandas,1,3.556,"читання CSV + агрегація; Spark включає toPandas(), pandas – один потік"
+year_count_volume,spark_local[*],2,3.588,"читання CSV + агрегація; Spark включає toPandas(), pandas – один потік"
+year_count_volume,pandas,2,3.524,"читання CSV + агрегація; Spark включає toPandas(), pandas – один потік"
+year_count_volume,spark_local[*],3,3.023,"читання CSV + агрегація; Spark включає toPandas(), pandas – один потік"
+year_count_volume,pandas,3,3.707,"читання CSV + агрегація; Spark включає toPandas(), pandas – один потік"
+daily_ohlc,spark_local[*],1,4.841,"читання CSV + агрегація; Spark включає toPandas(), pandas – один потік"
+daily_ohlc,pandas,1,5.449,"читання CSV + агрегація; Spark включає toPandas(), pandas – один потік"
+daily_ohlc,spark_local[*],2,4.547,"читання CSV + агрегація; Spark включає toPandas(), pandas – один потік"
+daily_ohlc,pandas,2,4.851,"читання CSV + агрегація; Spark включає toPandas(), pandas – один потік"
+daily_ohlc,spark_local[*],3,4.22,"читання CSV + агрегація; Spark включає toPandas(), pandas – один потік"
+daily_ohlc,pandas,3,4.884,"читання CSV + агрегація; Spark включає toPandas(), pandas – один потік"
+year_count_volume,spark_cached_df,1,0.729,лише агрегація над кешем (16 розділів)
+daily_ohlc,spark_cached_df,1,0.986,лише агрегація над кешем (16 розділів)
+year_count_volume,spark_cached_df,2,0.549,лише агрегація над кешем (16 розділів)
+daily_ohlc,spark_cached_df,2,0.563,лише агрегація над кешем (16 розділів)
+year_count_volume,spark_cached_df,3,0.428,лише агрегація над кешем (16 розділів)
+daily_ohlc,spark_cached_df,3,0.618,лише агрегація над кешем (16 розділів)
+year_count_volume,hadoop_streaming,,[ЗАПОВНИТИ ПІСЛЯ ЗАПУСКУ],значення з окремого бенчмарку Hadoop
+daily_ohlc,hadoop_streaming,,[ЗАПОВНИТИ ПІСЛЯ ЗАПУСКУ],значення з окремого бенчмарку Hadoop

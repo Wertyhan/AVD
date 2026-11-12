@@ -1,0 +1,327 @@
+{
+ "explainVersion": "2",
+ "stages": [
+  {
+   "$cursor": {
+    "queryPlanner": {
+     "namespace": "bigdata_db.candles_1m",
+     "parsedQuery": {},
+     "indexFilterSet": false,
+     "queryHash": "70ACC170",
+     "planCacheShapeHash": "70ACC170",
+     "planCacheKey": "A657D156",
+     "optimizationTimeMillis": 0,
+     "cursorType": "regular",
+     "maxIndexedOrSolutionsReached": false,
+     "maxIndexedAndSolutionsReached": false,
+     "maxScansToExplodeReached": false,
+     "prunedSimilarIndexes": false,
+     "winningPlan": {
+      "isCached": false,
+      "queryPlan": {
+       "stage": "GROUP",
+       "planNodeId": 4,
+       "inputStage": {
+        "stage": "SORT",
+        "planNodeId": 3,
+        "sortPattern": {
+         "ts": 1
+        },
+        "memLimit": 104857600,
+        "type": "simple",
+        "inputStage": {
+         "stage": "PROJECTION_SIMPLE",
+         "planNodeId": 2,
+         "transformBy": {
+          "close": true,
+          "high": true,
+          "low": true,
+          "open": true,
+          "ts": true,
+          "volume": true,
+          "_id": false
+         },
+         "inputStage": {
+          "stage": "COLLSCAN",
+          "planNodeId": 1,
+          "filter": {},
+          "nss": "bigdata_db.candles_1m",
+          "direction": "forward"
+         }
+        }
+       }
+      },
+      "slotBasedPlan": {
+       "slots": "$$RESULT=s30 env: { s10 = TimeZoneDatabase(Israel...America/Araguaina) (timeZoneDB) }",
+       "stages": "[4] project [s30 = newObj(\"_id\", s25, \"open\", s12, \"high\", s26, \"low\", s27, \"close\", s18, \"volume\", s28, \"n\", s29)] \n[4] project [s25 = newObj(\"y\", s23, \"m\", s24), s26 = (s14 ?: null), s27 = (s16 ?: null), s28 = doubleDoubleSumFinalize(s20), s29 = (convert ( s22, int32) ?: s22)] \n[4] group [s23, s24] [s12 = first((s6 ?: null)), s14 = max(fillType(s4, 1088, Nothing)), s16 = min(fillType(s5, 1088, Nothing)), s18 = last((s3 ?: null)), s20 = aggDoubleDoubleSum(s8), s22 = count()] spillSlots[s11, s13, s15, s17, s19, s21] mergingExprs[first((s11 ?: null)), max(fillType(s13, 1088, Nothing)), min(fillType(s15, 1088, Nothing)), last((s17 ?: null)), aggMergeDoubleDoubleSums(s19), sum(s21)] \n[4] project [s23 = \n    let [\n        l3.0 = year(s7, TimeZone(UTC)) \n    ] \n    in \n        if exists(l3.0) \n        then makeOwn(move(l3.0)) \n        else \n            if (typeMatch(s7, 1088) ?: true) \n            then null \n            else \n                if typeMatch(s7, 131712) \n                then Nothing \n                else fail(5157904, \"year parameter 'date' must be coercible to date\") \n, s24 = \n    let [\n        l4.0 = month(s7, TimeZone(UTC)) \n    ] \n    in \n        if exists(l4.0) \n        then makeOwn(move(l4.0)) \n        else \n            if (typeMatch(s7, 1088) ?: true) \n            then null \n            else \n                if typeMatch(s7, 131712) \n                then Nothing \n                else fail(5157904, \"month parameter 'date' must be coercible to date\") \n] \n[3] sort [s9] [asc] [s3, s4, s5, s6, s7, s8] \n[3] project [s9 = getSortKeyAsc(s7)] \n[1] scan generic [s1 = record, s2 = recordId] [s3 = close, s4 = high, s5 = low, s6 = open, s7 = ts, s8 = volume] @\"541a1f1d-6e8d-477d-96f4-a733bd479e3e\" "
+      }
+     },
+     "rejectedPlans": []
+    },
+    "executionStats": {
+     "executionSuccess": true,
+     "nReturned": 179,
+     "executionTimeMillis": 110433,
+     "totalKeysExamined": 0,
+     "totalDocsExamined": 7816537,
+     "executionStages": {
+      "stage": "project",
+      "planNodeId": 4,
+      "nReturned": 179,
+      "executionTimeMillisEstimate": 110429,
+      "opens": 1,
+      "closes": 1,
+      "saveState": 7918,
+      "restoreState": 7917,
+      "isEOF": 1,
+      "projections": {
+       "30": "newObj(\"_id\", s25, \"open\", s12, \"high\", s26, \"low\", s27, \"close\", s18, \"volume\", s28, \"n\", s29) "
+      },
+      "inputStage": {
+       "stage": "project",
+       "planNodeId": 4,
+       "nReturned": 179,
+       "executionTimeMillisEstimate": 110429,
+       "opens": 1,
+       "closes": 1,
+       "saveState": 7918,
+       "restoreState": 7917,
+       "isEOF": 1,
+       "projections": {
+        "25": "newObj(\"y\", s23, \"m\", s24) ",
+        "26": "(s14 ?: null) ",
+        "27": "(s16 ?: null) ",
+        "28": "doubleDoubleSumFinalize(s20) ",
+        "29": "(convert ( s22, int32) ?: s22) "
+       },
+       "inputStage": {
+        "stage": "group",
+        "planNodeId": 4,
+        "nReturned": 179,
+        "executionTimeMillisEstimate": 110429,
+        "opens": 1,
+        "closes": 1,
+        "saveState": 7918,
+        "restoreState": 7917,
+        "isEOF": 1,
+        "groupBySlots": [
+         23,
+         24
+        ],
+        "expressions": {
+         "12": "first((s6 ?: null)) ",
+         "14": "max(fillType(s4, 1088, Nothing)) ",
+         "16": "min(fillType(s5, 1088, Nothing)) ",
+         "18": "last((s3 ?: null)) ",
+         "20": "aggDoubleDoubleSum(s8) ",
+         "22": "count() ",
+         "initExprs": {
+          "12": null,
+          "14": null,
+          "16": null,
+          "18": null,
+          "20": null,
+          "22": null,
+          "mergingExprs": {
+           "11": "first((s11 ?: null)) ",
+           "13": "max(fillType(s13, 1088, Nothing)) ",
+           "15": "min(fillType(s15, 1088, Nothing)) ",
+           "17": "last((s17 ?: null)) ",
+           "19": "aggMergeDoubleDoubleSums(s19) ",
+           "21": "sum(s21) "
+          }
+         }
+        },
+        "usedDisk": true,
+        "spills": 3908268,
+        "spilledBytes": 351744210,
+        "spilledRecords": 3908269,
+        "spilledDataStorageSize": 167194624,
+        "peakTrackedMemBytes": 155,
+        "inputStage": {
+         "stage": "project",
+         "planNodeId": 4,
+         "nReturned": 7816537,
+         "executionTimeMillisEstimate": 14600,
+         "opens": 1,
+         "closes": 1,
+         "saveState": 7918,
+         "restoreState": 7917,
+         "isEOF": 1,
+         "projections": {
+          "23": "\n    let [\n        l3.0 = year(s7, TimeZone(UTC)) \n    ] \n    in \n        if exists(l3.0) \n        then makeOwn(move(l3.0)) \n        else \n            if (typeMatch(s7, 1088) ?: true) \n            then null \n            else \n                if typeMatch(s7, 131712) \n                then Nothing \n                else fail(5157904, \"year parameter 'date' must be coercible to date\") \n",
+          "24": "\n    let [\n        l4.0 = month(s7, TimeZone(UTC)) \n    ] \n    in \n        if exists(l4.0) \n        then makeOwn(move(l4.0)) \n        else \n            if (typeMatch(s7, 1088) ?: true) \n            then null \n            else \n                if typeMatch(s7, 131712) \n                then Nothing \n                else fail(5157904, \"month parameter 'date' must be coercible to date\") \n"
+         },
+         "inputStage": {
+          "stage": "sort",
+          "planNodeId": 3,
+          "nReturned": 7816537,
+          "executionTimeMillisEstimate": 14591,
+          "opens": 1,
+          "closes": 1,
+          "saveState": 7918,
+          "restoreState": 7917,
+          "isEOF": 1,
+          "memLimit": 104857600,
+          "totalDataSizeSorted": 726664120,
+          "usedDisk": true,
+          "spills": 8,
+          "spilledDataStorageSize": 234885023,
+          "spilledBytes": 617506423,
+          "spilledRecords": 7816537,
+          "peakTrackedMemBytes": 103809065,
+          "orderBySlots": {
+           "9": "asc"
+          },
+          "outputSlots": [
+           3,
+           4,
+           5,
+           6,
+           7,
+           8
+          ],
+          "inputStage": {
+           "stage": "project",
+           "planNodeId": 3,
+           "nReturned": 7816537,
+           "executionTimeMillisEstimate": 3498,
+           "opens": 1,
+           "closes": 1,
+           "saveState": 7918,
+           "restoreState": 7917,
+           "isEOF": 1,
+           "projections": {
+            "9": "getSortKeyAsc(s7) "
+           },
+           "inputStage": {
+            "stage": "scan",
+            "planNodeId": 1,
+            "nReturned": 7816537,
+            "executionTimeMillisEstimate": 2954,
+            "opens": 1,
+            "closes": 1,
+            "saveState": 7918,
+            "restoreState": 7917,
+            "isEOF": 1,
+            "numReads": 7816537,
+            "recordSlot": 1,
+            "recordIdSlot": 2,
+            "scanFieldNames": [
+             "close",
+             "high",
+             "low",
+             "open",
+             "ts",
+             "volume"
+            ],
+            "scanFieldSlots": [
+             3,
+             4,
+             5,
+             6,
+             7,
+             8
+            ]
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "nReturned": 179,
+   "executionTimeMillisEstimate": 110430
+  },
+  {
+   "$sort": {
+    "sortKey": {
+     "_id": 1
+    }
+   },
+   "totalDataSizeSortedBytesEstimate": 151613,
+   "usedDisk": false,
+   "spills": 0,
+   "spilledBytes": 0,
+   "spilledRecords": 0,
+   "spilledDataStorageSize": 0,
+   "nReturned": 179,
+   "executionTimeMillisEstimate": 110430,
+   "peakTrackedMemBytes": 151613
+  }
+ ],
+ "queryShapeHash": "1BCFCB4F12C0DC1ED6438C3DEED30FCADDFF36BB7443479ED5FA026E0A10B27C",
+ "peakTrackedMemBytes": 103809065,
+ "serverInfo": {
+  "host": "vm",
+  "port": 27017,
+  "version": "8.3.7",
+  "gitVersion": "nogitversion"
+ },
+ "serverParameters": {
+  "internalQueryFacetBufferSizeBytes": 104857600,
+  "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+  "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+  "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+  "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+  "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+  "internalQueryProhibitBlockingMergeOnMongoS": 0,
+  "internalQueryMaxAddToSetBytes": 104857600,
+  "internalQueryFrameworkControl": "trySbeRestricted",
+  "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+ },
+ "command": {
+  "aggregate": "candles_1m",
+  "pipeline": [
+   {
+    "$sort": {
+     "ts": 1
+    }
+   },
+   {
+    "$group": {
+     "_id": {
+      "y": {
+       "$year": "$ts"
+      },
+      "m": {
+       "$month": "$ts"
+      }
+     },
+     "open": {
+      "$first": "$open"
+     },
+     "high": {
+      "$max": "$high"
+     },
+     "low": {
+      "$min": "$low"
+     },
+     "close": {
+      "$last": "$close"
+     },
+     "volume": {
+      "$sum": "$volume"
+     },
+     "n": {
+      "$sum": 1
+     }
+    }
+   },
+   {
+    "$sort": {
+     "_id": 1
+    }
+   }
+  ],
+  "cursor": {},
+  "allowDiskUse": true,
+  "hint": {
+   "$natural": 1
+  },
+  "$db": "bigdata_db"
+ },
+ "ok": 1.0
+}

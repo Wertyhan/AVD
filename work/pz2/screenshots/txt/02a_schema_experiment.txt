@@ -1,14 +1,14 @@
 $ python code/pz2_spark.py
 # фрагмент виводу: inferSchema проти явної схеми: сума всіх 6 стовпців, 3 запуски, поря
-Файловий кеш ОС прогріто (buff/cache, МБ: 4789 -> 4789)
+Файловий кеш ОС прогріто (buff/cache, МБ: 2409 -> 2409)
     variant  run  position_in_pair  seconds
-inferSchema    1                 1   22.516
-   explicit    1                 2    6.414
-   explicit    2                 1   11.422
-inferSchema    2                 2   27.977
-inferSchema    3                 1   21.240
-   explicit    3                 2   12.568
+inferSchema    1                 1   16.929
+   explicit    1                 2    5.124
+   explicit    2                 1    4.949
+inferSchema    2                 2   10.744
+inferSchema    3                 1    9.903
+   explicit    3                 2    5.014
 
-    variant  median    min    max  ratio_vs_explicit
-   explicit  11.422  6.414 12.568              1.000
-inferSchema  22.516 21.240 27.977              1.971
+    variant  median   min    max  ratio_vs_explicit
+   explicit   5.014 4.949  5.124              1.000
+inferSchema  10.744 9.903 16.929              2.143

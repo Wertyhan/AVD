@@ -1,0 +1,12 @@
+metric,value
+window_partition_key,year+month
+partition_groups,179
+rows,7816537
+rdd_partitions,16
+non_empty_partitions,16
+log_ret_null_rows,179
+log_ret_null_rows_unpartitioned_window,1
+rows_with_vol60_window_lt_60_points,10740
+rows_with_vol60_window_lt_60_points_unpartitioned,60
+rows_vol60_null,358
+share_rows_vol60_incomplete_pct,0.1374

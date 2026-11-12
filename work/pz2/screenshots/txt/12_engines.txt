@@ -1,0 +1,24 @@
+$ python code/pz2_spark.py
+# фрагмент виводу: Spark проти pandas (порядок S,P,S,P,S,P), медіани, звірка результаті
+             task          engine  median   min   max
+       daily_ohlc          pandas   4.884 4.851 5.449
+       daily_ohlc spark_cached_df   0.618 0.563 0.986
+       daily_ohlc  spark_local[*]   4.547 4.220 4.841
+year_count_volume          pandas   3.556 3.524 3.707
+year_count_volume spark_cached_df   0.549 0.428 0.729
+year_count_volume  spark_local[*]   3.588 3.023 3.944
+
+Звірка результатів двох рушіїв (assert):
+             task                 check  passed
+year_count_volume       row_count_equal    True
+year_count_volume            year_equal    True
+year_count_volume           count_equal    True
+year_count_volume volume_rel_diff<=1e-6    True
+       daily_ohlc       row_count_equal    True
+       daily_ohlc            date_equal    True
+       daily_ohlc minutes_per_day_equal    True
+       daily_ohlc   open_rel_diff<=1e-9    True
+       daily_ohlc   high_rel_diff<=1e-9    True
+       daily_ohlc    low_rel_diff<=1e-9    True
+       daily_ohlc  close_rel_diff<=1e-9    True
+       daily_ohlc volume_rel_diff<=1e-6    True

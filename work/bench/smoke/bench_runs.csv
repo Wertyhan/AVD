@@ -1,0 +1,3 @@
+round,warmup,engine,task,seconds,load1_before,load1_after,mem_available_gb,timestamp,check
+0,True,pandas,T1,8.986,10.20556640625,9.94873046875,8.03,2026-11-11 23:24:30,reference
+0,True,pandas,T2,9.064,9.94873046875,9.662109375,9.54,2026-11-11 23:24:38,reference

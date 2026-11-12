@@ -1,9 +1,5 @@
 $ python code/smoke_test.py
 Spark 4.3.0 | count = 1000
-
-[Stage 3:>                                                          (0 + 2) / 2]
-
-                                                                                
 +---+-----+
 |  k|count|
 +---+-----+

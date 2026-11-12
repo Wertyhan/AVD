@@ -1,0 +1,12 @@
+metric,value
+k_threshold_min_ratio_of_q6_dates,4.63
+days_since_2018_total,3237.0
+spike_days,22.0
+spike_days_share_of_all_days_pct,0.68
+spike_days_with_abs_ret_ge_10pct,12.0
+spike_days_with_abs_ret_lt_10pct,10.0
+spike_days_with_abs_ret_lt_5pct,6.0
+share_spike_days_with_abs_ret_ge_10pct,0.5455
+q6_list_dates_in_q7,6.0
+max_ratio,9.27
+median_ratio,5.880000000000001

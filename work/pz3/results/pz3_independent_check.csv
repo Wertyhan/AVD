@@ -1,0 +1,3 @@
+group,n,max_abs_diff_z_ret,max_rel_diff_z_ret,max_abs_diff_z_vol,flag_mismatches_stream_vs_pandas,flag_mismatches_offline_vs_pandas
+непозначені,200,0.0,0.0,0.0,0,0
+позначені,200,0.0,0.0,0.0,0,0
