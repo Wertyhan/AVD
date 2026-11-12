@@ -393,7 +393,7 @@ def pipe_table(doc, rows):
     if sum(mins) > TEXT_W:
         k = TEXT_W / sum(mins); mins = [m * k for m in mins]
     fw = full(size)
-    cap = [min(f, max(m, 5.5)) if not numeric[j] else f for j, (f, m) in enumerate(zip(fw, mins))]
+    cap = [min(f, max(m, 5.5)) if not numeric[j] and n > 2 else f for j, (f, m) in enumerate(zip(fw, mins))]
     cap = [max(c, m) for c, m in zip(cap, mins)]
     narrow = n <= 3 and sum(cap) < 12.0
     target = min(TEXT_W, 12.0) if narrow else TEXT_W
