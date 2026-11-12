@@ -97,7 +97,7 @@ ax[0].bar(x - w / 2, l1.insample_lift_chosen_all_5_days, w, color="gray", label=
 ax[0].set_xticks(x); ax[0].set_xticklabels([f"{d[8:10]}.{d[5:7]}.{d[2:4]}" for d in l1.held_out]); ax[0].set_ylabel("lift"); ax[0].legend(fontsize=9); ax[0].set_title("Leave-one-event-out: lift обраного варіанта")
 t2 = ts.head(8); x = np.arange(len(t2))
 ax[1].bar(x - w / 2, t2.train_lift, w, color=C1, label="навчання 2013–2019"); ax[1].bar(x + w / 2, t2.test_lift_5_known_days, w, color=C3, label="тест 2020+ (5 днів)")
-ax[1].set_xticks(x); ax[1].set_xticklabels([v.replace("W10080_", "7д ").replace("zr_and_zv>", "z_ret∧z_vol>").replace("Q90|r|/1,6449", "Q90")[:16] for v in t2.variant], rotation=35, ha="right", fontsize=9)
+ax[1].set_xticks(x); ax[1].set_xticklabels([v.replace("W7d_same_hour_Q90", "7д, та сама год.").replace("W10080_", "7д ").replace("zr_and_zv>", "z_ret∧z_vol>").replace("Q90|r|/1,6449", "Q90") for v in t2.variant], rotation=35, ha="right", fontsize=9)
 ax[1].set_ylabel("lift"); ax[1].legend(fontsize=9); ax[1].set_title("Часовий поділ: вибір на 2013–2019, оцінка на 2020+")
 save(fig, F + "/pz3_oos_eval.png")
 print("figures done (anomaly)")

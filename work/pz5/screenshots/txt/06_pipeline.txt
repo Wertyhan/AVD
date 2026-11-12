@@ -1,7 +1,0 @@
-$ pipeline = Pipeline(stages=[SQLTransformer, Imputer, StringIndexer, OneHotEncoder, VectorAssembler, StandardScaler, LogisticRegression])
-LR: SQLTransformer -> Imputer -> StringIndexer -> OneHotEncoder -> VectorAssembler -> StandardScaler -> LogisticRegression
-RF: SQLTransformer -> Imputer -> StringIndexer -> OneHotEncoder -> VectorAssembler -> SQLTransformer -> RandomForestClassifier
-GBT: SQLTransformer -> Imputer -> StringIndexer -> OneHotEncoder -> VectorAssembler -> SQLTransformer -> GBTClassifier
-
-Ознаки (числові, 17): ['log_rv_l0', 'log_rv_l1', 'log_rv_l2', 'log_rv_l5', 'log_rv_l23', 'log_rv_m3', 'log_rv_m6', 'log_rv_m24', 'log_rv_m168', 'log_rv_over_thr', 'ret_1h', 'abs_ret_1h', 'ret_6h', 'log_rel_range', 'log_volume', 'vol_z168', 'flat_share']
-Циклічні/бінарні: ['hour_sin', 'hour_cos', 'is_weekend']; категоріальна: dow -> OneHot(7)

@@ -1,14 +1,14 @@
 $ python3 -c "import pandas as pd; pd.set_option('display.width',200); t=pd.read_csv('results/pz4_index_comparison.csv'); print(t[['experiment','phase','executionTimeMillis_explain_median','totalDocsExamined','totalKeysExamined','nReturned','winning_plan']].to_string(index=False))"
     experiment phase  executionTimeMillis_explain_median  totalDocsExamined  totalKeysExamined  nReturned           winning_plan
-  E1_range_day    до                                5939            7816537                  0       1440        SORT > COLLSCAN
+  E1_range_day    до                                4637            7816537                  0       1440        SORT > COLLSCAN
   E1_range_day після                                   1               1440               1440       1440         FETCH > IXSCAN
-E2_range_month    до                                5938            7816537                  0      44640        SORT > COLLSCAN
-E2_range_month після                                  51              44640              44640      44640         FETCH > IXSCAN
- E3_top_volume    до                                6437            7816537                  0         10        SORT > COLLSCAN
+E2_range_month    до                                5886            7816537                  0      44640        SORT > COLLSCAN
+E2_range_month після                                  50              44640              44640      44640         FETCH > IXSCAN
+ E3_top_volume    до                                5399            7816537                  0         10        SORT > COLLSCAN
  E3_top_volume після                                   0                 10                 10         10 LIMIT > FETCH > IXSCAN
-E4_year_volume    до                                   4               5429                  0         36        SORT > COLLSCAN
+E4_year_volume    до                                   2               5429                  0         36        SORT > COLLSCAN
 E4_year_volume після                                   0                 36                 36         36         FETCH > IXSCAN
-E5a_flat_hours    до                                 109             130276                  0         24        SORT > COLLSCAN
+E5a_flat_hours    до                                  86             130276                  0         24        SORT > COLLSCAN
 E5a_flat_hours після                                   0                 24                 24         24         FETCH > IXSCAN
 E5b_bucket_day    до                                   2               5429                  0          1               COLLSCAN
 E5b_bucket_day після                                   0                  1                  1          1         FETCH > IXSCAN

@@ -1,5 +1,0 @@
-$ model.write().save('results/model/best_pipeline_GBT'); PipelineModel.load(...)
-збережено: results/model/best_pipeline_GBT
-metadata
-stages
-етапи: ['SQLTransformer', 'ImputerModel', 'StringIndexerModel', 'OneHotEncoderModel', 'VectorAssembler', 'SQLTransformer', 'GBTClassificationModel']

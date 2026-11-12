@@ -1,8 +1,0 @@
-$ random split vs chronological split (same models and hyperparameters)
-model                  split  accuracy  precision  recall     f1  roc_auc  pr_auc  n_test
-   LR random 80/20 (shuffle)    0.8500     0.7737  0.5390 0.6354   0.8648  0.7441   15746
-   LR    chronological 80/20    0.8547     0.7902  0.5668 0.6601   0.8875  0.7820   15534
-   RF random 80/20 (shuffle)    0.8451     0.7825  0.5003 0.6103   0.8547  0.7204   15746
-   RF    chronological 80/20    0.8532     0.8528  0.4960 0.6272   0.8916  0.7847   15534
-  GBT random 80/20 (shuffle)    0.8527     0.7689  0.5613 0.6489   0.8718  0.7523   15746
-  GBT    chronological 80/20    0.8656     0.8229  0.5862 0.6847   0.9010  0.8032   15534

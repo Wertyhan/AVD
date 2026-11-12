@@ -24,7 +24,7 @@ for label, maxoff in (("backlog, maxOffsetsPerTrigger=3000", 3000), ("backlog, Ð
     q = w.writeStream.queryName(name).outputMode("update").format("memory").trigger(availableNow=True).option("checkpointLocation", tempfile.mkdtemp()).start()
     q.awaitTermination(300)
     prog = q.recentProgress
-    t = spark.table(name).toPandas().sort_values("window").drop_duplicates("window", keep="last")
+    t = spark.table(name).toPandas(); t["ws"] = t["window"].apply(lambda w: w["start"]); t = t.sort_values(["ws", "n_candles"]).drop_duplicates("ws", keep="last")
     dropped = sum(o.get("numRowsDroppedByWatermark", 0) for p in prog for o in p.get("stateOperators", []))
     res.append({"scenario": label, "micro_batches": len(prog), "messages_in_topic": 30240, "rows_in_windows": int(t["n_candles"].sum()),
                 "rows_lost": 30240 - int(t["n_candles"].sum()), "numRowsDroppedByWatermark_sum": int(dropped), "windows": len(t),

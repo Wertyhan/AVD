@@ -1,41 +1,7 @@
-$ mongosh --quiet --eval 'db.anomalies.aggregate([{$group:{_id:"$date",n_anom:{$sum:1},max_score:{$max:"$score"}}},{$lookup:{from:"spark_daily_features",localField:"_id",foreignField:"date",as:"f"}},{$unwind:"$f"},{$project:{_id:0,date:"$_id",n_anom:1,max_score:1,rv:"$f.rv",volume:"$f.volume"}},{$sort:{n_anom:-1}},{$limit:6}])' bigdata_db
-[
-  {
-    n_anom: 82,
-    max_score: 5.85405651641412,
-    date: ISODate('2020-03-12T00:00:00.000Z'),
-    rv: 0.21108938591177656,
-    volume: 58513.38918903003
-  },
-  {
-    n_anom: 75,
-    max_score: 3.473443560707312,
-    date: ISODate('2020-03-13T00:00:00.000Z'),
-    rv: 0.27837440369771943,
-    volume: 54419.641335529945
-  },
-  {
-    n_anom: 66,
-    max_score: 4.600795525732278,
-    date: ISODate('2019-04-02T00:00:00.000Z'),
-    rv: 0.07583354726055354,
-    volume: 30686.173514419977
-  },
-  {
-    n_anom: 59,
-    max_score: 9.478977576178238,
-    date: ISODate('2022-11-08T00:00:00.000Z'),
-    rv: 0.0933148359781162,
-    volume: 12035.901788449988
-  },
-  {
-    n_anom: 58,
-    max_score: 4.862595967409188,
-    date: ISODate('2018-11-14T00:00:00.000Z'),
-    rv: 0.0699415595527449,
-    volume: 25121.933013560014
-  },
-  {
-    n_anom: 55,
-    max_score: 10.222216791952286,
-… (ще 5 рядків)
+$ mongosh --quiet --eval 'db.anomalies.aggregate([{$group:{_id:"$date",n_anom:{$sum:1},max_score:{$max:"$score"}}},{$lookup:{from:"spark_daily_features",localField:"_id",foreignField:"date",as:"f"}},{$unwind:"$f"},{$project:{_id:0,date:"$_id",n_anom:1,max_score:1,rv:"$f.rv",volume:"$f.volume"}},{$sort:{n_anom:-1}},{$limit:6}]).forEach(d => print(d.date.toISOString().slice(0,10), String(d.n_anom).padStart(4), d.max_score.toFixed(2).padStart(6), d.rv.toFixed(4), Math.round(d.volume)))' bigdata_db
+2020-03-12   82   5.85 0.2111 58513
+2020-03-13   75   3.47 0.2784 54420
+2019-04-02   66   4.60 0.0758 30686
+2022-11-08   59   9.48 0.0933 12036
+2018-11-14   58   4.86 0.0699 25122
+2013-04-10   55  10.22 0.8632 20889
