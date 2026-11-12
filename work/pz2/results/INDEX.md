@@ -17,7 +17,7 @@
 | 7. Візуалізація | – | figures/fig01-fig12 (12 рисунків) |
 | Часи кроків | timings.csv | |
 
-Hadoop Streaming: у таблицях і timings.csv рядки-заповнювачі `[ЗАПОВНИТИ ПІСЛЯ ЗАПУСКУ]` (окремий бенчмарк).
+Hadoop Streaming / Hive / pandas / Spark наскрізно (зі стартом процесу): окремий бенчмарк `bench/results/` (bench_summary.csv, bench_method.md); копія підсумку – `engine_benchmark.csv`, рисунок – `figures/fig_bench.png`.
 
 Примітки до інтерпретації:
 - Вікна рахуються з `partitionBy(year, month)`: перший рядок кожного місяця має `log_ret = NULL`, перші 59 хв місяця мають менше 60 точок у `vol60` (кількості в pz2_window_boundary.csv). Глобальне вікно зводило б усі 7,8 млн рядків в один розділ.

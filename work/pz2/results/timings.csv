@@ -48,6 +48,4 @@ engine_daily_ohlc_spark_local[*],4.547,медіана з 3 запусків
 engine_year_count_volume_pandas,3.556,медіана з 3 запусків
 engine_year_count_volume_spark_cached_df,0.549,медіана з 3 запусків
 engine_year_count_volume_spark_local[*],3.588,медіана з 3 запусків
-engine_year_count_volume_hadoop_streaming,,[ЗАПОВНИТИ ПІСЛЯ ЗАПУСКУ]
-engine_daily_ohlc_hadoop_streaming,,[ЗАПОВНИТИ ПІСЛЯ ЗАПУСКУ]
 TOTAL_script_runtime,504.393,

@@ -1,0 +1,4 @@
+file,lines_total,lines_without_comments_blank_docstrings
+mapper_ohlc.py,63,43
+reducer_ohlc.py,51,26
+hive_04_daily_struct.hql,18,13

@@ -9,7 +9,7 @@ import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from pz5_common import BASE, RES, SHOTS, TXT, SEED, cap as _cap, save
 np.random.seed(SEED)
-SRC = "/home/user/AVD/work/pz2/results/pz2_hourly_features.parquet"   # результат попередньої обробки (ПЗ2, чистий перезапуск)
+SRC = os.path.join(BASE, "..", "pz2", "results", "pz2_hourly_features.parquet")   # результат попередньої обробки (ПЗ2)
 SCRIPT = "pz5_spark.py"
 def cap(name, desc): return _cap(name, SCRIPT, desc)
 os.makedirs(f"{RES}/model", exist_ok=True)
@@ -359,7 +359,7 @@ with cap("09_importance", "model.stages[-1].featureImportances / coefficients (�
     print(imp.head(14).drop(columns=["LR_abs_coef"]).rename(columns={"LR_coef_standardized": "LR_coef"}).round(4).to_string(index=False))
     print(f"... ще {len(imp) - 14} рядків у results/pz5_feature_importance.csv; LR intercept:", round(models['LR'].stages[-1].intercept, 4))
 
-# ---------- Випадковий поділ проти хронологічного: порівняння на ОДНАКОВИХ годинах (MAJOR-1) ----------
+# ---------- Випадковий поділ проти хронологічного: порівняння на ОДНАКОВИХ годинах ----------
 #  A  – хронологічна модель (train до ембарго) -> хронологічний test (n_te)
 #  B  – випадкова вибірка 80 % передтестового періоду (train) -> ТОЙ САМИЙ хронологічний test (ті самі рядки, що й A)
 #  C  – випадковий поділ 80/20 усього періоду -> його випадковий test (вся історія 2018–2026)

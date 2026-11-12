@@ -21,7 +21,8 @@ def last_block(log, prefix):
 def live(cmd, cwd=None):
     return subprocess.run(cmd, shell=True, executable='/bin/bash', capture_output=True, text=True, cwd=cwd).stdout
 
-HQL = lambda n: f'hive -f {n}'
+GREP19 = "grep -vE '^(OwnerType|Owner|CreateTime|LastAccessTime|Retention):|bucketing|transient'"
+HQL = lambda n: f'hive -S -f {n}'
 def trim_top_range(o):
     return o[o.index('trade_date\thigh'):]
 # (png, відображувана команда або None=з логу, джерело, примітка)
@@ -45,7 +46,7 @@ J = [
  ('16_mr_yearly_result', 'hdfs dfs -cat /user/root/btc/out/mr_yearly/part-*', 'LIVE:hdfs dfs -cat /user/root/btc/out/mr_yearly/part-*', None),
  ('17_mr_daily_ohlc_job_output', 'hadoop jar hadoop-streaming-3.3.6.jar -D mapreduce.job.name=mr_daily_ohlc -files mapper_ohlc.py,reducer_ohlc.py -mapper \'python3 mapper_ohlc.py\' -reducer \'python3 reducer_ohlc.py\' -input /user/root/btc/raw -output /user/root/btc/out/mr_daily_ohlc', ('06_mr_daily_ohlc.log', 'hadoop jar'), 'початок і кінець журналу задачі'),
  ('18_mr_daily_ohlc_result', 'hdfs dfs -cat /user/root/btc/out/mr_daily_ohlc/part-* | head -n 12', 'LIVE:hdfs dfs -cat /user/root/btc/out/mr_daily_ohlc/part-* | head -n 12', None),
- ('19_hive_create_table', "hive -f hive_01b_describe.hql | sed '/^# Storage Information/,$d'", ('08_hive_describe.log', 'hive -S'), 'DESCRIBE FORMATTED candles (без Storage Information)'),
+ ('19_hive_create_table', "hive -S -f hive_01b_describe.hql | sed '/^# Storage Information/,$d' | " + GREP19, ('08_hive_describe.log', 'hive -S'), 'DESCRIBE FORMATTED candles (без Storage Information)'),
  ('20_hive_select', HQL('hive_02_select.hql'), ('08_hive_select.log', 'hive -S'), None),
  ('21_hive_yearly', HQL('hive_03a_yearly.hql'), ('08_hive_yearly.log', 'hive -S'), None),
  ('22_hive_monthly', HQL('hive_03b_monthly.hql'), ('08_hive_monthly.log', 'hive -S'), 'початок і кінець результату (усього 179 місяців)'),
@@ -61,7 +62,7 @@ J = [
  ('48_hdfs_check_ls_R', 'hdfs dfs -ls -R -h /user/root/btc/raw /user/root/btc/wc_in /user/root/btc/out/wordcount', 'LIVE:hdfs dfs -ls -R -h /user/root/btc/raw /user/root/btc/wc_in /user/root/btc/out/wordcount', None),
  ('49_hdfs_check_du_cat', 'hdfs dfs -du -h /user/root/btc/raw; hdfs dfs -cat /user/root/btc/raw/btcusd_1-min_data.csv | head -n 5', 'LIVE:hdfs dfs -du -h /user/root/btc/raw; hdfs dfs -cat /user/root/btc/raw/btcusd_1-min_data.csv | head -n 5', None),
  ('50_wordcount_cat_head', 'hdfs dfs -cat /user/root/btc/out/wordcount/part-r-00000 | head -n 15', 'LIVE:hdfs dfs -cat /user/root/btc/out/wordcount/part-r-00000 | head -n 15', None),
- ('51_hive_load_data', HQL('hive_07_load_data.hql'), ('08_hive_load_data.log', 'hive -S'), 'CREATE TABLE candles_managed + LOAD DATA INPATH + COUNT(*)'),
+ ('51_hive_load_data', HQL('hive_07_load_data.hql') + ' | head -n 2', ('08_hive_load_data.log', 'hive -S'), 'CREATE TABLE candles_managed + LOAD DATA INPATH + COUNT(*)'),
  ('52_hdfs_after_load', 'hdfs dfs -ls -h /user/root/btc/raw /user/root/btc/load_src /user/hive/warehouse/btc.db/candles_managed', 'LIVE:hdfs dfs -ls -h /user/root/btc/raw /user/root/btc/load_src /user/hive/warehouse/btc.db/candles_managed', 'raw: файл на місці; load_src: порожній (LOAD перемістив файл); candles_managed: файл у сховищі'),
 ]
 only = sys.argv[1:]
@@ -70,6 +71,10 @@ for png, shown, src, note in J:
     if isinstance(src, tuple):
         cmd, out = last_block(*src)
         if src[0] == '08_hive_top_range.log': out = trim_top_range(out)
+        if png.startswith('51_'):  # head -n 2 з показаної команди
+            out = '\n'.join(out.split('\n')[:2])
+        if png.startswith('19_'):  # той самий grep, що й у показаній команді, застосований до виводу з журналу
+            out = subprocess.run(GREP19[:5] + ' ' + GREP19[5:], shell=True, input=out, capture_output=True, text=True).stdout
         if shown is None: shown = cmd
     else:
         out = live(src[5:], cwd=str(P))

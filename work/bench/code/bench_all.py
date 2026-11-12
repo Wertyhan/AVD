@@ -11,7 +11,7 @@ bench_all.py - єдина точка входу: чесне порівняння
 import os, sys, re, time, subprocess, shutil, json
 from pathlib import Path
 
-W = Path('/home/user/AVD/work'); B = W / 'bench'; CODE = B / 'code'
+W = Path(__file__).resolve().parents[2]; B = W / 'bench'; CODE = B / 'code'
 CSV = W / 'data/raw/btcusd_1-min_data.csv'
 SCR = Path('/tmp/bench_scratch')            # локальний каталог виводу pandas/Spark
 HDFS_RAW = '/user/root/btc/raw'; HDFS_OUT = '/user/root/btc/out'; HDFS_TINY = '/user/root/btc/bench_tiny'

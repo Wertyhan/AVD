@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-"""ПЗ5: аналіз помилок (csv) та рисунки з results/*.csv. Правило 2b: друкований розмір 6,3 x 3,4 / 4,7 дюйма,
+"""ПЗ5: аналіз помилок (csv) та рисунки з results/*.csv. Друкований розмір 6,3 x 3,4 / 4,7 дюйма,
 шрифти >= 9 pt, dpi 200, українські підписи, десяткова кома."""
 import os, sys, json
 import numpy as np, pandas as pd
-sys.path.insert(0, "/home/user/AVD/work/tools_report"); sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "tools_report")); sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import plotstyle
 from plotstyle import dec, comma_fmt, SINGLE, TWO_PANEL
 import matplotlib.pyplot as plt

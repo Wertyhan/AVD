@@ -10,22 +10,23 @@ from types import SimpleNamespace
 # ---------- шляхи / paths ----------
 DRIVE_BASE = Path('/nonexistent_drive')   # на Colab тут був Google Drive; локально синхронізація не потрібна
 OUT_DRIVE  = DRIVE_BASE / 'colab_results' / 'pz1'
-OUT   = Path('/home/user/AVD/work/pz1')       # каталог результатів ПЗ1
+WORK  = Path(__file__).resolve().parents[2]   # робочий каталог курсу (code -> pz1 -> work)
+OUT   = WORK / 'pz1'                          # каталог результатів ПЗ1
 SHOTS = OUT / 'screenshots'
 RES   = OUT / 'results'
 LOGS  = OUT / 'logs'
 CODE  = OUT / 'code'                           # mapper/reducer/hql
-DATA  = Path('/home/user/AVD/work/data/raw')
+DATA  = WORK / 'data/raw'
 for d in (SHOTS, RES, LOGS, CODE):
     d.mkdir(parents=True, exist_ok=True)
 
 # ---------- версії та середовище ----------
 HADOOP_VER, HIVE_VER = '3.3.6', '3.1.3'
-HADOOP_HOME, HIVE_HOME = '/home/user/AVD/work/tools/hadoop-3.3.6', '/home/user/AVD/work/tools/apache-hive-3.1.3-bin'
-RT = '/home/user/AVD/work/hadoop_runtime'      # дані NameNode/DataNode, pid-файли, метасховище Hive
-JAVA_HOME = '/home/user/AVD/work/mamba/envs/jdk8'   # JDK 8 (потрібен Hive 3.1.3; Hadoop 3.3.6 теж працює на ній)
+HADOOP_HOME, HIVE_HOME = str(WORK / 'tools/hadoop-3.3.6'), str(WORK / 'tools/apache-hive-3.1.3-bin')
+RT = str(WORK / 'hadoop_runtime')      # дані NameNode/DataNode, pid-файли, метасховище Hive
+JAVA_HOME = str(WORK / 'mamba/envs/jdk8')   # JDK 8 (потрібен Hive 3.1.3; Hadoop 3.3.6 теж працює на ній)
 HDFS_BASE = '/user/root/btc'
-os.environ.pop('JAVA_TOOL_OPTIONS', None)   # проксі-налаштування сесії не потрібні Hadoop
+os.environ.pop('JAVA_TOOL_OPTIONS', None)   # сторонні параметри JVM із середовища Hadoop не потрібні
 os.environ.update({
     'JAVA_HOME': JAVA_HOME, 'HADOOP_HOME': HADOOP_HOME, 'HADOOP_CONF_DIR': f'{HADOOP_HOME}/etc/hadoop',
     'HADOOP_MAPRED_HOME': HADOOP_HOME, 'HIVE_HOME': HIVE_HOME,

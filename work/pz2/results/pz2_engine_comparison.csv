@@ -17,5 +17,3 @@ year_count_volume,spark_cached_df,2,0.549,лише агрегація над к�
 daily_ohlc,spark_cached_df,2,0.563,лише агрегація над кешем (16 розділів)
 year_count_volume,spark_cached_df,3,0.428,лише агрегація над кешем (16 розділів)
 daily_ohlc,spark_cached_df,3,0.618,лише агрегація над кешем (16 розділів)
-year_count_volume,hadoop_streaming,,[ЗАПОВНИТИ ПІСЛЯ ЗАПУСКУ],значення з окремого бенчмарку Hadoop
-daily_ohlc,hadoop_streaming,,[ЗАПОВНИТИ ПІСЛЯ ЗАПУСКУ],значення з окремого бенчмарку Hadoop

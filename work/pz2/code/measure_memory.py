@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """Пік пам'яті (RSS) для pandas і Spark на тих самих двох задачах, що й у pz2_spark.py.
 Кожне вимірювання – окремий процес; psutil опитує RSS кожні 50 мс (процес + діти, для Spark – JVM драйвера).
-3 раунди, у кожному раунді конфігурації йдуть у чергуванні pandas/Spark; у звіт іде медіана.
+3 раунди, у кожному раунді конфігурації йдуть у чергуванні pandas/Spark; підсумок – медіана.
 Додатково: базовий рівень простої сесії Spark (spark.range(1).count()), Spark із driver 2g, pandas з read_csv(chunksize)."""
 import os, sys, time, subprocess, psutil, csv, statistics
-RAW = "/home/user/AVD/work/data/raw/btcusd_1-min_data.csv"
+RAW = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "raw", "btcusd_1-min_data.csv"))
 RES = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "results"))
 WORKER = r'''
 import sys, pandas as pd

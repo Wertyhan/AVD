@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Рисунки до ПЗ2 з файлів results/ (matplotlib, dpi 150, підписи українською)."""
+"""Рисунки до ПЗ2 з файлів results/ (matplotlib, друкований розмір 6,3 дюйма, dpi 200, підписи українською, десяткова кома)."""
 import os, numpy as np, pandas as pd, matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -7,8 +7,7 @@ from matplotlib.ticker import FuncFormatter
 np.random.seed(42)
 BASE = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 R, FG = f"{BASE}/results", f"{BASE}/figures"
-import sys as _s; _s.path.insert(0, '/home/user/AVD/work/tools_report'); import plotstyle  # правило 2b
-plt.rcParams.update({"font.size": 9, "axes.labelsize": 10, "axes.titlesize": 11, "legend.fontsize": 10, "xtick.labelsize": 9, "ytick.labelsize": 9, "axes.grid": True, "grid.alpha": .3, "axes.spines.top": False, "axes.spines.right": False})
+plt.rcParams.update({"font.family": "DejaVu Sans", "axes.unicode_minus": False, "font.size": 9, "axes.labelsize": 10, "axes.titlesize": 11, "legend.fontsize": 10, "xtick.labelsize": 9, "ytick.labelsize": 9, "axes.grid": True, "grid.alpha": .3, "axes.spines.top": False, "axes.spines.right": False})
 C = ["#1f77b4", "#d95f02", "#2a9d8f", "#7b2d8e"]
 from matplotlib.ticker import ScalarFormatter
 def _fmt(v, _=None):
@@ -98,8 +97,8 @@ for i, (e, lab) in enumerate([("pandas", "pandas (1 потік)"), ("spark_local
     r_ = [s[(s.task == k) & (s.engine == e)].iloc[0] for k in tasks]
     v = [x["median"] for x in r_]; lo = [x["median"] - x["min"] for x in r_]; hi = [x["max"] - x["median"] for x in r_]
     b = ax.bar(np.arange(2) + (i - 1) * w, v, w, yerr=[lo, hi], capsize=3, label=lab, color=C[i])
-    for rr, vv in zip(b, v): ax.text(rr.get_x() + rr.get_width() / 2, vv, cm(vv, 1), ha="center", va="bottom")
-ax.set_xticks(range(2)); ax.set_xticklabels([names[k] for k in tasks]); ax.set_ylabel("Час, с (медіана, мін–макс)"); ax.legend()
+    for rr, vv, hh_ in zip(b, v, hi): ax.text(rr.get_x() + rr.get_width() / 2, vv + hh_ + .05, cm(vv, 1), ha="center", va="bottom")
+ax.set_xticks(range(2)); ax.set_xticklabels([names[k] for k in tasks]); ax.set_ylabel("Час, с (медіана, мін–макс)"); ax.set_ylim(0, 6.5); ax.legend(loc="upper left", fontsize=9)
 ax.set_title("Spark проти pandas на тому самому CSV (запуски чергувалися)"); out("fig08_engines")
 
 # 9. Кешування: кеш із 16 розділів
@@ -110,18 +109,18 @@ ax[0].bar(np.arange(3) - .2, u, .4, color=C[0], label="без cache()"); ax[0].b
 ax[0].set_xticks(range(3)); ax[0].set_xticklabels(["раунд 1", "раунд 2", "раунд 3"]); ax[0].set_ylabel("Час двох запитів, с"); ax[0].set_ylim(0, max(u) * 1.3); ax[0].legend(loc="upper right", ncol=2)
 ax[0].set_title(f"Запит без кешу та з кешем (медіани: {cm(np.median(u),1)} с і {cm(np.median(cc_),1)} с)")
 ax[1].bar(range(3), mat, color=C[2]); ax[1].set_xticks(range(3)); ax[1].set_xticklabels(["раунд 1", "раунд 2", "раунд 3"]); ax[1].set_ylabel("Час, с")
-ax[1].set_title(f"Матеріалізація кешу (медіана {cm(np.median(mat),1)} с)"); out("fig09_cache")
+ax[1].set_title(f"Матеріалізація кешу (медіана {cm(np.median(mat),2)} с)"); out("fig09_cache")
 
 # 10. Частка flat-хвилин за добу
 fig, ax = plt.subplots(figsize=(6.3, 3.4)); ax.plot(daily.date, daily.flat_share * 100, color=C[3], lw=.8)
-ax.set_ylabel("Частка хвилин із нульовим обсягом за добу, %"); ax.set_xlabel("Дата (UTC)"); ax.set_title("Частка хвилин із нульовим обсягом за добу"); out("fig10_flat_share")
+ax.set_ylabel("Частка, %"); ax.set_xlabel("Дата (UTC)"); ax.set_title("Частка хвилин із нульовим обсягом за добу"); out("fig10_flat_share")
 
 # 11. Ледачі обчислення: ціна різних дій над одним DataFrame
 a_ = pd.read_csv(f"{R}/pz2_lazy_vs_action_summary.csv")
-lab = {"transformations_build_only": "лише трансформації\n(план без дії)", "count": "count()\n(вікна обрізано)", "agg_sum_vol60_logret": "sum(vol60), sum(log_ret)\n(вікна потрібні)", "noop_write": "write.format(\"noop\")\n(усі стовпці)"}
+lab = {"transformations_build_only": "лише\nтрансформації", "count": "count()\n(без вікон)", "agg_sum_vol60_logret": "sum(vol60),\nsum(log_ret)", "noop_write": "noop-запис\n(усі стовпці)"}
 fig, ax = plt.subplots(figsize=(6.3, 3.4)); x = np.arange(len(a_))
 ax.bar(x, a_["median"], color=[C[2], C[0], C[1], C[1]], yerr=[a_["median"] - a_["min"], a_["max"] - a_["median"]], capsize=3)
-for xi, v in zip(x, a_["median"]): ax.text(xi, v, cm(v, 2), ha="center", va="bottom", fontsize=9)
+for xi, v, mx in zip(x, a_["median"], a_["max"]): ax.text(xi + .22, mx, cm(v, 2), ha="left", va="bottom", fontsize=9)
 ax.set_xticks(x); ax.set_xticklabels([lab[k] for k in a_.action]); ax.set_ylabel("Час, с (медіана з 3)")
 ax.set_title("Трансформації та дії: count() не обчислює вікон, повні дії – обчислюють"); out("fig11_lazy_actions")
 

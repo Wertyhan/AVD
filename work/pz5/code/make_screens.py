@@ -2,7 +2,7 @@
 """Рендер РЕАЛЬНОГО виводу програм (screenshots/txt/*.txt) у PNG через спільний tools_report/term_png.py.
 Формат txt: рядок 1 – '$ python code/<скрипт>' (справжня команда), рядок 2 – '# коментар', далі – захоплений вивід."""
 import glob, os, sys
-sys.path.insert(0, "/home/user/AVD/work/tools_report"); sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "tools_report")); sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from term_png import render_terminal_png
 from pz5_common import SHOTS, TXT
 for p in sorted(glob.glob(f"{TXT}/*.txt")):

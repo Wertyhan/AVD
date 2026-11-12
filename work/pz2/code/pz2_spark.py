@@ -11,7 +11,7 @@ SEED = 42
 np.random.seed(SEED)
 BASE = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 RES, SHOTS, TXT = f"{BASE}/results", f"{BASE}/screenshots", f"{BASE}/screenshots/txt"
-RAW = "/home/user/AVD/work/data/raw/btcusd_1-min_data.csv"
+RAW = os.path.normpath(f"{BASE}/../data/raw/btcusd_1-min_data.csv")   # датасет Kaggle (той самий, що в ПЗ1)
 for d in (RES, f"{RES}/logs", SHOTS, TXT):
     os.makedirs(d, exist_ok=True)
 
@@ -120,7 +120,7 @@ def parse_all(d):
     """Дія, що розбирає ВСІ шість стовпців: суми всіх стовпців (на відміну від count(), який стовпці не читає)."""
     return d.agg(*[F.sum(c).alias(c) for c in d.columns]).first().asDict()
 
-# 2а. Експеримент inferSchema vs явна схема (M3): гріємо файловий кеш ОС, потім 3 пари запусків із чергуванням порядку
+# Експеримент inferSchema vs явна схема: гріємо файловий кеш ОС, потім 3 пари запусків із чергуванням порядку
 mem_before = sh("free -m | awk '/Mem:/{print $6}'")
 with open(RAW, "rb") as fh:
     while fh.read(1 << 24): pass                       # прогрів файлового кешу ОС: один повний послідовний прохід
@@ -198,7 +198,7 @@ def build(partitioned=True):
     d = d.withColumn("vol60", F.stddev("log_ret").over(w.rowsBetween(-59, 0)))
     return d
 
-# 3.1 Демонстрація дублікатів/пропусків
+# Демонстрація дублікатів/пропусків
 with timed("dedup_check"):
     n_dedup = raw.dropna().dropDuplicates(["Timestamp"]).count()
 pd.DataFrame([("rows_raw", n_rows), ("rows_after_dropna", raw.dropna().count()),
@@ -257,7 +257,7 @@ for task, fs, fp in (("year_count_volume", spark_year_count_volume, pandas_year_
     eq_rows += check_equal(task, last["spark_local[*]"], last["pandas"])
 pd.DataFrame(eq_rows, columns=["task", "check", "passed", "detail"]).to_csv(f"{RES}/pz2_engine_equality.csv", index=False)
 
-# ---------- Ледача обчислюваність: трансформації, дії, explain() (C1) ----------
+# ---------- Ледача обчислюваність: трансформації, дії, explain() ----------
 t = time.perf_counter()
 df = build()
 t_transform = time.perf_counter() - t
@@ -296,7 +296,7 @@ with cap("04_lazy", "трансформації (мс) проти дій; explai
     print("== df.agg(sum('vol60')).explain(), вузли ==")
     print("\n".join(l[:88] for l in plan_vol.splitlines()[:30] if ("Window" in l or "Exchange" in l or "Scan" in l) and l.startswith(("+-", "   ", "(", "-")) and "[" in l)[:2000])
 
-# ---------- Кешування (M4): розділи, матеріалізація, кешований vs некешований запит ----------
+# ---------- Кешування: розділи, матеріалізація, кешований vs некешований запит ----------
 def heavy_query(d):
     """Два аналітичні запити (дві дії): топ-10 днів за реалізованою волатильністю та обсяг за годиною доби."""
     a = (d.groupBy("date").agg(F.sqrt(F.sum(F.col("log_ret") ** 2)).alias("rv"))
@@ -378,7 +378,7 @@ with cap("06_derived", "похідні атрибути (травень 2021) т
     print(f"\nНульовий обсяг: {flat['flat']} з {flat['n']} = {100*flat['flat']/flat['n']:.2f} %")
 
 # ---------- Завдання 4. Розподілена аналітика ----------
-# 4.1 Денний агрегат (групування + агрегація) з похідними ознаками
+# Денний агрегат (групування + агрегація) з похідними ознаками
 with timed("daily_aggregation"):
     d1 = (df.groupBy("date").agg(
         F.min_by("Open", "Timestamp").alias("open"), F.max("High").alias("high"), F.min("Low").alias("low"),
@@ -403,7 +403,7 @@ daily["date"] = pd.to_datetime(daily["date"])
 daily.to_parquet(f"{RES}/pz2_daily_features.parquet", index=False)
 save(daily, "pz2_daily_features")
 
-# C3: розподіл добової rv після 2023 року (для коректного цитування у звіті)
+# Розподіл добової rv після 2023 року (квантилі для опису волатильності останніх років)
 def rv_dist(sub, label):
     x = sub["rv"].dropna()
     return (label, len(x), x.min(), x.quantile(.05), x.quantile(.25), x.median(), x.quantile(.75), x.quantile(.95), x.max())
@@ -413,7 +413,7 @@ rvd = pd.DataFrame([rv_dist(daily[daily.date >= "2023-01-01"], "all days >= 2023
                    columns=["subset", "n", "min", "p05", "p25", "median", "p75", "p95", "max"])
 save(rvd, "pz2_rv_after2023")
 
-# 4.2 Найволатильніші дні (сортування + фільтрація)
+# Найволатильніші доби (сортування + фільтрація)
 comp = d1.filter("is_complete = 1")
 with timed("top10_volatile_days"):
     top_rv = comp.orderBy(F.desc("rv")).limit(10).toPandas()
@@ -432,7 +432,7 @@ with cap("07_top_days", "топ-10 найволатильніших діб (rv �
     print("\nТоп-10 за (High-Low)/Open, повні доби:")
     print(top_hl[c6].round(4).to_string(index=False))
 
-# 4.3 Обсяг за годиною доби (UTC) та за роками
+# Обсяг за годиною доби (UTC) та за роками
 with timed("volume_by_hour"):
     vh = (df.groupBy("hour").agg(F.sum("Volume").alias("volume_total"),
                                  F.avg("Volume").alias("volume_mean_per_minute"),
@@ -445,7 +445,7 @@ save(flat_by_year, "pz2_volume_by_year")
 with cap("08_volume", "обсяг за годиною доби (UTC) і за роками"):
     print(vh[["hour", "volume_total", "volume_mean_per_minute", "share_pct"]].round(4).to_string(index=False))
 
-# 4.4 Погодинна таблиця ознак
+# Погодинна таблиця ознак
 with timed("hourly_features"):
     hh = (df.groupBy(F.date_trunc("hour", "datetime").alias("datetime_utc")).agg(
         F.min_by("Open", "Timestamp").alias("open"), F.max("High").alias("high"), F.min("Low").alias("low"),
@@ -463,7 +463,7 @@ with timed("hourly_features"):
     hourly = hh.orderBy("datetime_utc").toPandas()
 hourly.to_parquet(f"{RES}/pz2_hourly_features.parquet", index=False)
 
-# 4.5 Асиметрія та ексцес дохідностей на різних масштабах + стійкість до викидів (M7)
+# Асиметрія та ексцес дохідностей на різних масштабах + стійкість до викидів
 def moments(name, d, col, filt=None):
     x = d.filter(filt) if filt is not None else d
     r = x.filter(F.col(col).isNotNull()).agg(F.count(col).alias("n"), F.avg(col).alias("mean"), F.stddev(col).alias("std"),
@@ -533,7 +533,7 @@ def run_sql(k, q):
         print(" ".join(q.split())[:86] + "…\n"); print(r.head(18).to_string(index=False))
 for k, q in SQLQ.items(): run_sql(k, q)
 
-# Q7 (M6): УСІ доби з 2018 року, де обсяг перевищує поріг k × середній обсяг попередніх 30 діб (те саме правило, що в Q6)
+# Q7: УСІ доби з 2018 року, де обсяг перевищує поріг k × середній обсяг попередніх 30 діб (те саме правило, що в Q6)
 K = float(res_sql["q6_crash_days_vs_30d_mean"]["volume_x_prev30_mean"].min())      # k = найменше відношення серед 6 відомих кризових діб
 SQLQ["q7_volume_spike_days"] = f"""SELECT * FROM (
     SELECT date, ROUND(100*ret_1d,2) AS ret_pct, ROUND(rv,4) AS rv, ROUND(volume,0) AS volume, {RATIO} AS volume_x_prev30_mean,
@@ -568,8 +568,7 @@ for run in (1, 2, 3):
     t = time.perf_counter()
     df.groupBy("date").agg(F.min_by("Open", "Timestamp"), F.max("High"), F.min("Low"), F.max_by("Close", "Timestamp"), F.sum("Volume")).collect(); dt2 = time.perf_counter() - t
     cmp_rows.append(("daily_ohlc", "spark_cached_df", run, round(dt2, 3), "лише агрегація над кешем (16 розділів)"))
-cmp_rows.append(("year_count_volume", "hadoop_streaming", "", "[ЗАПОВНИТИ ПІСЛЯ ЗАПУСКУ]", "значення з окремого бенчмарку Hadoop"))
-cmp_rows.append(("daily_ohlc", "hadoop_streaming", "", "[ЗАПОВНИТИ ПІСЛЯ ЗАПУСКУ]", "значення з окремого бенчмарку Hadoop"))
+# Hadoop MapReduce (Hadoop Streaming) вимірюється окремим наскрізним бенчмарком на тих самих задачах (розділ 6 звіту)
 cmp = pd.DataFrame(cmp_rows, columns=["task", "engine", "run", "seconds", "note"])
 save(cmp, "pz2_engine_comparison")
 num = cmp[pd.to_numeric(cmp["seconds"], errors="coerce").notna()].copy(); num["seconds"] = num["seconds"].astype(float)
@@ -577,8 +576,6 @@ summ = num.groupby(["task", "engine"])["seconds"].agg(["median", "min", "max"]).
 save(summ, "pz2_engine_comparison_summary")
 for _, r in summ.iterrows():
     rec(f"engine_{r['task']}_{r['engine']}", r["median"], "медіана з 3 запусків")
-rec("engine_year_count_volume_hadoop_streaming", float("nan"), "[ЗАПОВНИТИ ПІСЛЯ ЗАПУСКУ]")
-rec("engine_daily_ohlc_hadoop_streaming", float("nan"), "[ЗАПОВНИТИ ПІСЛЯ ЗАПУСКУ]")
 with cap("12_engines", "Spark проти pandas (порядок S,P,S,P,S,P), медіани, звірка результатів"):
     print(summ.to_string(index=False))
     print("\nЗвірка результатів двох рушіїв (assert):"); print(pd.read_csv(f"{RES}/pz2_engine_equality.csv").drop(columns="detail").to_string(index=False))

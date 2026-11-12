@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-"""Порівняння вхідного parquet ПЗ2: попередній запуск (_old_run) проти чистого перезапуску; опорні числа ПЗ2 для звіту.
+"""Порівняння вхідного parquet ПЗ2: попередній запуск (_old_run) проти поточного запуску; опорні числа ПЗ2 для звіту.
 Запуск: python code/input_diff.py   ->  results/pz5_input_diff.csv, results/pz2_reference_numbers.csv"""
 import os, sys
 import numpy as np, pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from pz5_common import RES, save
-P2 = "/home/user/AVD/work/pz2"
+P2 = os.path.join(os.path.dirname(RES), "..", "pz2")
 o = pd.read_parquet(f"{P2}/_old_run/results/pz2_hourly_features.parquet").set_index("datetime_utc")
 n = pd.read_parquet(f"{P2}/results/pz2_hourly_features.parquet").set_index("datetime_utc")
 rows = [("rows_old", len(o), len(o[o.index.year >= 2018]), None, None), ("rows_new", len(n), len(n[n.index.year >= 2018]), None, None),
@@ -31,7 +31,7 @@ extra = pd.DataFrame([("rv_diff_rows_at_month_start_00h", int(fm.sum()), int((fm
                      columns=out.columns)
 save(pd.concat([out, extra]), "pz5_input_diff")
 print(pd.concat([out, extra]).to_string(index=False))
-# опорні числа ПЗ2, що використовує звіт ПЗ5 (RULES, Integrity п. 1)
+# опорні числа ПЗ2, на які посилається звіт ПЗ5
 sk = pd.read_csv(f"{P2}/results/pz2_skew_kurtosis.csv"); sk = sk[sk.iloc[:, 0] == "1 год, усі"].iloc[0]
 top = pd.read_csv(f"{P2}/results/pz2_top10_rv.csv")
 vh = pd.read_csv(f"{P2}/results/pz2_volume_by_hour.csv").sort_values("volume_total", ascending=False).iloc[0]
