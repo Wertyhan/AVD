@@ -19,17 +19,17 @@ def commas(ax, which="y"):
     (ax.yaxis if which == "y" else ax.xaxis).set_major_formatter(comma_fmt)
 C1, C2 = "#c0504d", "#2e75b6"
 ic = pd.concat([pd.read_csv(f"{RES}/pz4_index_comparison.csv"), pd.read_csv(f"{RES}/pz4_anom_index_comparison.csv")])
-names = {"E1_range_day": "ts, 1 доба\n(candles_1m)", "E2_range_month": "ts, 1 місяць\n(candles_1m)", "E3_top_volume": "топ-10 volume\n(candles_1m)",
-         "E4_year_volume": "year+volume\n(candles_1d)", "E5a_flat_hours": "24 год: плоска\n(candles_1h)", "E5b_bucket_day": "24 год: bucket\n(1d_buckets)",
-         "ANOM1_year_top_score": "аномалії 2021\ntop-20", "ANOM2_day": "аномалії доби\n12.03.2020"}
+names = {"E1_range_day": "ts, 1 доба", "E2_range_month": "ts, 1 місяць", "E3_top_volume": "топ-10 volume",
+         "E4_year_volume": "year+volume", "E5a_flat_hours": "24 год: плоска", "E5b_bucket_day": "24 год: bucket",
+         "ANOM1_year_top_score": "аномалії 2021", "ANOM2_day": "аномалії 12.03.2020"}
 
 
 def pair(col, xlabel, fn, title, log=True):
-    ex = list(names); y = np.arange(len(ex))[::-1]; h = .38
+    ex = list(names); y = np.arange(len(ex))[::-1]; h = .4
     b = [ic[(ic.experiment == e) & (ic.phase == "до")][col].iloc[0] for e in ex]
     a = [ic[(ic.experiment == e) & (ic.phase == "після")][col].iloc[0] for e in ex]
     floor = .5 if log else 0
-    fig, ax = plt.subplots(figsize=(6.3, 4.7))
+    fig, ax = plt.subplots(figsize=plotstyle.SINGLE)
     r1 = ax.barh(y + h / 2, np.maximum(b, floor), h, label="без індексу (COLLSCAN)", color=C1)
     r2 = ax.barh(y - h / 2, np.maximum(a, floor), h, label="з індексом (IXSCAN)", color=C2)
     top = max(max(b), max(a))
@@ -38,12 +38,12 @@ def pair(col, xlabel, fn, title, log=True):
     if log: ax.set_xscale("log"); ax.set_xlim(right=top * 8)
     ax.xaxis.set_major_formatter(comma_fmt)
     ax.set_yticks(y); ax.set_yticklabels([names[e] for e in ex], fontsize=9); ax.set_xlabel(xlabel); ax.set_title(title)
-    ax.legend(loc="lower right"); ax.grid(axis="y", visible=False)
+    ax.legend(loc="lower right", fontsize=9); ax.grid(axis="y", visible=False)
     fig.tight_layout(); fig.savefig(f"{FIG}/{fn}", dpi=200); plt.close(fig)
 
 
 # та сама метрика, що в таблиці 6: executionTimeMillis з explain (медіана з 5); повний час у Python - окремий стовпець CSV
-pair("executionTimeMillis_explain_median", "executionTimeMillis, мс (медіана з 5, лог. шкала; 0 = менше 1 мс)", "fig_idx_time.png", "Час виконання запиту до та після індексу")
+pair("executionTimeMillis_explain_median", "executionTimeMillis, мс (медіана з 5, лог.; 0 = менше 1 мс)", "fig_idx_time.png", "Час виконання запиту до та після індексу")
 pair("totalDocsExamined", "переглянуто документів (лог. шкала)", "fig_idx_docs.png", "totalDocsExamined до та після індексації")
 
 m = pd.read_csv(f"{RES}/pz4_agg_monthly_ohlc.csv"); m["d"] = pd.to_datetime(dict(year=m.year, month=m.month, day=1))

@@ -931,7 +931,33 @@ save_csv("pz4_write_cost", rows)
 for r in rows: print(r)
 ```
 
-## А.11 Файл pz4_a1_repeat.py – повторні запуски A1 з індексом і без нього, explain
+## А.11 Файл pz4_q7_explain.py – explain(executionStats) запиту Q7
+
+```python
+# -*- coding: utf-8 -*-
+"""ПЗ4, запит Q7: explain("executionStats") для count_documents({"volume": 0}) у candles_1m.
+count_documents у PyMongo виконується як aggregate [{$match}, {$group: {_id: 1, n: {$sum: 1}}}], тому explain знімається саме для цього конвеєра.
+Результат -> results/explain/Q7_zero_volume_count_explain.json."""
+import json
+from bson import json_util
+from pz4_common import get_db, EXPL
+
+db = get_db()
+cmd = {"aggregate": "candles_1m", "pipeline": [{"$match": {"volume": 0}}, {"$group": {"_id": 1, "n": {"$sum": 1}}}], "cursor": {}}
+ex = db.command({"explain": cmd, "verbosity": "executionStats"})
+with open(f"{EXPL}/Q7_zero_volume_count_explain.json", "w", encoding="utf-8") as f:
+    json.dump(json.loads(json_util.dumps(ex, json_options=json_util.RELAXED_JSON_OPTIONS)), f, ensure_ascii=False, indent=1)
+st = ex["executionStats"]
+def find_stage(p, name):
+    if isinstance(p, dict):
+        if p.get("stage") == name: return True
+        return any(find_stage(v, name) for v in p.values())
+    return False
+print("COUNT_SCAN:", find_stage(ex["queryPlanner"]["winningPlan"], "COUNT_SCAN"),
+      "keys:", st["totalKeysExamined"], "docs:", st["totalDocsExamined"], "ms:", st["executionTimeMillis"])
+```
+
+## А.12 Файл pz4_a1_repeat.py – повторні запуски A1 з індексом і без нього, explain
 
 ```python
 # -*- coding: utf-8 -*-
@@ -987,7 +1013,7 @@ rows.append(dict(variant="місячний OHLC з candles_1d (5 429 док.), �
 save_csv("pz4_agg_A1_timing", rows)
 ```
 
-## А.12 Файл s18_explain_ts.js – план запиту E1 у mongosh
+## А.13 Файл s18_explain_ts.js – план запиту E1 у mongosh
 
 ```javascript
 // Порівняння плану ДО (hint $natural = COLLSCAN) і ПІСЛЯ (за індексом) для одного й того ж запиту
@@ -1000,7 +1026,7 @@ print('BEFORE (hint $natural):'); printjson(f(q().hint({$natural: 1}).explain('e
 print('AFTER (index):'); printjson(f(q().explain('executionStats')));
 ```
 
-## А.13 Файл s19_explain_vol.js – план запиту E3 у mongosh
+## А.14 Файл s19_explain_vol.js – план запиту E3 у mongosh
 
 ```javascript
 // Порівняння плану ДО (hint $natural = COLLSCAN) і ПІСЛЯ (за індексом) для одного й того ж запиту
@@ -1013,7 +1039,7 @@ print('BEFORE (hint $natural):'); printjson(f(q().hint({$natural: 1}).explain('e
 print('AFTER (index):'); printjson(f(q().explain('executionStats')));
 ```
 
-## А.14 Файл s20_explain_anom.js – план запиту ANOM1 у mongosh
+## А.15 Файл s20_explain_anom.js – план запиту ANOM1 у mongosh
 
 ```javascript
 // Порівняння плану ДО (hint $natural = COLLSCAN) і ПІСЛЯ (за індексом) для одного й того ж запиту
@@ -1026,7 +1052,7 @@ print('BEFORE (hint $natural):'); printjson(f(q().hint({$natural: 1}).explain('e
 print('AFTER (index):'); printjson(f(q().explain('executionStats')));
 ```
 
-## А.15 Файл pz4_figures.py – побудова рисунків
+## А.16 Файл pz4_figures.py – побудова рисунків
 
 ```python
 # -*- coding: utf-8 -*-
@@ -1050,17 +1076,17 @@ def commas(ax, which="y"):
     (ax.yaxis if which == "y" else ax.xaxis).set_major_formatter(comma_fmt)
 C1, C2 = "#c0504d", "#2e75b6"
 ic = pd.concat([pd.read_csv(f"{RES}/pz4_index_comparison.csv"), pd.read_csv(f"{RES}/pz4_anom_index_comparison.csv")])
-names = {"E1_range_day": "ts, 1 доба\n(candles_1m)", "E2_range_month": "ts, 1 місяць\n(candles_1m)", "E3_top_volume": "топ-10 volume\n(candles_1m)",
-         "E4_year_volume": "year+volume\n(candles_1d)", "E5a_flat_hours": "24 год: плоска\n(candles_1h)", "E5b_bucket_day": "24 год: bucket\n(1d_buckets)",
-         "ANOM1_year_top_score": "аномалії 2021\ntop-20", "ANOM2_day": "аномалії доби\n12.03.2020"}
+names = {"E1_range_day": "ts, 1 доба", "E2_range_month": "ts, 1 місяць", "E3_top_volume": "топ-10 volume",
+         "E4_year_volume": "year+volume", "E5a_flat_hours": "24 год: плоска", "E5b_bucket_day": "24 год: bucket",
+         "ANOM1_year_top_score": "аномалії 2021", "ANOM2_day": "аномалії 12.03.2020"}
 
 
 def pair(col, xlabel, fn, title, log=True):
-    ex = list(names); y = np.arange(len(ex))[::-1]; h = .38
+    ex = list(names); y = np.arange(len(ex))[::-1]; h = .4
     b = [ic[(ic.experiment == e) & (ic.phase == "до")][col].iloc[0] for e in ex]
     a = [ic[(ic.experiment == e) & (ic.phase == "після")][col].iloc[0] for e in ex]
     floor = .5 if log else 0
-    fig, ax = plt.subplots(figsize=(6.3, 4.7))
+    fig, ax = plt.subplots(figsize=plotstyle.SINGLE)
     r1 = ax.barh(y + h / 2, np.maximum(b, floor), h, label="без індексу (COLLSCAN)", color=C1)
     r2 = ax.barh(y - h / 2, np.maximum(a, floor), h, label="з індексом (IXSCAN)", color=C2)
     top = max(max(b), max(a))
@@ -1069,12 +1095,12 @@ def pair(col, xlabel, fn, title, log=True):
     if log: ax.set_xscale("log"); ax.set_xlim(right=top * 8)
     ax.xaxis.set_major_formatter(comma_fmt)
     ax.set_yticks(y); ax.set_yticklabels([names[e] for e in ex], fontsize=9); ax.set_xlabel(xlabel); ax.set_title(title)
-    ax.legend(loc="lower right"); ax.grid(axis="y", visible=False)
+    ax.legend(loc="lower right", fontsize=9); ax.grid(axis="y", visible=False)
     fig.tight_layout(); fig.savefig(f"{FIG}/{fn}", dpi=200); plt.close(fig)
 
 
 # та сама метрика, що в таблиці 6: executionTimeMillis з explain (медіана з 5); повний час у Python - окремий стовпець CSV
-pair("executionTimeMillis_explain_median", "executionTimeMillis, мс (медіана з 5, лог. шкала; 0 = менше 1 мс)", "fig_idx_time.png", "Час виконання запиту до та після індексу")
+pair("executionTimeMillis_explain_median", "executionTimeMillis, мс (медіана з 5, лог.; 0 = менше 1 мс)", "fig_idx_time.png", "Час виконання запиту до та після індексу")
 pair("totalDocsExamined", "переглянуто документів (лог. шкала)", "fig_idx_docs.png", "totalDocsExamined до та після індексації")
 
 m = pd.read_csv(f"{RES}/pz4_agg_monthly_ohlc.csv"); m["d"] = pd.to_datetime(dict(year=m.year, month=m.month, day=1))
@@ -1127,7 +1153,7 @@ fig.tight_layout(); fig.savefig(f"{FIG}/fig_yearly_volatility.png", dpi=200); pl
 print("ok")
 ```
 
-## А.16 Файл pz4_screens_txt.py – отримання реального виводу команд для скриншотів
+## А.17 Файл pz4_screens_txt.py – отримання реального виводу команд для скриншотів
 
 ```python
 # -*- coding: utf-8 -*-
@@ -1213,7 +1239,7 @@ run("s22_load_log", "grep -E '^\\{|^DONE|7200000| 0s$' results/load.log | tail -
 run("s23_index_table", "python3 -c \"import pandas as pd; pd.set_option('display.width',200); t=pd.read_csv('results/pz4_index_comparison.csv'); print(t[['experiment','phase','executionTimeMillis_explain_median','totalDocsExamined','totalKeysExamined','nReturned','winning_plan']].to_string(index=False))\"")
 ```
 
-## А.17 Файл make_screens.py – рендер виводу терміналу в PNG
+## А.18 Файл make_screens.py – рендер виводу терміналу в PNG
 
 ```python
 # -*- coding: utf-8 -*-
