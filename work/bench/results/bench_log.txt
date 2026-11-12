@@ -18,3 +18,4 @@
 {'poll': 17, 'time': '09:43:30', 'load1': 1.51123046875, 'other_procs': 3, 'streak': 0}
 {'poll': 18, 'time': '09:44:30', 'load1': 1.64111328125, 'other_procs': 3, 'streak': 0}
 {'poll': 19, 'time': '09:45:30', 'load1': 1.923828125, 'other_procs': 3, 'streak': 0}
+{'poll': 20, 'time': '09:46:30', 'load1': 1.3369140625, 'other_procs': 3, 'streak': 0}
