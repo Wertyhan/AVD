@@ -9,7 +9,7 @@ import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from pz5_common import BASE, RES, SHOTS, TXT, SEED, cap as _cap, save
 np.random.seed(SEED)
-SRC = os.path.join(BASE, "..", "pz2", "results", "pz2_hourly_features.parquet")   # результат попередньої обробки (ПЗ2)
+SRC = os.path.join(BASE, "..", "pz2", "results", "pz2_hourly_features.parquet")   # результат обробки ПЗ2
 SCRIPT = "pz5_spark.py"
 def cap(name, desc): return _cap(name, SCRIPT, desc)
 os.makedirs(f"{RES}/model", exist_ok=True)
@@ -58,7 +58,7 @@ pd.DataFrame(env, columns=["parameter", "value"]).to_csv(f"{RES}/env_versions.cs
 with cap("01_env", "версії ПЗ, ресурси машини та конфігурація SparkSession"):
     for k, v in env: print(f"{k:<20}{v}")
 
-# ---------- Крок 1. Завантаження результатів попередньої обробки (ПЗ2) ----------
+# ---------- Крок 1. Завантаження результатів обробки ПЗ2 ----------
 t = time.perf_counter()
 raw = spark.read.parquet(SRC).orderBy("datetime_utc")
 n_raw = raw.count()
@@ -449,7 +449,7 @@ try:
         pg.screenshot(path=path, full_page=True, clip={"x": max(bb["x"] - 4, 0), "y": max(bb["y"] - 4, 0),
                       "width": min(bb["width"] + 8, 1280), "height": min(bb["height"] + 8, maxh)})
     with sync_playwright() as p:
-        b = p.chromium.launch(executable_path="/opt/pw-browsers/chromium-1243/chrome-linux64/chrome", args=["--no-sandbox"])
+        b = p.chromium.launch(executable_path=os.environ.get("CHROMIUM_PATH"), args=["--no-sandbox"])
         pg = b.new_page(viewport={"width": 1280, "height": 800}, device_scale_factor=2)
         pages = {"jobs": ("jobs/", "#completedJob-table", [6]), "stages": ("stages/", "#completedStage-table", [6, 7, 8, 9]),
                  "storage": ("storage/", "#storage-by-rdd-table", []), "sql": ("SQL/", "table:has(th:has-text('Description'))", []),

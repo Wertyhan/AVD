@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-"""Порівняння вхідного parquet ПЗ2: попередній запуск (_old_run) проти поточного запуску; опорні числа ПЗ2 для звіту.
+"""Перевірка вхідних даних ПЗ2 та опорні числа ПЗ2 для звіту.
 Запуск: python code/input_diff.py   ->  results/pz5_input_diff.csv, results/pz2_reference_numbers.csv"""
 import os, sys
 import numpy as np, pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from pz5_common import RES, save
 P2 = os.path.join(os.path.dirname(RES), "..", "pz2")
-o = pd.read_parquet(f"{P2}/_old_run/results/pz2_hourly_features.parquet").set_index("datetime_utc")
+REF = os.environ.get("PZ2_REF_DIR", os.path.join(P2, "ref"))   # еталонна копія результатів ПЗ2 для порівняння
+o = pd.read_parquet(f"{REF}/results/pz2_hourly_features.parquet").set_index("datetime_utc")
 n = pd.read_parquet(f"{P2}/results/pz2_hourly_features.parquet").set_index("datetime_utc")
 rows = [("rows_old", len(o), len(o[o.index.year >= 2018]), None, None), ("rows_new", len(n), len(n[n.index.year >= 2018]), None, None),
         ("same_datetime_index (1=yes)", int(o.index.equals(n.index)), int(o.index.equals(n.index)), None, None),
