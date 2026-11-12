@@ -91,7 +91,7 @@ ver_rows = [
     ("Python", platform.python_version()), ("pandas", pd.__version__),
     ("numpy", np.__version__), ("matplotlib", matplotlib.__version__), ("psutil", psutil.__version__),
     ("playwright", sh("pip show playwright | awk '/^Version/{print $2}'")),
-    ("Chromium", sh("/opt/pw-browsers/chromium-1243/chrome-linux64/chrome --version 2>/dev/null")),
+    ("Chromium", sh(os.environ.get("CHROME_BIN", "chromium") + " --version 2>/dev/null")),
     ("OS", platform.platform()),
     ("CPU", sh("lscpu | grep 'Model name' | sed 's/.*: *//'")),
     ("CPU_logical_cores", str(CORES)),
@@ -533,7 +533,7 @@ def run_sql(k, q):
         print(" ".join(q.split())[:86] + "…\n"); print(r.head(18).to_string(index=False))
 for k, q in SQLQ.items(): run_sql(k, q)
 
-# Q7: УСІ доби з 2018 року, де обсяг перевищує поріг k × середній обсяг попередніх 30 діб (те саме правило, що в Q6)
+# Q7: УСІ доби з 2018 року, де обсяг перевищує поріг k × середній обсяг за 30 діб, що передують (те саме правило, що в Q6)
 K = float(res_sql["q6_crash_days_vs_30d_mean"]["volume_x_prev30_mean"].min())      # k = найменше відношення серед 6 відомих кризових діб
 SQLQ["q7_volume_spike_days"] = f"""SELECT * FROM (
     SELECT date, ROUND(100*ret_1d,2) AS ret_pct, ROUND(rv,4) AS rv, ROUND(volume,0) AS volume, {RATIO} AS volume_x_prev30_mean,
@@ -584,7 +584,7 @@ with cap("12_engines", "Spark проти pandas (порядок S,P,S,P,S,P), м
 def ui_screens():
     """Знімки Spark UI: viewport 1280x800, device_scale_factor=2, лише потрібна область (таблиця/граф), масштаб сторінки 1,5."""
     from playwright.sync_api import sync_playwright
-    exe = "/opt/pw-browsers/chromium-1243/chrome-linux64/chrome"
+    exe = os.environ.get("CHROME_BIN", "chromium")      # шлях до Chromium задається змінною середовища
     sql_list = rest("sql?details=false&length=1000")
     def exec_id(label):
         for e in sql_list:

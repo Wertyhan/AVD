@@ -46,21 +46,13 @@ d = d.withColumn("vol60", F.stddev("log_ret").over(w.rowsBetween(-59, 0)))
 
 ### 3.2 Хвилини з нульовим обсягом
 
-Хвилин з `Volume = 0` – 1 312 419 (16,79 %); у них усі чотири ціни дорівнюють попередньому закриттю, тобто це заповнення сітки, а не угоди. Їх частка становить 94,95 % у 2012 році, 39,16 % у 2013, 33,19 % у 2016 і не перевищує 3,95 % з 2018 року; доби 6–8 січня 2015 року не мають жодної угоди. Видалення цих хвилин зруйнувало б `lag("Close")` і 60-хвилинну рамку, тому їх позначено `is_flat` і відфільтровано лише в моментах (`is_flat = 0`) і рейтингах діб (`flat_share < 0,5`). Поріг відсікає 2012 рік, зберігає 2013–2016 роки (24,24–39,16 %) і залишає 4876 з 5429 діб.
+Хвилин з `Volume = 0` – 1 312 419 (16,79 %); у них усі чотири ціни дорівнюють закриттю минулої хвилини, тобто це заповнення сітки, а не угоди. Їх частка становить 94,95 % у 2012 році, 39,16 % у 2013, 33,19 % у 2016 і не перевищує 3,95 % з 2018 року; доби 6–8 січня 2015 року не мають жодної угоди. Видалення цих хвилин зруйнувало б `lag("Close")` і 60-хвилинну рамку, тому їх позначено `is_flat` і відфільтровано лише в моментах (`is_flat = 0`) і рейтингах діб (`flat_share < 0,5`). Поріг відсікає 2012 рік, зберігає 2013–2016 роки (24,24–39,16 %) і залишає 4876 з 5429 діб.
 
 ### 3.3 Ліниві обчислення, план виконання і кешування
 
 Функція `build()` описує весь конвеєр (читання, `dropna`, `dropDuplicates`, десять `withColumn`, два вікна) без обчислень. Над тим самим DataFrame виконано три дії по три рази з ротацією порядку; плани і час наведено на рисунку 3 і в таблиці 1.
 
 ![Рисунок 3 – Час трансформацій і дій та фізичний план count()](screenshots/term_04_lazy.png)
-
-У плані `df.groupBy().count()` немає вузлів `Window`: правило ColumnPruning відкидає непотрібні стовпці `log_ret` і `vol60` разом із вікнами, лишаються `Scan csv`, `Filter` (`dropna`) і `HashAggregate` дедуплікації. Тому `count()` не є повним проходом. Повний прохід вимірюється записом у формат `noop`, який обчислює всі стовпці й нічого не пише:
-
-```python
-df.count()                                                    # без Window
-df.agg(F.sum("vol60"), F.sum("log_ret")).first()              # з Window
-df.write.format("noop").mode("overwrite").save()              # усі стовпці
-```
 
 Таблиця 1 – Час дій над конвеєром і ефект кешування (медіана з трьох запусків)
 
@@ -74,7 +66,17 @@ df.write.format("noop").mode("overwrite").save()              # усі стов�
 | Матеріалізація кешу (`persist` + `count`) | так | 28,950 | 21,209–29,722 |
 | Запит `heavy_query` над кешем | – | 1,363 | 0,927–1,640 |
 
-Різниця між 6,653 і 24,537 с – це вартість двох вікон: обміну за (year, month), сортування всередині груп і обчислення `lag` і `stddev`. Граф повного проходу в Spark UI наведено на рисунку 4.
+У плані `df.groupBy().count()` немає вузлів `Window`: правило ColumnPruning відкидає непотрібні стовпці `log_ret` і `vol60` разом із вікнами, лишаються `Scan csv`, `Filter` (`dropna`) і `HashAggregate` дедуплікації. Тому `count()` не є повним проходом. Повний прохід вимірюється записом у формат `noop`, який обчислює всі стовпці й нічого не пише (три дії наведено після таблиці 1).
+
+Різниця між 6,653 і 24,537 с – це вартість двох вікон: обміну за (year, month), сортування всередині груп і обчислення `lag` і `stddev`. Три дії над конвеєром записано так:
+
+```python
+df.count()                                                    # без Window
+df.agg(F.sum("vol60"), F.sum("log_ret")).first()              # з Window
+df.write.format("noop").mode("overwrite").save()              # усі стовпці
+```
+
+Граф повного проходу в Spark UI наведено на рисунку 4.
 
 ![Рисунок 4 – Граф виконання повного проходу (noop-запис) у вкладці SQL Spark UI; граф розбито на три колонки для друку](screenshots/spark_ui_sql_detail_3col.png)
 
@@ -82,9 +84,9 @@ df.write.format("noop").mode("overwrite").save()              # усі стов�
 
 Запит `heavy_query` (топ-10 діб за `rv` і обсяг за годиною, дві дії) виконано у трьох раундах з чергуванням порядку «без кешу – матеріалізація – з кешем». Кеш прискорив запит у 11,4 разу (15,484 проти 1,363 с), а матеріалізація (28,950 с, довша за noop-прохід на час серіалізації 16 стовпців) окупається після 2,1 повтору; над кешем виконано понад двадцять запитів, тож він виправданий. Стан кешу показано на рисунку 5.
 
-![Рисунок 5 – Вкладка Storage у Spark UI: рівень зберігання, кешовані розділи і розмір кешованого DataFrame](screenshots/spark_ui_storage_cols.png)
+![Рисунок 5 – Вкладка Storage у Spark UI (фрагмент таблиці): рівень зберігання, кешовані розділи і розмір кешованого DataFrame](screenshots/spark_ui_storage_cols.png)
 
-Кеш займає 360,6 МіБ у пам'яті і всі 16 з 16 розділів, тож запити до нього виконуються 16 паралельними задачами; розділи містять від 266 400 до 754 560 рядків, бо місяці розподіляються за хешем нерівномірно.
+Кеш займає 360,6 МіБ у пам'яті і всі 16 з 16 розділів, тож запити до нього виконуються 16 задачами, по 4 одночасно (за кількістю ядер); розділи містять від 266 400 до 754 560 рядків, бо місяці розподіляються за хешем нерівномірно.
 
 ## 4 Розподілена аналітика
 
@@ -118,13 +120,13 @@ d1 = df.groupBy("date").agg(
 | 1 год | 130 275 | 0,009522 | −1,23 | 118,11 |
 | 1 доба | 5 428 | 0,040632 | −1,31 | 25,46 |
 
-Хвилинний ексцес 7161,62 (для нормального розподілу 0) майже повністю створюють кілька хвилин. Дві найбільші за модулем, −0,617 і +0,617 (понад 350 σ), – миттєвий обвал 11.04.2013 о 10:57 UTC до 75,0 USD з поверненням до 138,99 USD при реальному обсязі 15,61 і 5,89 BTC. Без них ексцес падає до 3260,81, без десяти найбільших – до 711,21. Додатна хвилинна асиметрія 3,92 також є ефектом викидів: серед десяти найбільших |r| переважають стрибки вгору (+0,462 і +0,457 у січні 2012 року, +0,435 10.04.2013), і після їх виключення асиметрія стає −0,07. З агрегацією ексцес спадає до 118,11 (година) і 25,46 (доба), а асиметрія стає від'ємною через падіння 11.04.2013 (−0,664) і 12.03.2020 (−0,494). Динаміку волатильності показано на рисунку 6.
+Хвилинний ексцес 7161,62 (для нормального розподілу 0) майже повністю створюють кілька хвилин. Дві найбільші за модулем, −0,617 і +0,617 (понад 350 σ), – миттєвий обвал 11.04.2013 о 10:57 UTC до 75,0 USD з поверненням до 138,99 USD при реальному обсязі 15,61 і 5,89 BTC. Без них ексцес падає до 3260,81, без десяти найбільших – до 711,21. Додатна хвилинна асиметрія 3,92 також є ефектом викидів: серед десяти найбільших |r| п'ять додатних і п'ять від'ємних, але стрибки вгору більші за модулем (+0,462 і +0,457 у січні 2012 року, +0,435 10.04.2013 проти −0,379, −0,370 і −0,252 серед від'ємних), і після їх виключення асиметрія стає −0,07. З агрегацією ексцес спадає до 118,11 (година) і 25,46 (доба), а асиметрія стає від'ємною через падіння 11.04.2013 (−0,664) і 12.03.2020 (−0,494). Динаміку волатильності показано на рисунку 6.
 
 Добова `rv` у 2013 році перевищувала 0,3 протягом 13 діб. Після 2023 року (1411 діб) її медіана становить 0,020, міжквартильний діапазон 0,015–0,027, 5-й і 95-й процентилі – 0,009 і 0,041, мінімум 0,003, максимум 0,105 (05.08.2024); для порівняння, з 2018 року медіана 0,028 і максимум 0,278. Сплески збігаються з подіями: 12.03.2020 `rv` 0,211 при 30-денній волатильності 0,094, 19.05.2021 – 0,191 при 0,053.
 
-![Рисунок 6 – Добова реалізована волатильність rv і середня за добу 60-хвилинна σ](figures/fig04_volatility.png)
+Обидві панелі показують поступове зниження волатильності після 2018 року на тлі окремих сплесків. Провали майже до нуля в 2012 році і 6–8.01.2015 не є справжнім затишшям: у ці доби угод майже не було (див. 3.2), тому `rv` рахується за нерухомою ціною.
 
-Обидві панелі показують поступове зниження волатильності після 2018 року на тлі окремих сплесків.
+![Рисунок 6 – Добова реалізована волатильність rv і середня за добу 60-хвилинна σ](figures/fig04_volatility.png)
 
 ### 4.3 Фільтрація і сортування: найволатильніші доби
 
@@ -175,9 +177,9 @@ WHERE date >= DATE'2018-01-01' AND volume_x_prev30_mean >= 4.63
 
 Q2 повторив рейтинг з підрозділу 4.3; за Q3 максимум хвилинного обсягу з 2018 року припадає на будні о 14:00 UTC (6,1661 BTC у середу), мінімум – на неділю о 02:00 UTC (1,532 BTC). За Q4 найбільша середня добова `rv` у січні (0,03977) і березні (0,03912), найменша – у жовтні (0,02342). За Q5 рекордна доба за обсягом – 18.12.2013 (137 070 BTC).
 
-Q6 показав, що в дні обвалу 12–13.03.2020, падіння 19.05.2021, заморожування виведення коштів платформою Celsius 13.06.2022 і колапсу FTX 08–09.11.2022 обсяг перевищував середній за 30 попередніх діб у 4,63–9,27 разу (12.03.2020: −49,40 % при 9,27). Щоб перевірити, чи такий сплеск характерний саме для криз, Q7 відібрав усі доби з 2018 року з відношенням не менше 4,63. Результат показано на рисунку 7.
+Q6 показав, що в дні обвалу 12–13.03.2020, падіння 19.05.2021, заморожування виведення коштів платформою Celsius 13.06.2022 і колапсу FTX 08–09.11.2022 обсяг перевищував середній за 30 діб, що передують у 4,63–9,27 разу (12.03.2020: −49,40 % при 9,27). Щоб перевірити, чи такий сплеск характерний саме для криз, Q7 відібрав усі доби з 2018 року з відношенням не менше 4,63. Результат показано на рисунку 7.
 
-![Рисунок 7 – Доби з 2018 року з обсягом не менше 4,63 середнього за 30 попередніх діб (запит Q7)](figures/fig12_volume_spikes.png)
+![Рисунок 7 – Доби з 2018 року з обсягом не менше 4,63 середнього за 30 діб, що передують (запит Q7)](figures/fig12_volume_spikes.png)
 
 Поріг перевищили 22 доби з 3237 (0,68 %), медіана відношення 5,88. З них 12 мають |дохідність| ≥ 10 %, а 10 – менше 10 %, зокрема 6 – менше 5 %, наприклад 12.05.2022 (−0,36 %) і 15.07.2025 (−1,78 %): кризові доби мають сплеск обсягу, але майже половина діб зі сплеском не супроводжувалася великою зміною ціни.
 
@@ -185,7 +187,7 @@ Q6 показав, що в дні обвалу 12–13.03.2020, падіння 1
 
 ### 6.1 Наскрізний бенчмарк Hadoop Streaming, Hive, pandas і Spark
 
-Продуктивність порівняно окремим бенчмарком на тій самій машині: Т1 – кількість хвилин і обсяг за роками, Т2 – добові OHLC; Hadoop Streaming 3.3.6 (YARN і HDFS на одному вузлі, mapper і reducer з ПЗ1), Hive 3.1.3 на рушії MR, pandas і PySpark обробляли той самий CSV. Вимірювався час від запуску процесу до записаного результату і окремо старт рушія («обробка» – різниця медіан). Після очікування тиші виконано прогрівальне і п'ять вимірюваних кіл з циклічним зсувом порядку рушіїв (навантаження 1,44–3,22); усі 48 запусків пройшли звірку з pandas. Результати наведено в таблиці 4 і на рисунку 8.
+Продуктивність порівняно окремим бенчмарком на тій самій машині: Т1 – кількість хвилин і обсяг за роками, Т2 – добові OHLC; Hadoop Streaming 3.3.6 (YARN і HDFS на одному вузлі, mapper і reducer з ПЗ1, їхні листинги наведено в додатку А звіту ПЗ1, А.1–А.4), Hive 3.1.3 на рушії MR (запити в А.6 і А.7 цього звіту), pandas і PySpark обробляли той самий CSV. Spark працював з драйвером 3 ГБ і 8 shuffle-розділами (у сесії розділу 6.2 – 8 ГБ і 16), Hadoop і Hive – на JDK 8, Spark – на JDK 21; код бенчмарку наведено в А.5. Вимірювався час від запуску процесу до записаного результату і окремо старт рушія («обробка» – різниця медіан). Після очікування тиші виконано прогрівальне і п'ять вимірюваних кіл з циклічним зсувом порядку рушіїв (навантаження 1,44–3,22); усі 48 запусків пройшли звірку з pandas. Результати наведено в таблиці 4 і на рисунку 8.
 
 Таблиця 4 – Наскрізний час виконання задач (медіана з п'яти запусків), с
 
@@ -200,9 +202,9 @@ Q6 показав, що в дні обвалу 12–13.03.2020, падіння 1
 | Т2 | pandas | 9,21 | 8,50–10,18 | 0,43 | 8,78 |
 | Т2 | PySpark | 14,04 | 13,58–14,86 | 6,29 | 7,75 |
 
-![Рисунок 8 – Наскрізний час задач Т1 і Т2 у чотирьох рушіях: загальний і без старту](figures/fig_bench.png)
+Spark виконав обидві задачі у 1,7–2,1 раза швидше за Hadoop Streaming (12,88 проти 27,20 с і 14,04 проти 24,08 с), і більшу частину різниці дає старт: 15,47 с на подання завдання в YARN проти 6,29 с на створення SparkSession. Без старту Spark швидший на Т1 (6,58 проти 11,73 с), а на Т2 майже рівний (7,75 проти 8,62 с). Hive найповільніший через компіляцію запиту і MR-завдання. За загальним часом виграє pandas (файл вміщується в пам'ять, старт 0,43 с), але без старту Spark на чотирьох ядрах швидший за нього (6,58 проти 8,03 с і 7,75 проти 8,78 с). Обмеження: один вузол без масштабування, запис у HDFS для Hadoop і Hive проти локального диска, лише п'ять вимірювань.
 
-Spark виконав обидві задачі в півтора–два рази швидше за Hadoop Streaming (12,88 проти 27,20 с і 14,04 проти 24,08 с), і більшу частину різниці дає старт: 15,47 с на подання завдання в YARN проти 6,29 с на створення SparkSession. Без старту Spark швидший на Т1 (6,58 проти 11,73 с), а на Т2 майже рівний (7,75 проти 8,62 с). Hive найповільніший через компіляцію запиту і MR-завдання. За загальним часом виграє pandas (файл вміщується в пам'ять, старт 0,43 с), але без старту Spark на чотирьох ядрах швидший за нього (6,58 проти 8,03 с і 7,75 проти 8,78 с). Обмеження: один вузол без масштабування, запис у HDFS для Hadoop і Hive проти локального диска, лише п'ять вимірювань.
+![Рисунок 8 – Наскрізний час задач Т1 і Т2 у чотирьох рушіях: загальний і без старту](figures/fig_bench.png)
 
 ### 6.2 Вимірювання в межах сесії Spark
 
@@ -219,7 +221,7 @@ Spark виконав обидві задачі в півтора–два раз
 | Т2 | Spark, читання CSV | 4,547 | 4,220–4,841 | 1496,7 (JVM) + 128,9 (Python) |
 | Т2 | Spark, кеш | 0,618 | 0,563–0,986 | – |
 
-У межах сесії Spark і pandas рівні на Т1 (3,588 проти 3,556 с), а на Т2 Spark трохи швидший (4,547 проти 4,884 с); час Spark включає `toPandas()`, pandas працює в одному потоці. Результати збігаються (дати, кількості й OHLC точно, обсяг з похибкою до 1e-6). Над кешем задачі тривають 0,549 і 0,618 с, отже без кешу основну частину часу займає читання CSV.
+У межах сесії Spark і pandas рівні на Т1 (3,588 проти 3,556 с), а на Т2 Spark трохи швидший (4,547 проти 4,884 с); час Spark включає `toPandas()`, pandas працює в одному потоці. Результати збігаються (дати, кількості й OHLC точно, обсяг з відносною похибкою до 10⁻⁶). Над кешем задачі тривають 0,549 і 0,618 с, отже без кешу основну частину часу займає читання CSV.
 
 Числа таблиць 4 і 5 відрізняються через межу вимірювання: у бенчмарку кожен запуск – новий процес з холодною JVM, `dropna` і записом у файл, а в сесії JVM прогріта і результат лишається в пам'яті. Тому Spark у сесії обробляє Т1 за 3,588 с проти 6,58 с «обробки» в бенчмарку; для pandas (3,556 проти 8,03 с) різницю дають додаткові кроки бенчмарку та інший стан машини, тож серії не об'єднано.
 
@@ -243,7 +245,7 @@ Spark виконав обидві задачі в півтора–два раз
 
 ## 7 Візуалізація
 
-Програма `make_figures.py` будує дванадцять графіків з агрегатів, переданих у Python (5429 добових рядків замість 7 816 537); у звіті наведено рисунки 6, 7 і 8. Решта графіків збережена в каталозі `figures`.
+Програма `make_figures.py` будує дванадцять графіків з агрегатів, переданих у Python (5429 добових рядків замість 7 816 537); у звіті наведено рисунки 6, 7 і 8. Решту графіків не включено, щоб не перевищувати обсяг звіту.
 
 # Висновки
 
@@ -263,22 +265,24 @@ Spark виконав обидві задачі в півтора–два раз
 
 # Додаток А. Лістинг програми
 
-Усі результати отримано одним запуском `bash code/run_all.sh` з каталогу роботи; файли нижче наведено повністю. Допоміжні скрипти `env_shots.py`, `make_screens.py` і `smoke_test.py` лише перетворюють вивід команд на зображення терміналу та перевіряють встановлення PySpark, результатів не обчислюють, тому їх не наведено.
+Результати розділів 1–5 і 6.2, рисунки та знімки Spark UI отримано запуском `bash code/run_all.sh` з каталогу роботи (А.1–А.4 і А.8). Наскрізний бенчмарк розділу 6.1 (таблиця 4, рисунок 8) виконано окремим скриптом `bench_all.py` (А.5) із запитами Hive А.6 і А.7. Mapper і reducer Hadoop Streaming наведено в додатку А звіту ПЗ1 (А.1–А.4), тут їх не повторено. Файли нижче наведено повністю. Допоміжні скрипти `env_shots.py`, `make_screens.py` і `smoke_test.py` лише перетворюють вивід команд на зображення терміналу та перевіряють встановлення PySpark, результатів не обчислюють, тому їх не наведено.
 
 ### А.1 Файл run_all.sh – послідовність запуску
 
 ```bash
 #!/usr/bin/env bash
-# Повний відтворюваний запуск ПЗ2 одним командою:  bash code/run_all.sh   (з будь-якого каталогу)
+# Повний відтворюваний запуск ПЗ2 однією командою:  bash code/run_all.sh   (з будь-якого каталогу)
 # Після нього results/, figures/, screenshots/ створені лише цим кодом. Seed 42.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-export JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java-21-openjdk-amd64}
+export JAVA_HOME=${JAVA_HOME:-$(dirname "$(dirname "$(readlink -f "$(command -v java)")")")}   # JDK із PATH, якщо не задано
+: "${CHROME_BIN:=$(command -v chromium chromium-browser chrome 2>/dev/null | head -1)}"; export CHROME_BIN   # Chromium для знімків Spark UI
 mkdir -p results/logs figures screenshots/txt
 T0=$(date +%s)
 python code/env_shots.py                 # скріншоти середовища (java, python, pyspark, jupyter, smoke-тест)
 python code/pz2_spark.py 2>&1 | tee results/logs/run.log     # конвеєр Spark, Spark UI-знімки, txt для терміналів
 python code/measure_memory.py            # пік пам'яті: pandas і Spark, окремі процеси (після завершення основної сесії)
+python code/crop_ui.py                  # кроп і розкладка двох знімків Spark UI для друку (рис. 4, 5)
 python code/make_figures.py              # рисунки з results/
 python code/make_screens.py              # рендер txt -> PNG терміналів
 T1=$(date +%s)
@@ -381,7 +385,7 @@ ver_rows = [
     ("Python", platform.python_version()), ("pandas", pd.__version__),
     ("numpy", np.__version__), ("matplotlib", matplotlib.__version__), ("psutil", psutil.__version__),
     ("playwright", sh("pip show playwright | awk '/^Version/{print $2}'")),
-    ("Chromium", sh("/opt/pw-browsers/chromium-1243/chrome-linux64/chrome --version 2>/dev/null")),
+    ("Chromium", sh(os.environ.get("CHROME_BIN", "chromium") + " --version 2>/dev/null")),
     ("OS", platform.platform()),
     ("CPU", sh("lscpu | grep 'Model name' | sed 's/.*: *//'")),
     ("CPU_logical_cores", str(CORES)),
@@ -823,7 +827,7 @@ def run_sql(k, q):
         print(" ".join(q.split())[:86] + "…\n"); print(r.head(18).to_string(index=False))
 for k, q in SQLQ.items(): run_sql(k, q)
 
-# Q7: УСІ доби з 2018 року, де обсяг перевищує поріг k × середній обсяг попередніх 30 діб (те саме правило, що в Q6)
+# Q7: УСІ доби з 2018 року, де обсяг перевищує поріг k × середній обсяг за 30 діб, що передують (те саме правило, що в Q6)
 K = float(res_sql["q6_crash_days_vs_30d_mean"]["volume_x_prev30_mean"].min())      # k = найменше відношення серед 6 відомих кризових діб
 SQLQ["q7_volume_spike_days"] = f"""SELECT * FROM (
     SELECT date, ROUND(100*ret_1d,2) AS ret_pct, ROUND(rv,4) AS rv, ROUND(volume,0) AS volume, {RATIO} AS volume_x_prev30_mean,
@@ -874,7 +878,7 @@ with cap("12_engines", "Spark проти pandas (порядок S,P,S,P,S,P), м
 def ui_screens():
     """Знімки Spark UI: viewport 1280x800, device_scale_factor=2, лише потрібна область (таблиця/граф), масштаб сторінки 1,5."""
     from playwright.sync_api import sync_playwright
-    exe = "/opt/pw-browsers/chromium-1243/chrome-linux64/chrome"
+    exe = os.environ.get("CHROME_BIN", "chromium")      # шлях до Chromium задається змінною середовища
     sql_list = rest("sql?details=false&length=1000")
     def exec_id(label):
         for e in sql_list:
@@ -1140,8 +1144,334 @@ m = q7.in_q6_list == 1
 ax.scatter(q7[~m].volume_x_prev30_mean, q7[~m].ret_pct, color=C[0], s=28, label="інші доби зі сплеском")
 ax.scatter(q7[m].volume_x_prev30_mean, q7[m].ret_pct, color=C[1], s=40, marker="D", label="6 відомих кризових діб (Q6)")
 ax.axhline(0, color="gray", lw=.6); ax.axhline(10, color="gray", lw=.6, ls=":"); ax.axhline(-10, color="gray", lw=.6, ls=":")
-ax.set_xlabel("Обсяг / середній обсяг попередніх 30 діб"); ax.set_ylabel("Дохідність за добу, %"); ax.legend()
+ax.set_xlabel("Обсяг / середній обсяг за 30 діб, що передують"); ax.set_ylabel("Дохідність за добу, %"); ax.legend()
 ax.set_title("Усі доби з 2018 року зі сплеском обсягу (порогові значення – Q7)"); out("fig12_volume_spikes")
 print("ok")
 ```
 
+### А.5 Файл bench_all.py – наскрізний бенчмарк Hadoop Streaming, Hive, pandas і Spark (розділ 6.1)
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+bench_all.py - єдина точка входу: чесне порівняння двох агрегацій у чотирьох рушіях.
+  T1: кількість свічок і сумарний обсяг за роками;  T2: добові OHLC (first/max/min/last/sum за Timestamp).
+  Рушії: Hadoop Streaming (YARN), Hive (рушій MR), pandas, PySpark local[*].
+Запуск:  python3 bench_all.py            (повний прогін: очікування тиші, 1 прогрів + 5 вимірюваних кіл)
+         python3 bench_all.py --smoke    (одне коло для перевірки, результати у bench/smoke, не рахуються)
+Службовий режим:  bench_all.py --job <engine> <T1|T2|start> <outdir>  (виконується у дочірньому процесі).
+"""
+import os, sys, re, time, subprocess, shutil, json
+from pathlib import Path
+
+W = Path(__file__).resolve().parents[2]; B = W / 'bench'; CODE = B / 'code'
+CSV = W / 'data/raw/btcusd_1-min_data.csv'
+SCR = B / 'scratch'            # локальний каталог виводу pandas/Spark
+HDFS_RAW = '/user/root/btc/raw'; HDFS_OUT = '/user/root/btc/out'; HDFS_TINY = '/user/root/btc/bench_tiny'
+HH = W / 'tools/hadoop-3.3.6'; HV = W / 'tools/apache-hive-3.1.3-bin'
+JDK8 = W / 'mamba/envs/jdk8'; JDK21 = os.environ.get('JDK21_HOME', os.environ.get('JAVA_HOME', ''))
+HIVE_META = W / 'hadoop_runtime/hive_meta'
+SELF = str(CODE / 'bench_all.py')
+ROUNDS = 5
+
+# ------------------------------------------------------------------ дочірні завдання
+def job_pandas(task, out):
+    import pandas as pd
+    df = pd.read_csv(CSV, float_precision='round_trip').dropna()
+    if task == 'T1':
+        y = pd.to_datetime(df['Timestamp'], unit='s').dt.year.rename('year')
+        r = df.groupby(y).agg(candles=('Volume', 'size'), volume=('Volume', 'sum')).reset_index()
+    else:
+        d = df.sort_values('Timestamp', kind='stable')
+        day = (d['Timestamp'] // 86400).rename('day_n')
+        r = d.groupby(day).agg(open=('Open', 'first'), high=('High', 'max'), low=('Low', 'min'), close=('Close', 'last'),
+                               volume=('Volume', 'sum'), candles=('Volume', 'size')).reset_index()
+        r['day_n'] = pd.to_datetime(r['day_n'] * 86400, unit='s').dt.strftime('%Y-%m-%d')
+    r.to_csv(Path(out) / 'result.csv', index=False, header=False)
+
+def spark_session():
+    from pyspark.sql import SparkSession
+    s = (SparkSession.builder.master('local[*]').appName('bench').config('spark.driver.memory', '3g')
+         .config('spark.sql.session.timeZone', 'UTC').config('spark.sql.shuffle.partitions', '8')
+         .config('spark.ui.enabled', 'false').getOrCreate())
+    s.sparkContext.setLogLevel('ERROR')
+    return s
+
+def job_spark(task, out):
+    from pyspark.sql import functions as F
+    spark = spark_session()
+    if task == 'start':
+        spark.stop(); return
+    schema = 'Timestamp DOUBLE, Open DOUBLE, High DOUBLE, Low DOUBLE, Close DOUBLE, Volume DOUBLE'
+    s = spark.read.csv(f'file://{CSV}', header=True, schema=schema).na.drop()
+    s = s.withColumn('t', F.timestamp_seconds(F.col('Timestamp').cast('long')))
+    if task == 'T1':
+        r = s.groupBy(F.year('t').alias('year')).agg(F.count('*').alias('candles'), F.sum('Volume').alias('volume'))
+    else:
+        r = (s.withColumn('day', F.date_format('t', 'yyyy-MM-dd')).groupBy('day')
+             .agg(F.min_by('Open', 'Timestamp'), F.max('High'), F.min('Low'), F.max_by('Close', 'Timestamp'),
+                  F.sum('Volume'), F.count('*')))
+    r.coalesce(1).write.mode('overwrite').option('header', 'false').csv(f'file://{out}/result')
+    spark.stop()
+
+if len(sys.argv) > 1 and sys.argv[1] == '--job':
+    eng, task, out = sys.argv[2:5]
+    {'pandas': job_pandas, 'spark': job_spark}[eng](task, out)
+    sys.exit(0)
+
+# ------------------------------------------------------------------ головний процес
+import numpy as np, pandas as pd
+os.environ.pop('JAVA_TOOL_OPTIONS', None)
+ENV8 = dict(os.environ, JAVA_HOME=str(JDK8), HADOOP_HOME=str(HH), HIVE_HOME=str(HV), HADOOP_CONF_DIR=str(HH / 'etc/hadoop'),
+            HADOOP_MAPRED_HOME=str(HH), PATH=f'{HH}/bin:{HV}/bin:{JDK8}/bin:' + os.environ['PATH'])
+ENV21 = dict(os.environ, JAVA_HOME=JDK21, PATH=f'{JDK21}/bin:' + os.environ['PATH'])
+STREAM_JAR = next((HH / 'share/hadoop/tools/lib').glob('hadoop-streaming-*.jar'))
+PY = sys.executable
+
+def sh(cmd, env=ENV8, cwd=None):
+    t0 = time.perf_counter()
+    p = subprocess.run(cmd, shell=True, executable='/bin/bash', env=env, cwd=cwd, capture_output=True, text=True)
+    return p.returncode, p.stdout, p.stderr, time.perf_counter() - t0
+
+def streaming_cmd(task):
+    out = f'{HDFS_OUT}/bench_hs_{task}'
+    if task == 'T1':
+        m, r, c = 'mapper_year.py', 'reducer_year.py', 'reducer_year.py'
+    else:
+        m, r, c = 'mapper_ohlc.py', 'reducer_ohlc.py', None
+    P1 = W / 'pz1/code'
+    files = ','.join(str(P1 / f) for f in dict.fromkeys([m, r] + ([c] if c else [])))
+    comb = f"-combiner 'python3 {c}'" if c else ''
+    return out, (f"hadoop jar {STREAM_JAR} -D mapreduce.job.name=bench_{task} -D mapreduce.job.reduces=1 -files {files} "
+                 f"-mapper 'python3 {m}' {comb} -reducer 'python3 {r}' -input {HDFS_RAW} -output {out}")
+
+def prepare(engine, task):
+    """Очищення вихідних каталогів (поза вимірюваним часом)."""
+    if engine in ('pandas', 'spark'):
+        d = SCR / f'{engine}_{task}'; shutil.rmtree(d, ignore_errors=True); d.mkdir(parents=True)
+    elif engine == 'hadoop':
+        sh(f'hdfs dfs -rm -r -f {HDFS_OUT}/bench_hs_{task}')
+    elif engine == 'hive':
+        sh(f'hdfs dfs -rm -r -f {HDFS_OUT}/bench_hive_{task}')
+
+def command(engine, task):
+    """Команда, яка вимірюється (від запуску процесу до готового результату)."""
+    if engine == 'pandas':
+        if task == 'start': return f'{PY} -c "import pandas"', ENV8, None
+        return f'{PY} {SELF} --job pandas {task} {SCR}/pandas_{task}', ENV8, None
+    if engine == 'spark':
+        return f'{PY} {SELF} --job spark {task} {SCR}/spark_{task}', ENV21, None
+    if engine == 'hadoop':
+        if task == 'start':
+            return (f"hadoop jar {STREAM_JAR} -D mapreduce.job.reduces=0 -mapper cat -input {HDFS_TINY} "
+                    f"-output {HDFS_OUT}/bench_hs_start", ENV8, None)
+        return streaming_cmd(task)[1], ENV8, None
+    if engine == 'hive':
+        if task == 'start': return 'hive -S -e "select 1"', ENV8, str(HIVE_META)
+        return f'hive -S -f {CODE}/bench_{"yearly" if task == "T1" else "daily"}.hql', ENV8, str(HIVE_META)
+
+def fetch(engine, task):
+    """Результат у DataFrame без назв стовпців (поза вимірюваним часом)."""
+    if engine in ('pandas', 'spark'):
+        d = SCR / f'{engine}_{task}'
+        f = d / 'result.csv' if engine == 'pandas' else next((d / 'result').glob('part-*.csv'))
+        return pd.read_csv(f, header=None, float_precision='round_trip')
+    d = f'{HDFS_OUT}/bench_hs_{task}' if engine == 'hadoop' else f'{HDFS_OUT}/bench_hive_{task}'
+    rc, o, e, _ = sh(f'hdfs dfs -cat {d}/*')
+    assert rc == 0, e[-500:]
+    import io
+    return pd.read_csv(io.StringIO(o), sep='\t', header=None, float_precision='round_trip')
+
+def normalise(df, task):
+    if task == 'T1':
+        df = df.iloc[:, :3].copy(); df.columns = ['year', 'candles', 'volume']
+        return df.sort_values('year').reset_index(drop=True)
+    df = df.iloc[:, :7].copy(); df.columns = ['day', 'open', 'high', 'low', 'close', 'volume', 'candles']
+    return df.sort_values('day').reset_index(drop=True)
+
+REF = {}
+def verify(engine, task):
+    cur = normalise(fetch(engine, task), task)
+    if engine == 'pandas' and task not in REF:
+        REF[task] = cur
+        return 'reference'
+    ref = REF[task]
+    ok = len(cur) == len(ref)
+    if ok:
+        ok = bool((cur.iloc[:, 0].astype(str).values == ref.iloc[:, 0].astype(str).values).all())
+        ok = ok and bool((cur['candles'].astype('int64').values == ref['candles'].astype('int64').values).all())
+        ok = ok and bool(np.allclose(cur['volume'], ref['volume'], rtol=1e-6, atol=0))
+        if task == 'T2':
+            for k in ('open', 'high', 'low', 'close'):
+                ok = ok and bool((cur[k].values == ref[k].values).all())
+    return 'ok' if ok else 'MISMATCH'
+
+def mem_avail_gb():
+    return round(int(re.search(r'MemAvailable:\s+(\d+)', open('/proc/meminfo').read()).group(1)) / 1048576, 2)
+
+def run_once(engine, task, rnd, warm, rows, runs_csv):
+    prepare(engine, task)
+    if engine == 'hadoop' and task == 'start': sh(f'hdfs dfs -rm -r -f {HDFS_OUT}/bench_hs_start')
+    cmd, env, cwd = command(engine, task)
+    l1, mem, ts = os.getloadavg()[0], mem_avail_gb(), time.strftime('%Y-%m-%d %H:%M:%S')
+    rc, o, e, t = sh(cmd, env, cwd)
+    l2 = os.getloadavg()[0]
+    status = 'rc=%d' % rc
+    if rc == 0 and task != 'start':
+        status = verify(engine, task)
+    row = dict(round=rnd, warmup=warm, engine=engine, task=task, seconds=round(t, 3), load1_before=l1, load1_after=l2,
+               mem_available_gb=mem, timestamp=ts, check=status)
+    print(row, flush=True)
+    if rc != 0: print(e[-1500:], flush=True)
+    rows.append(row); pd.DataFrame(rows).to_csv(runs_csv, index=False)
+    return row
+
+def quiet_wait(log, max_min=90):
+    """Опитування щохвилини: load1 < 1,5 тричі поспіль і жодних сторонніх java/spark-процесів."""
+    streak, quiet, polls = 0, False, []
+    for i in range(max_min):
+        la = os.getloadavg()[0]
+        ps = subprocess.run("ps -eo pid,args", shell=True, capture_output=True, text=True).stdout.splitlines()
+        others = []
+        for l in ps:
+            if re.search(r'java|spark-submit|pyspark|pz\d?_spark', l) and 'grep' not in l and 'bench_all' not in l:
+                if re.search(r'org\.apache\.hadoop|kafka\.Kafka|kafka_2\.13|\bps -eo', l): continue   # демони Hadoop, Kafka (лише записується)
+                others.append(l.strip()[:120])
+        ok = la < 1.5 and not others
+        streak = streak + 1 if ok else 0
+        polls.append(dict(poll=i, time=time.strftime('%H:%M:%S'), load1=la, other_procs=len(others), streak=streak))
+        print(polls[-1], flush=True)
+        if streak >= 3: quiet = True; break
+        time.sleep(60)
+    pd.DataFrame(polls).to_csv(log, index=False)
+    return quiet, len(polls)
+
+def conditions(quiet, npolls, resdir):
+    ver = lambda c, env=ENV8: subprocess.run(c, shell=True, env=env, capture_output=True, text=True).stdout.strip().splitlines()[:1]
+    ps = subprocess.run("ps -eo comm,args", shell=True, capture_output=True, text=True).stdout
+    import pyspark
+    c = dict(start_time=time.strftime('%Y-%m-%d %H:%M:%S'), quiet_reached=quiet, polls=npolls,
+             load1_start=os.getloadavg()[0], load5_start=os.getloadavg()[1], nproc=os.cpu_count(), mem_available_gb=mem_avail_gb(),
+             kafka_running=bool(re.search(r'kafka\.Kafka|kafka_2\.13', ps)), mongod_running='mongod' in ps,
+             pandas=pd.__version__, pyspark=pyspark.__version__, python=sys.version.split()[0],
+             hadoop='3.3.6', hive='3.1.3 (MR)', jdk_hadoop_hive='8u472', jdk_spark='21',
+             spark_cfg='local[*], driver 3g, shuffle.partitions 8, UI off', hadoop_cfg='1 reducer, 1 node YARN/HDFS (pseudo-distributed)')
+    pd.DataFrame([c]).to_csv(resdir / 'bench_conditions.csv', index=False)
+
+def summarise(runs, resdir):
+    r = runs[~runs.warmup]
+    ok = r[r.task.isin(['T1', 'T2'])]
+    st = r[r.task == 'start'].groupby('engine').seconds.median()
+    out = []
+    for (e, t), g in ok.groupby(['engine', 'task'], sort=False):
+        s = g.seconds; sm = st[e]; p = s - sm
+        q1, q3 = s.quantile(.25), s.quantile(.75)
+        out.append(dict(engine=e, task=t, median_total_s=round(s.median(), 2), median_startup_s=round(sm, 2),
+                        median_processing_s=round(s.median() - sm, 2), min=round(s.min(), 2), max=round(s.max(), 2),
+                        iqr=round(q3 - q1, 2), n=len(s), min_processing_s=round(p.min(), 2), max_processing_s=round(p.max(), 2),
+                        all_checks_ok=bool((g.check.isin(['ok', 'reference'])).all())))
+    S = pd.DataFrame(out); S.to_csv(resdir / 'bench_summary.csv', index=False)
+    return S
+
+def figure(S, figdir):
+    sys.path.insert(0, str(W / 'tools_report')); import plotstyle
+    import matplotlib.pyplot as plt
+    names = {'hadoop': 'Hadoop Streaming', 'hive': 'Hive (MR)', 'pandas': 'pandas', 'spark': 'PySpark'}
+    fig, axs = plt.subplots(2, 1, figsize=plotstyle.TWO_PANEL, sharex=True)
+    for ax, (task, ttl) in zip(axs, [('T1', 'Т1: свічки та обсяг за роками'), ('T2', 'Т2: добові OHLC')]):
+        g = S[S.task == task].set_index('engine').loc[list(names)]
+        x = np.arange(len(g)); w = .38
+        for off, col, lo, hi, lab, c in [(-w / 2, 'median_total_s', 'min', 'max', 'Загальний час (зі стартом)', '#3b6ea5'),
+                                         (w / 2, 'median_processing_s', 'min_processing_s', 'max_processing_s', 'Без старту (обробка)', '#e08a2c')]:
+            v = g[col].values
+            ax.bar(x + off, v, w, color=c, label=lab, yerr=[v - g[lo].values, g[hi].values - v], capsize=3, error_kw=dict(lw=1))
+            for xi, vi in zip(x + off, v): ax.text(xi, vi * 1.04 + 1, plotstyle.dec(vi, 1), ha='center', fontsize=9)
+        ax.set_title(ttl); ax.set_ylabel('Час, с'); ax.set_ylim(0, g['max'].max() * 1.25)
+        plotstyle.commas(ax)
+    axs[0].legend(loc='upper right', frameon=False)
+    axs[1].set_xticks(x); axs[1].set_xticklabels([names[e] for e in g.index])
+    fig.tight_layout(); fig.savefig(figdir / 'fig_bench.png'); plt.close(fig)
+
+def main():
+    smoke = '--smoke' in sys.argv
+    res = B / ('smoke' if smoke else 'results'); res.mkdir(parents=True, exist_ok=True)
+    if not smoke: quiet, npolls = quiet_wait(res / 'bench_quiet_polls.csv')
+    else: quiet, npolls = False, 0
+    # підготовка: крихітний вхід для порожнього MR-завдання; перевірка заголовка таблиці Hive
+    sh(f'hdfs dfs -mkdir -p {HDFS_TINY} && echo x | hdfs dfs -put -f - {HDFS_TINY}/one.txt')
+    rc, o, e, _ = sh('hive -S -e "select count(*) from btc.candles"', cwd=str(HIVE_META))
+    assert rc == 0 and o.strip().splitlines()[-1] == '7816537', (o, e[-500:])
+    conditions(quiet, npolls, res)
+    combos = [(e, t) for e in ('hadoop', 'hive', 'pandas', 'spark') for t in ('T1', 'T2')] + [(e, 'start') for e in ('hadoop', 'hive', 'pandas', 'spark')]
+    # pandas T1/T2 першими в нульовому колі, щоб мати еталон для звірки
+    combos.sort(key=lambda c: 0 if c[0] == 'pandas' and c[1] != 'start' else 1)
+    # чергування: кожне коло проходить усі рушії та задачі; порядок рушіїв циклічно зсувається
+    rows, runs_csv = [], res / 'bench_runs.csv'
+    for rnd in range(0, 1 if smoke else ROUNDS + 1):
+        order = combos[:]
+        if rnd > 0:
+            k = rnd % len(order); order = order[k:] + order[:k]
+        else:
+            order = combos
+        for e, t in order:
+            run_once(e, t, rnd, rnd == 0, rows, runs_csv)
+    runs = pd.DataFrame(rows)
+    if smoke: return
+    S = summarise(runs, res); print(S.to_string(index=False))
+    figure(S, B / 'figures')
+    for p in (W / 'pz1/results', W / 'pz2/results'): shutil.copy(res / 'bench_summary.csv', p / 'engine_benchmark.csv')
+
+main()
+```
+
+### А.6 Файл bench_yearly.hql – запит Hive для задачі Т1
+
+```sql
+-- T1: свічки і сумарний обсяг за роками (без ORDER BY, як у Streaming); результат пишеться в HDFS
+USE btc;
+INSERT OVERWRITE DIRECTORY '/user/root/btc/out/bench_hive_T1'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+SELECT year(trade_date), COUNT(*), SUM(volume)
+FROM candles_v
+GROUP BY year(trade_date);
+```
+
+### А.7 Файл bench_daily.hql – запит Hive для задачі Т2
+
+```sql
+-- T2: добові OHLC (open = open свічки з min ts, close = close свічки з max ts); результат пишеться в HDFS
+USE btc;
+INSERT OVERWRITE DIRECTORY '/user/root/btc/out/bench_hive_T2'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+SELECT CAST(trade_date AS STRING), min(struct(ts, open)).col2, max(high), min(low),
+       max(struct(ts, close)).col2, sum(volume), count(*)
+FROM candles_v
+GROUP BY trade_date;
+```
+
+### А.8 Файл crop_ui.py – кроп і розкладка знімків Spark UI для рисунків 4 і 5
+
+```python
+# -*- coding: utf-8 -*-
+"""Підготовка двох знімків Spark UI для друку (кроп і розкладка; вміст пікселів не змінюється):
+ - spark_ui_storage_cols.png: фрагмент таблиці Storage без стовпців ID і RDD Name (довгий план);
+ - spark_ui_sql_detail_3col.png: вузький довгий граф SQL розкладено на три колонки.
+Вхід: screenshots/spark_ui_storage.png і screenshots/spark_ui_sql_detail.png (їх створює pz2_spark.py)."""
+import os, sys
+from PIL import Image
+BASE = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+OUT = sys.argv[1] if len(sys.argv) > 1 else f"{BASE}/screenshots"
+S = f"{BASE}/screenshots"
+
+st = Image.open(f"{S}/spark_ui_storage.png").convert("RGB")
+st.crop((1168, 0, st.width, 430)).save(f"{OUT}/spark_ui_storage_cols.png")
+
+g = Image.open(f"{S}/spark_ui_sql_detail.png").convert("RGB")
+H, GAP, N = 812, 40, 3
+canvas = Image.new("RGB", (N * g.width + (N - 1) * GAP, H), (255, 255, 255))
+cuts = [(0, 805), (805, 1617), (1617, g.height)]   # межі колонок у вихідному графі (рядки)
+for k, (y0, y1) in enumerate(cuts):
+    canvas.paste(g.crop((0, y0, g.width, y1)), (k * (g.width + GAP), 0))
+canvas.save(f"{OUT}/spark_ui_sql_detail_3col.png")
+```

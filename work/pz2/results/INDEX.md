@@ -26,3 +26,6 @@ Hadoop Streaming / Hive / pandas / Spark наскрізно (зі стартом
 - Порівняння рушіїв: час Spark включає `toPandas()`, pandas працює в одному потоці; запуски Spark і pandas чергувалися в сесії без кешу, рядки «spark_cached_df» виміряно після кешування.
 - Пікова пам'ять RSS JVM відображає ліниве звільнення пам'яті збирачем сміття, а не мінімальну потребу (див. рядки idle і driver 2g у pz2_memory.csv).
 - Скріншоти терміналів: заголовок `$ python code/pz2_spark.py`, приглушений рядок `# фрагмент виводу: ...`, далі справжній stdout; Spark UI – знімки області таблиці або графа (viewport 1280x800, масштаб 2).
+
+- `timings.csv` і `pz2_engine_comparison.csv` після запуску один раз постобробляли: вилучено два рядки-заповнювачі Hadoop (`hadoop_streaming`). Поточний `code/pz2_spark.py` таких рядків уже не пише (Hadoop вимірює окремий бенчмарк), тому код і файли збігаються; числа не змінилися.
+- Рисунки 4 і 5 звіту (`spark_ui_sql_detail_3col.png`, `spark_ui_storage_cols.png`) створює `code/crop_ui.py` зі знімків `spark_ui_sql_detail.png` і `spark_ui_storage.png`; результат піксель-в-піксель збігається з файлами, використаними у звіті.

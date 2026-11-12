@@ -15,7 +15,7 @@ st.crop((1168, 0, st.width, 430)).save(f"{OUT}/spark_ui_storage_cols.png")
 g = Image.open(f"{S}/spark_ui_sql_detail.png").convert("RGB")
 H, GAP, N = 812, 40, 3
 canvas = Image.new("RGB", (N * g.width + (N - 1) * GAP, H), (255, 255, 255))
-starts = [0, 805, 1617]                 # початок кожної колонки у вихідному графі (рядки), колонки трохи перекриваються
-for k, y in enumerate(starts):
-    canvas.paste(g.crop((0, y, g.width, min(y + H, g.height))), (k * (g.width + GAP), 0))
+cuts = [(0, 805), (805, 1617), (1617, g.height)]   # межі колонок у вихідному графі (рядки)
+for k, (y0, y1) in enumerate(cuts):
+    canvas.paste(g.crop((0, y0, g.width, y1)), (k * (g.width + GAP), 0))
 canvas.save(f"{OUT}/spark_ui_sql_detail_3col.png")

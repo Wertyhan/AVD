@@ -341,7 +341,7 @@ def split_row(line):
     return [c.strip().replace("\\|", "|") for c in re.split(r"(?<!\\)\|", s)]
 
 
-NUMRE = re.compile(r"^[\s\d.,:;%±+\-−–—/()*×x<>=~\u00a0\u2011\u202f]*$")
+NUMRE = re.compile(r"^[\s\[\]\d.,:;%±+\-−–—/()*×x<>=~\u00a0\u2011\u202f]*$")
 _FONTCACHE = {}
 
 
@@ -389,13 +389,13 @@ def pipe_table(doc, rows):
     else:
         size = 9; hyph_ok = True; mins = minw(size, True)
         if sum(mins) > TEXT_W:
-            print(f"WARNING: table too wide even at 9 pt ({sum(mins):.1f} cm)", file=sys.stderr)
+            print(f"WARNING: table too wide even at 9 pt ({sum(mins):.1f} cm) {[round(m,1) for m in mins]} {hdr[:2]}", file=sys.stderr)
     if sum(mins) > TEXT_W:
         k = TEXT_W / sum(mins); mins = [m * k for m in mins]
     fw = full(size)
     cap = [min(f, max(m, 5.5)) if not numeric[j] and n > 2 else f for j, (f, m) in enumerate(zip(fw, mins))]
     cap = [max(c, m) for c, m in zip(cap, mins)]
-    narrow = n <= 3 and sum(cap) < 12.0
+    narrow = n <= 3 and sum(cap) < (8.0 if n == 2 else 12.0)
     target = min(TEXT_W, 12.0) if narrow else TEXT_W
     if sum(cap) <= target:
         ws = [c * target / sum(cap) for c in cap]

@@ -131,6 +131,6 @@ m = q7.in_q6_list == 1
 ax.scatter(q7[~m].volume_x_prev30_mean, q7[~m].ret_pct, color=C[0], s=28, label="інші доби зі сплеском")
 ax.scatter(q7[m].volume_x_prev30_mean, q7[m].ret_pct, color=C[1], s=40, marker="D", label="6 відомих кризових діб (Q6)")
 ax.axhline(0, color="gray", lw=.6); ax.axhline(10, color="gray", lw=.6, ls=":"); ax.axhline(-10, color="gray", lw=.6, ls=":")
-ax.set_xlabel("Обсяг / середній обсяг попередніх 30 діб"); ax.set_ylabel("Дохідність за добу, %"); ax.legend()
+ax.set_xlabel("Обсяг / середній обсяг за 30 діб, що передують"); ax.set_ylabel("Дохідність за добу, %"); ax.legend()
 ax.set_title("Усі доби з 2018 року зі сплеском обсягу (порогові значення – Q7)"); out("fig12_volume_spikes")
 print("ok")

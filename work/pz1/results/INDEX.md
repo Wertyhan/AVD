@@ -29,3 +29,6 @@
 - M2/C2: `figures/ui_hdfs_panel.png`, `figures/ui_yarn_panel.png` (джерела в `screenshots/ui_panel_src/`, код `code/ui_panels_pz1.py`), `ui_values.csv` (378.47 MB, Shuffled Maps = 3, DFS Used тощо).
 - Застосунки Hive у YARN: `hive_yarn_applications.csv`, `hive_yarn_app_count.csv` (12).
 - Код: `code/rerun_hive_fix.py` (повторний запуск Hive-кроків і звірка Hive vs MR), `code/rerender_pz1.py` (записи 19, 48-52).
+
+Примітка до звірки: у `crosscheck_mr_hive_vs_pandas.csv` для `hive_vs_pandas_top10_range_days` right_rows = 5429 – це довжина переданої в журнал повної добової таблиці Pandas (run_pz1.py:661); match порівнює множини 10 дат; збіг 10/10 підтверджують `hive_top10_range_days.csv` і `pandas_top10_range_days.csv`.
+Джерело частки нульового обсягу (16,79 

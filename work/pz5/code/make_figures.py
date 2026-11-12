@@ -33,7 +33,7 @@ M = pd.read_csv(f"{R}/pz5_metrics_test.csv")
 
 # 1. Цільова змінна в часі
 s = pd.read_csv(f"{R}/pz5_target_series.csv", parse_dates=["datetime_utc"]).set_index("datetime_utc")
-fig, ax = plt.subplots(2, 1, figsize=TWO_PANEL, sharex=True)
+fig, ax = plt.subplots(2, 1, figsize=(6.3, 4.0), sharex=True)
 d1 = s.resample("D").agg({"rv": "mean", "thr_rv": "mean", "label": "mean"})
 ax[0].plot(d1.index, d1.rv, lw=.6, label="середня за добу погодинна rv"); ax[0].plot(d1.index, d1.thr_rv, lw=1.2, color="C3", label="поріг (75-й перцентиль за 720 год)")
 ax[0].set_yscale("log"); ax[0].set_ylabel("rv"); ax[0].legend(loc="upper right", fontsize=9); ax[0].set_title("Волатильність і ковзний поріг цільової змінної")
@@ -123,7 +123,7 @@ rv = pd.read_csv(f"{R}/pz5_random_vs_chrono_ci.csv")
 VAR = [("A хроно -> хроно test", "A: хроно → test"), ("B випадкові 80% передтестового -> той самий test", "B: випадк. 80 % передтесту\n→ той самий test"),
        ("A* хроно на тих самих годинах, що C*", "A*: хроно, години C*"), ("C* випадковий поділ, тест лише >= test_start", "C*: випадк. поділ,\nлише години test"),
        ("C випадковий поділ усього періоду -> власний випадковий test", "C: випадк. поділ,\nвесь період")]
-fig, ax = plt.subplots(1, 2, figsize=TWO_PANEL, sharey=True)
+fig, ax = plt.subplots(1, 2, figsize=(6.3, 3.8), sharey=True)
 for x, met, t in zip(ax, ("pr_auc", "roc_auc"), ("PR-AUC", "ROC-AUC")):
     for j, (v, lab_) in enumerate(VAR):
         for k, nm in enumerate(("LR", "RF", "GBT")):

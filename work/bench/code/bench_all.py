@@ -13,10 +13,10 @@ from pathlib import Path
 
 W = Path(__file__).resolve().parents[2]; B = W / 'bench'; CODE = B / 'code'
 CSV = W / 'data/raw/btcusd_1-min_data.csv'
-SCR = Path('/tmp/bench_scratch')            # локальний каталог виводу pandas/Spark
+SCR = B / 'scratch'            # локальний каталог виводу pandas/Spark
 HDFS_RAW = '/user/root/btc/raw'; HDFS_OUT = '/user/root/btc/out'; HDFS_TINY = '/user/root/btc/bench_tiny'
 HH = W / 'tools/hadoop-3.3.6'; HV = W / 'tools/apache-hive-3.1.3-bin'
-JDK8 = W / 'mamba/envs/jdk8'; JDK21 = '/usr/lib/jvm/java-21-openjdk-amd64'
+JDK8 = W / 'mamba/envs/jdk8'; JDK21 = os.environ.get('JDK21_HOME', os.environ.get('JAVA_HOME', ''))
 HIVE_META = W / 'hadoop_runtime/hive_meta'
 SELF = str(CODE / 'bench_all.py')
 ROUNDS = 5
