@@ -4,7 +4,7 @@
 # -> консольний споживач/групи -> знімки Spark UI (під час роботи, після >= 22 мікробатчів) -> перевірочний споживач -> run_post.sh.
 # Вихід: results/ (CSV), screenshots/, логи run/logs/.
 set -u
-W=/home/user/AVD/work; P=$W/pz3; L=$P/run/logs; R=$P/results; SC=$P/screenshots
+P=$(cd "$(dirname "$0")/.." && pwd); W=$(dirname "$P"); L=$P/run/logs; R=$P/results; SC=$P/screenshots
 mkdir -p $L $R $SC $R/stream; rm -rf $L/* $P/run/ckpt $R/stream/* $P/run/done.json
 export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 KAFKA_HOME=$W/tools/kafka_2.13-3.7.0
 export PATH=$JAVA_HOME/bin:$KAFKA_HOME/bin:$PATH
@@ -74,7 +74,7 @@ stage spark_job $s_spark $(ts)
 tail -3 $L/spark_job.log | cut -c1-300
 # ---- 7. скріншоти: producer-лог, console sink, foreachBatch
 shot term_03_producer_log "sed -n '1,5p;\$p' run/logs/producer.log | cut -c1-300"
-shot term_07_spark_console_batch "grep -a -A 13 -m1 '^Batch: 12\$' run/logs/spark_job.log"
+shot term_07_spark_console_batch "grep -a -A 7 -m1 '^Batch: 12\$' run/logs/spark_job.log"
 shot term_08_spark_anomaly_foreachbatch "grep -a -E '\[anomaly\]' run/logs/spark_job.log | sed -n '1,4p;20,23p;48,50p'"
 # ---- 8. перевірочний споживач (повне перечитування) та групи
 KN timeout 120 kafka-console-consumer.sh --bootstrap-server $BS --topic $TOPIC --group pz3-verify --from-beginning --timeout-ms 15000 \

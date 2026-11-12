@@ -1,0 +1,26 @@
+$ python code/pz5_spark.py
+# підбір гіперпараметрів: часова CV (3 фолди), найкращі конфігурації та вибір моделі
+
+LR: найкраще {'regParam': 0.001, 'elasticNetParam': 0.0}
+ regParam  elasticNetParam  cv_roc  cv_pr    std
+    0.001              0.0  0.8625 0.7456 0.0338
+    0.001              0.5  0.8623 0.7452 0.0336
+    0.000              0.5  0.8613 0.7432 0.0326
+
+RF: найкраще {'numTrees': 100, 'maxDepth': 8, 'minInstancesPerNode': 20}
+ numTrees  maxDepth  minInstancesPerNode  cv_roc  cv_pr    std
+    100.0       8.0                 20.0  0.8536 0.7241 0.0381
+    200.0       8.0                 20.0  0.8537 0.7235 0.0380
+    200.0       8.0                100.0  0.8470 0.7153 0.0377
+
+GBT: найкраще {'maxIter': 100, 'maxDepth': 3, 'stepSize': 0.1}
+ maxDepth  maxIter  stepSize  cv_roc  cv_pr    std
+      3.0    100.0      0.10  0.8680 0.7467 0.0373
+      5.0    100.0      0.05  0.8678 0.7464 0.0374
+      5.0     50.0      0.10  0.8681 0.7433 0.0392
+
+Вибір моделі за CV PR-AUC (test не використано):
+model  cv_pr_auc  cv_pr_auc_std_between_folds  cv_roc_auc  selected_by_cv
+   LR     0.7456                       0.0338      0.8625           False
+   RF     0.7241                       0.0381      0.8536           False
+  GBT     0.7467                       0.0373      0.8680            True

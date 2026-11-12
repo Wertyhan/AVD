@@ -26,8 +26,8 @@ if a.grep:
     lines = [l for l in lines if re.search(a.grep, l)]
 if a.head: lines = lines[:a.head]
 if a.tail: lines = lines[-a.tail:]
-# Рендер: спільний хелпер координатора (правило 2a: 90 колонок на всю ширину 1600 px, <= 35 рядків, перенос довгих рядків маркером)
-sys.path.insert(0, "/home/user/AVD/work/tools_report")
+# Рендер термінального знімка (90 колонок на всю ширину 1600 px, <= 35 рядків, перенос довгих рядків маркером)
+sys.path.insert(0, os.environ.get("TERM_PNG_DIR", "."))   # каталог із term_png.py
 from term_png import render_terminal_png
 if a.save:
     open(a.save + ".cmd", "w").write(a.cmd)

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Короткий повторний потоковий прогін правила v2 (тема bigdata-topic-v2-ui) для знімків Spark UI під час роботи запиту anomaly.
 set -u
-W=/home/user/AVD/work; P=$W/pz3; L=$P/run/logs_ui_v2; O=$P/run/ui_v2_out; mkdir -p $L
+P=$(cd "$(dirname "$0")/.." && pwd); W=$(dirname "$P"); L=$P/run/logs_ui_v2; O=$P/run/ui_v2_out; mkdir -p $L
 export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 KAFKA_HOME=$W/tools/kafka_2.13-3.7.0
 export PATH=$JAVA_HOME/bin:$KAFKA_HOME/bin:$PATH
 BS=localhost:9092; TOPIC=bigdata-topic-v2-ui; PORT=${UI_PORT:-4040}

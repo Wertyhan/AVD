@@ -3,7 +3,8 @@
 import os, sys
 import numpy as np, pandas as pd
 import matplotlib.dates as mdates
-P = "/home/user/AVD/work/pz3"; R = P + "/results"; F = P + "/figures"
+from pathlib import Path
+P = str(Path(__file__).resolve().parents[1]); R = P + "/results"; F = P + "/figures"
 sys.path.insert(0, P + "/code")
 from anomaly_rule import K_SEL
 from figstyle import *
@@ -52,7 +53,7 @@ save(fig, F + "/pz3_lift.png")
 dc = pd.read_csv(R + "/pz3_design_comparison.csv"); dc = dc[dc.combination == "return"].copy()
 lbl = {"MAD0=Q50|r|/0,6745": "MAD", "IQR(r)/1,349": "IQR", "Q90|r|/1,6449": "Q90", "Q99|r|/2,5758": "Q99"}
 dc["lab"] = [("7 діб, та сама година, Q90" if "same_hour" in v else f"{ {60: '60 хв', 1440: '24 год', 10080: '7 діб'}[b]}, {lbl.get(s, s)}") for v, b, s in zip(dc.variant, dc.baseline_min, dc.scale)]
-fig, ax = plt.subplots(2, 1, figsize=(W, H2 + 1.0)); y = np.arange(len(dc)); isel = [l == "7 діб, Q90" for l in dc.lab]
+fig, ax = plt.subplots(2, 1, figsize=(W, H2)); y = np.arange(len(dc)); isel = [l == "7 діб, Q90" for l in dc.lab]
 ax[0].bar(y, dc.lift_event_vs_2018plus, color=[C3 if s else C1 for s in isel]); ax[0].set_ylabel("lift днів подій"); ax[0].set_title("Варіанти правила за бюджету 0,10 % (2018+)"); ax[0].set_xticks(y); ax[0].set_xticklabels([])
 ax[1].bar(y, dc.rate_2012_2016_pct, color=[C3 if s else "gray" for s in isel]); ax[1].set_yscale("log"); ax[1].axhline(0.1, color=C4, ls=":", label="0,10 % (як 2018+)")
 ax[1].set_ylabel("частка 2012–2016, %"); ax[1].set_xticks(y); ax[1].set_xticklabels(dc.lab, rotation=40, ha="right", fontsize=9); ax[1].legend(fontsize=9)
@@ -91,13 +92,13 @@ save(fig, F + "/pz3_top50_direction.png")
 
 # 7. оцінка поза вибіркою (out-of-sample)
 loo = pd.read_csv(R + "/pz3_oos_loo.csv"); ts = pd.read_csv(R + "/pz3_oos_timesplit.csv")
-fig, ax = plt.subplots(2, 1, figsize=(W, H2 + .6))
+fig, ax = plt.subplots(2, 1, figsize=(W, H2))
 l1 = loo[loo.unit == "день"]; x = np.arange(len(l1)); w = .38
 ax[0].bar(x - w / 2, l1.insample_lift_chosen_all_5_days, w, color="gray", label="in-sample (усі 5 днів)"); ax[0].bar(x + w / 2, l1.heldout_lift_chosen, w, color=C3, label="пропущений день")
-ax[0].set_xticks(x); ax[0].set_xticklabels([f"{d[8:10]}.{d[5:7]}.{d[2:4]}" for d in l1.held_out]); ax[0].set_ylabel("lift"); ax[0].legend(fontsize=9); ax[0].set_title("Leave-one-event-out: lift обраного варіанта")
+ax[0].set_xticks(x); ax[0].set_xticklabels([f"{d[8:10]}.{d[5:7]}.{d[2:4]}" for d in l1.held_out]); ax[0].set_ylabel("lift"); ax[0].set_ylim(0, ax[0].get_ylim()[1] * 1.3); ax[0].legend(fontsize=9, ncol=2, loc="upper center", frameon=False); ax[0].set_title("Leave-one-event-out: lift обраного варіанта")
 t2 = ts.head(8); x = np.arange(len(t2))
 ax[1].bar(x - w / 2, t2.train_lift, w, color=C1, label="навчання 2013–2019"); ax[1].bar(x + w / 2, t2.test_lift_5_known_days, w, color=C3, label="тест 2020+ (5 днів)")
 ax[1].set_xticks(x); ax[1].set_xticklabels([v.replace("W7d_same_hour_Q90", "7д, та сама год.").replace("W10080_", "7д ").replace("zr_and_zv>", "z_ret∧z_vol>").replace("Q90|r|/1,6449", "Q90") for v in t2.variant], rotation=35, ha="right", fontsize=9)
-ax[1].set_ylabel("lift"); ax[1].legend(fontsize=9); ax[1].set_title("Часовий поділ: вибір на 2013–2019, оцінка на 2020+")
+ax[1].set_ylabel("lift"); ax[1].set_ylim(0, ax[1].get_ylim()[1] * 1.3); ax[1].legend(fontsize=9, ncol=2, loc="upper center", frameon=False); ax[1].set_title("Часовий поділ: вибір на 2013–2019, оцінка на 2020+")
 save(fig, F + "/pz3_oos_eval.png")
 print("figures done (anomaly)")

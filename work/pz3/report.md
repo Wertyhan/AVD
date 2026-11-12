@@ -87,7 +87,9 @@ raw = (spark.readStream.format("kafka")
 
 Ключ і значення Kafka приводяться з `binary` до `string`, JSON розбирається функцією `from_json` за явною схемою (поле `ts` типу `LongType` і п'ять полів `DoubleType`), а мітка CreateTime зберігається для вимірювання затримки.
 
-Фільтр відкидає записи з порожніми полями, `high < low`, `close ≤ 0` або від'ємним обсягом (таких 0 з 30 240). Групування і агрегування реалізовано запитом `daily_mem`: tumbling-вікно 1 доба з кількістю хвилин, середнім і стандартним відхиленням `close`, мінімумом, максимумом і сумою обсягу. Вікно з водяною позначкою дозволяє видаляти стан закритих діб; результат містить 21 добу по 1 440 хвилин. Console-приймач у режимі update виводить у журнал змінені вікна. Вікна будуються за часом події з поля `ts` (2020⁠–⁠2022 роки), а не за часом обробки (листопад 2026 року), що залежав би від швидкості відтворення й навантаження хоста.
+Фільтр відкидає записи з порожніми полями, `high < low`, `close ≤ 0` або від'ємним обсягом (таких 0 з 30 240). Групування і агрегування реалізовано запитом `daily_mem`: tumbling-вікно 1 доба з кількістю хвилин, середнім і стандартним відхиленням `close`, мінімумом, максимумом і сумою обсягу. Вікно з водяною позначкою дозволяє видаляти стан закритих діб; результат містить 21 добу по 1 440 хвилин. Console-приймач у режимі update виводить у журнал змінені вікна; фрагмент виводу для мікробатчу 12 (1-год вікна 15.03.2020 з агрегатами `open`, `high`, `low`, `close`, `volume`, `n_candles`) наведено на рисунку 4. Вікна будуються за часом події з поля `ts` (2020⁠–⁠2022 роки), а не за часом обробки (листопад 2026 року), що залежав би від швидкості відтворення й навантаження хоста.
+
+![Рисунок 4 – Вивід console-приймача: віконні агрегати мікробатчу 12](screenshots/term_07_spark_console_batch.png)
 
 ## 5 Віконна обробка
 
@@ -119,17 +121,15 @@ Open і close взято через `min/max` структури за `event_tim
 | Вікон у parquet (append), дублікатів | 2 015, 0 | 503, 0 |
 | Не записано в parquet | 1 | 1 |
 
-Усі вікна збіглися; розбіжність обсягу порядку 10⁻¹² дає порядок додавання чисел з плаваючою комою. Parquet-приймач (append) не записав останнє вікно кожного масштабу: вікно 23:00⁠–⁠24:00 12.11.2022 закрилося б лише подією з часом не раніше 00:10 13.11.2022, а потік закінчується на 23:59. Вікна березня 2020 року показано на рисунку 4.
+Усі вікна збіглися; розбіжність обсягу порядку 10⁻¹² дає порядок додавання чисел з плаваючою комою. Parquet-приймач (append) не записав останнє вікно кожного масштабу: вікно 23:00⁠–⁠24:00 12.11.2022 закрилося б лише подією з часом не раніше 00:10 13.11.2022, а потік закінчується на 23:59. Вікна березня 2020 року показано на рисунку 5.
 
-![Рисунок 4 – OHLC за 15-хв вікнами (12.03.2020) і 1-год вікнами (9⁠–⁠16.03.2020)](figures/pz3_window_ohlc.png)
+![Рисунок 5 – OHLC за 15-хв вікнами (12.03.2020) і 1-год вікнами (9⁠–⁠16.03.2020)](figures/pz3_window_ohlc.png)
 
 На 15-хв вікнах видно дві хвилі обвалу 12.03.2020 (близько 10:30⁠–⁠11:30 UTC і наприкінці доби); обсяг 1-год вікон у ці години сягає 8 925 BTC (11:00) і 8 051 BTC (23:00).
 
 ### 5.2 Водяна позначка
 
-Виміряна невпорядкованість подій – 0 з 30 240 повідомлень як у кожній партиції, так і в реальному порядку надходження (максимальне запізнення 0 с), а `numRowsDroppedByWatermark` = 0 в усіх запитах. Отже, 10 хв – запас для живого джерела, де свічка може прийти пізніше через перепідключення до біржі; ціна запасу – append-результат з'являється на 10 хв часу подій пізніше (близько 0,1 с за прискореного відтворення). Рух позначки показано на рисунку 5.
-
-![Рисунок 5 – Watermark запиту sink_win15m і розрив «час обробки – watermark» за мікробатчами](figures/pz3_watermark.png)
+Виміряна невпорядкованість подій – 0 з 30 240 повідомлень як у кожній партиції, так і в реальному порядку надходження (максимальне запізнення 0 с), а `numRowsDroppedByWatermark` = 0 в усіх запитах. Отже, 10 хв – запас для живого джерела, де свічка може прийти пізніше через перепідключення до біржі; ціна запасу – append-результат з'являється на 10 хв часу подій пізніше (близько 0,1 с за прискореного відтворення). Рух позначки записано в `pz3_watermark_lastprogress.csv`.
 
 Остання позначка – 2022-11-12 23:49. Розрив між часом обробки і позначкою («Global Watermark Gap» у Spark UI) змінюється сходинками від 2,107·10⁸ с (2020 рік) до 1,261·10⁸ с (2022 рік), медіана 1,730·10⁸ с ≈ 5,48 року (`pz3_watermark_gap.csv`); це вік історичних подій, а не затримка обробки.
 
@@ -154,7 +154,7 @@ z_vol,t = (ln V_t − Q0,50{ln V_i}) / ((Q0,75{ln V_i} − Q0,25{ln V_i}) / 1,34
 
 Константи 1,6449 і 1,349 роблять шкали спроможними оцінками σ за нормального розподілу; оцінка вимагає не менше 3 360 активних хвилин у базі, тому оцінено 6 453 867 з 7 816 537 хвилин.
 
-Формулу обрано порівнянням 19 варіантів за однакового бюджету 0,10 % позначених активних хвилин 2018+. Порівнювалися lift (частка позначених хвилин у п'яти днях подій, поділена на частку в інші дні 2018+), частота позначок 2012⁠–⁠2016 років і ранги днів подій (таблиця 4, рисунок 6). Це числа проєктної вибірки; оцінку поза нею наведено в підрозділі 6.5.
+Формулу обрано порівнянням 19 варіантів за однакового бюджету 0,10 % позначених активних хвилин 2018+. Порівнювалися lift (частка позначених хвилин у п'яти днях подій, поділена на частку в інші дні 2018+), частота позначок 2012⁠–⁠2016 років і ранги днів подій (таблиця 4). Це числа проєктної вибірки; оцінку поза нею наведено в підрозділі 6.5.
 
 Таблиця 4 – Варіанти правила за однакового бюджету тривог 0,10 % (2018+), проєктна вибірка
 
@@ -169,8 +169,6 @@ z_vol,t = (ln V_t − Q0,50{ln V_i}) / ((Q0,75{ln V_i} − Q0,25{ln V_i}) / 1,34
 | 7 діб | лише обсяг | 2,59 | 11,3 | 0,5099 | 381 / 1133 / 25 / 219 / 1787 |
 | 7 діб | Q90 і z_vol > 0 | 8,87 | 38,4 | 0,0613 | 1 / 2 / 25 / 4 / 63 |
 | 60 хв (v1) | MAD або обсяг | 1,28 | 0,3 | 5,0698 | 3406 / 3406 / 3406 / 2262 / 3406 |
-
-![Рисунок 6 – Lift днів подій і частота позначок 2012⁠–⁠2016 років для варіантів правила](figures/pz3_design_comparison.png)
 
 За базою 60 хв і 24 год шкала зростає вже під час обвалу (lift не більше 7,0), а 7-денна база охоплює тижневий цикл ринку й реагує повільніше за обвал (lift 36,9⁠–⁠38,4). Q90 обрано замість MAD через точні нулі дохідності: частка активних хвилин з r = 0 становить 42,6 % у 2012 році й 29,4 % у 2013 році проти 0,4 % у 2021 році, тому за MAD 2012⁠–⁠2016 роки отримують 3,40 % позначених хвилин, а за Q90 – 0,0648 %.
 
@@ -196,23 +194,23 @@ z_vol,t = (ln V_t − Q0,50{ln V_i}) / ((Q0,75{ln V_i} − Q0,25{ln V_i}) / 1,34
 
 ### 6.4 Потокова реалізація
 
-У потоці правило виконується в `foreachBatch` класом `StreamScorer` (лістинг А.3), який для кожного ключа Kafka тримає буфер останніх 10 081 хвилини. Тижневу базу неможливо накопичити з 6⁠–⁠8-денних періодів, тому буфер прогрівається 10 081 хвилиною історії з parquet (рисунок 7).
+У потоці правило виконується в `foreachBatch` класом `StreamScorer` (лістинг А.3), який для кожного ключа Kafka тримає буфер останніх 10 081 хвилини. Тижневу базу неможливо накопичити з 6⁠–⁠8-денних періодів, тому буфер прогрівається 10 081 хвилиною історії з parquet.
 
-Найбільше аномалій дали мікробатчі 8 (95; ніч 12⁠–⁠13.03.2020), 7 (56; 12.03.2020) і 27 (56; 08.11.2022); мікробатч 18 на рисунку 7 – це 23 аномалії 19.05.2021.
-
-![Рисунок 7 – Журнал запиту anomaly: прогрів бази і аномалії за мікробатчами](screenshots/term_08_spark_anomaly_foreachbatch.png)
+Найбільше аномалій дали мікробатчі 8 (95; ніч 12⁠–⁠13.03.2020), 7 (56; 12.03.2020) і 27 (56; 08.11.2022); мікробатч 18 – це 23 аномалії 19.05.2021.
 
 ### 6.5 Оцінка поза вибіркою
 
 Числа таблиці 4 оптимістичні, тому виконано дві перевірки. У leave-one-event-out варіант обирається за lift на чотирьох днях і оцінюється на п'ятому; 7-денна база обирається в усіх п'яти фолдах, але шкала змінюється (Q90 у трьох, IQR(r) в одному, «та сама година» в одному). Середній lift пропущеного дня 30,7 проти 38,4 на проєктній вибірці, тобто проєктна оцінка завищена приблизно на п'яту частину.
 
-У часовому поділі «подіями» навчання були 118 днів 2013⁠–⁠2019 років з |денна лог-дохідність| ≥ 0,10, і k підбирався на цих роках. Найкращим виявився варіант 7 діб, Q90 (k = 8,38); на 2020+ він дає lift 42,5 (рисунок 8) для п'яти відомих днів і 0,094 % позначок у базові дні, тобто бюджет переноситься на нові роки. Вибір відтворюється без днів 2020+, хоча «події» навчання – не розмічені аномалії, а дні великої зміни ціни.
+У часовому поділі «подіями» навчання були 118 днів 2013⁠–⁠2019 років з |денна лог-дохідність| ≥ 0,10, і k підбирався на цих роках. Найкращим виявився варіант 7 діб, Q90 (k = 8,38); на 2020+ він дає lift 42,5 (рисунок 6) для п'яти відомих днів і 0,094 % позначок у базові дні, тобто бюджет переноситься на нові роки. Вибір відтворюється без днів 2020+, хоча «події» навчання – не розмічені аномалії, а дні великої зміни ціни.
 
-![Рисунок 8 – Оцінка поза вибіркою: leave-one-event-out і часовий поділ 2013⁠–⁠2019 / 2020+](figures/pz3_oos_eval.png)
+![Рисунок 6 – Оцінка поза вибіркою: leave-one-event-out і часовий поділ 2013⁠–⁠2019 / 2020+](figures/pz3_oos_eval.png)
 
 ## 7 Збереження результатів
 
-Віконні агрегати записуються parquet-приймачами в режимі append з окремим checkpoint для кожного запиту, кожне вікно один раз (дублікатів 0). Оцінки хвилин `foreachBatch` записує у файл з номером мікробатчу, тому повтор мікробатчу після збою перезаписує той самий файл. Для ПЗ4 сформовано `pz3_anomalies.csv` – 5 437 аномальних хвилин історії, з них 272 у відтворених періодах. Стан `StreamScorer` живе в драйвері, а не в checkpoint; повторний прогрів з parquet відновлює його лише для відтворення історії, а живому потоку потрібне сховище стану, наприклад `applyInPandasWithState`.
+Віконні агрегати записуються parquet-приймачами в режимі append з окремим checkpoint для кожного запиту, кожне вікно один раз (дублікатів 0). Оцінки хвилин `foreachBatch` записує у файл з номером мікробатчу, тому повтор мікробатчу після збою перезаписує той самий файл. Для ПЗ4 сформовано `pz3_anomalies.csv` – 5 437 аномальних хвилин історії, з них 272 у відтворених періодах. Стан `StreamScorer` живе в драйвері, а не в checkpoint; повторний прогрів з parquet відновлює його лише для відтворення історії, а живому потоку потрібне сховище стану, наприклад `applyInPandasWithState`. Вміст каталогу parquet-приймача `win1h` (133 файли даних і службовий каталог `_spark_metadata`, розмір файлу 2–3 КБ) та початок файлу `pz3_anomalies.csv` показано на рисунку 7.
+
+![Рисунок 7 – Збережені результати: parquet-приймач вікон 1 год і файл аномалій для ПЗ4](screenshots/term_15_saved_outputs.png)
 
 ## 8 Аналіз результатів
 
@@ -229,11 +227,11 @@ z_vol,t = (ln V_t − Q0,50{ln V_i}) / ((Q0,75{ln V_i} − Q0,25{ln V_i}) / 1,34
 | 2022-11 | 9 915 | 77 | 77 | 11,18 | 8,6 | 5,0 | 3,7 | 85,31 |
 | Разом | 30 016 | 272 | 272 | – | – | – | – | – |
 
-На 30 016 оцінених хвилинах max |Δz_ret| = max |Δz_vol| = max |Δsigma| = 0, розбіжностей прапорців 0. Обидві сторони викликають одну функцію `score()`, тому збіг доводить лише, що розбиття на мікробатчі та прогрів не змінюють результату. Формулу перевірено скриптом `verify_anomalies_independent.py` (лістинг А.7) без `score()`: для 200 позначених і 200 непозначених хвилин окрема pandas-реалізація дала 0 розбіжностей. У тесті на заглядання вперед для 40 хвилин усі наступні 3 000 свічок замінено випадковими, і z у момент t збіглися в 40 з 40 випадків. Частота аномалій у періодах у 3,7⁠–⁠16,0 раза вища за базову (1,3 на добу).
+На 30 016 оцінених хвилинах max |Δz_ret| = max |Δz_vol| = max |Δsigma| = 0, розбіжностей прапорців 0. Обидві сторони викликають одну функцію `score()`, тому збіг доводить лише, що розбиття на мікробатчі та прогрів не змінюють результату. Формулу перевірено скриптом `verify_anomalies_independent.py` (лістинг А.7) без `score()`: для 200 позначених і 200 непозначених хвилин окрема pandas-реалізація дала 0 розбіжностей. У тесті на заглядання вперед для 40 хвилин усі наступні 3 000 свічок замінено випадковими, і z у момент t збіглися в 40 з 40 випадків. Частота аномалій у періодах у 3,7⁠–⁠16,0 раза вища за базову (1,3 на добу у днях 2018+ без подій; на всіх днях 2018+ – 1,38).
 
 ### 8.2 Відомі події
 
-Відомі події наведено в таблиці 7; ранг – місце дати серед 1 572 дат з позначками, останній стовпець – lift дня, виключеного з вибору варіанта.
+Відомі події наведено в таблиці 7; ранг – місце дати серед 1 572 дат з позначками (1 293 дати для рангу в 2018+), останній стовпець – lift дня, виключеного з вибору варіанта.
 
 Таблиця 7 – Виявлення відомих подій правилом v2 (k = 9)
 
@@ -249,11 +247,11 @@ z_vol,t = (ln V_t − Q0,50{ln V_i}) / ((Q0,75{ln V_i} − Q0,25{ln V_i}) / 1,34
 
 ### 8.3 Закономірності
 
-Закономірності оцінено за офлайн-оцінкою всієї історії тим самим правилом, бо три відтворені тижні замалі для статистики; 4 364 з 5 437 позначок належать до 2018+ (рисунок 9).
-
-![Рисунок 9 – Кількість аномалій за днем тижня і годиною доби UTC, 2018+](figures/pz3_patterns.png)
+Закономірності оцінено за офлайн-оцінкою всієї історії тим самим правилом, бо три відтворені тижні замалі для статистики; 4 364 з 5 437 позначок належать до 2018+ (рисунок 8).
 
 Частка позначених хвилин у будні 0,113 %, у вихідні 0,052 % (відношення 2,17); за годиною вона зростає з 0,0358 % о 07 UTC до 0,1556 % о 14 UTC, що збігається з робочими годинами американських ринків, хоча частину піку дає база без урахування внутрішньодобової сезонності. Правило нечутливе до знака руху: серед 50 найактивніших дат історії 30 обвалів і 20 зростань, серед 50 дат 2018+ – 25 і 25. Аномалії йдуть сплесками: 71,1 % позначок 2018+ мають іншу позначку в межах 60 хв, тож у потоці тривоги доцільно групувати в інциденти.
+
+![Рисунок 8 – Кількість аномалій за днем тижня і годиною доби UTC, 2018+](figures/pz3_patterns.png)
 
 ### 8.4 Продуктивність
 
@@ -265,9 +263,9 @@ z_vol,t = (ln V_t − Q0,50{ln V_i}) / ((Q0,75{ln V_i} − Q0,25{ln V_i}) / 1,34
 |---|---|---|---|---|
 | anomaly | 34 | 1142,7 / 968,5 / 2384,2 / 2680 | 919,2 | 88,9 |
 | console_1h | 34 | 2516,8 / 2007,0 / 5006,2 / 6682 | 428,3 | 89,0 |
-| mem_daily | 34 | 2719,1 / 2363,0 / 6275,5 / 7504 | 446,2 | 90,2 |
-| mem_win15m | 34 | 2219,7 / 1896,5 / 4287,4 / 5497 | 488,3 | 89,1 |
-| mem_win1h | 34 | 2307,9 / 2006,0 / 4931,9 / 6996 | 501,6 | 89,1 |
+| daily_mem | 34 | 2719,1 / 2363,0 / 6275,5 / 7504 | 446,2 | 90,2 |
+| win15m_mem | 34 | 2219,7 / 1896,5 / 4287,4 / 5497 | 488,3 | 89,1 |
+| win1h_mem | 34 | 2307,9 / 2006,0 / 4931,9 / 6996 | 501,6 | 89,1 |
 | sink_win15m | 34 | 2817,6 / 2535,5 / 4920,9 / 6105 | 371,4 | 89,9 |
 | sink_win1h | 34 | 2646,7 / 2389,5 / 4357,9 / 5263 | 380,2 | 89,6 |
 
@@ -277,12 +275,14 @@ z_vol,t = (ln V_t − Q0,50{ln V_i}) / ((Q0,75{ln V_i} − Q0,25{ln V_i}) / 1,34
 
 Kafka 3.7.0 розгорнуто в режимі KRaft; ідемпотентний producer передав у тему `bigdata-topic` 30 240 свічок трьох періодів обвалів без помилок, а Spark Structured Streaming обробляв їх сімома запитами з декодуванням, фільтрацією й добовою агрегацією.
 
-Віконні OHLC-агрегати 15 хв і 1 год збіглися з `pandas.resample` в усіх 2 016 і 504 вікнах. Водяна позначка 10 хв – запас (невпорядкованість 0), але через її глобальність backlog двох партицій з різними епохами залишив у вікнах 15 хв лише 14 080 з 30 240 рядків. Правило v2 (|r| понад 9 робастних сигм за 7-денною базою Q90 з підтвердженням обсягом) дає 1,38 тривоги на добу; lift днів подій 38,4 на проєктній вибірці, 30,7 у leave-one-event-out і 42,5 на 2020+ за порогу з 2013⁠–⁠2019 років.
+Віконні OHLC-агрегати 15 хв і 1 год збіглися з `pandas.resample` в усіх 2 016 і 504 вікнах. Водяна позначка 10 хв – запас (невпорядкованість 0), але через її глобальність backlog двох партицій з різними епохами залишив у вікнах 15 хв лише 14 080 з 30 240 рядків. Правило v2 (|r| понад 9 робастних сигм за 7-денною базою Q90 з підтвердженням обсягом) дає 1,38 тривоги на добу; lift днів подій 38,4 на проєктній вибірці за бюджету 0,10 %, 30,7 у leave-one-event-out і 42,5 на 2020+ за порогу з 2013⁠–⁠2019 років.
 
 Потік збігся з офлайн-оцінкою (272 = 272), незалежна перевірка формули розбіжностей не виявила; 5 437 аномалій історії збережено в `pz3_anomalies.csv` для ПЗ4. Аномалії в 2,17 раза частіші в будні, мають пік о 14 UTC, супроводжують і обвали, і зростання (30 і 20 серед топ-50 дат) та йдуть сплесками. Мікробатчі тривали не більше 7 504 мс, середня затримка до результату – 5,823 с.
 
 Набуто навичок організації потоку, віконної агрегації та виявлення аномалій засобами Kafka і Spark Structured Streaming.
 # Додаток А. Лістинг програми
+
+У лістингу наведено основні програми прогону та аналізу. Допоміжні скрипти для побудови рисунків і знімків екрана (`figstyle.py`, `term_shot.py`, `show_csv.py`, `ui_shot_run.py`, `crop_ui_streaming.py`) містяться в каталозі `code/` репозиторію проєкту.
 
 ## А.1 Файл producer.py – producer: відтворення хвилинних свічок у Kafka
 
@@ -1516,19 +1516,21 @@ for f in ("pz3_metrics_per_query.csv", "pz3_latency_summary.csv", "pz3_metrics_s
 # -*- coding: utf-8 -*-
 """Статистика тонкого ринку за роками та розподіл z_vol (докази для ANOMALY_DESIGN.md): results/pz3_thin_market_stats.csv, pz3_zvol_quantiles.csv."""
 import numpy as np, pandas as pd
-R = "/home/user/AVD/work/pz3/results"
-df = pd.read_parquet("/home/user/AVD/work/data/btc_1min.parquet", columns=["Timestamp", "Close", "Volume"])
+from pathlib import Path
+PZ = Path(__file__).resolve().parents[1]; DATA = PZ.parent / "data"   # корінь ПЗ3 та каталог data
+R = str(PZ / "results")
+df = pd.read_parquet(str(DATA / "btc_1min.parquet"), columns=["Timestamp", "Close", "Volume"])
 r = np.r_[np.nan, np.diff(np.log(df.Close.to_numpy()))]; act = df.Volume.to_numpy() > 0
 y = pd.to_datetime(df.Timestamp, unit="s", utc=True).dt.year.to_numpy()
 t = pd.DataFrame({"y": y, "act": act, "zero": (r == 0) & act, "absr": np.where(act, np.abs(r), np.nan)})
 g = t.groupby("y").agg(active_share_pct=("act", "mean"), n_active=("act", "sum"), n_zero_ret_active=("zero", "sum"), median_abs_r_active=("absr", "median"))
 g["active_share_pct"] = (100 * g.active_share_pct).round(1); g["zero_ret_share_of_active_pct"] = (100 * g.n_zero_ret_active / g.n_active).round(1)
 g.to_csv(R + "/pz3_thin_market_stats.csv"); print(g.to_string())
-s = pd.read_parquet("/home/user/AVD/work/pz3/run/offline_scored_v2.parquet", columns=["ts", "scored", "z_vol", "sigma_ret"])
+s = pd.read_parquet(str(PZ / "run" / "offline_scored_v2.parquet"), columns=["ts", "scored", "z_vol", "sigma_ret"])
 yy = pd.to_datetime(s.ts, unit="s", utc=True).dt.year
 m = s.scored & (yy >= 2018)
 q = np.nanpercentile(s.z_vol[m], [50, 90, 99, 99.9, 99.99])
-lv = pd.read_parquet("/home/user/AVD/work/pz3/run/offline_scored_v2.parquet", columns=["volume", "scored"])
+lv = pd.read_parquet(str(PZ / "run" / "offline_scored_v2.parquet"), columns=["volume", "scored"])
 out = pd.DataFrame({"stat": ["zvol_p50", "zvol_p90", "zvol_p99", "zvol_p99.9", "zvol_p99.99", "share_zvol_gt4_pct", "max_zvol"],
                     "value_2018plus": list(np.round(q, 3)) + [round(100 * float((s.z_vol[m] > 4).mean()), 5), round(float(s.z_vol[m].max()), 3)]})
 out.to_csv(R + "/pz3_zvol_quantiles.csv", index=False); print(out.to_string(index=False))
@@ -1542,7 +1544,8 @@ out.to_csv(R + "/pz3_zvol_quantiles.csv", index=False); print(out.to_string(inde
 import os, sys
 import numpy as np, pandas as pd
 import matplotlib.dates as mdates
-P = "/home/user/AVD/work/pz3"; R = P + "/results"; F = P + "/figures"
+from pathlib import Path
+P = str(Path(__file__).resolve().parents[1]); R = P + "/results"; F = P + "/figures"
 os.makedirs(F, exist_ok=True); sys.path.insert(0, P + "/code")
 from figstyle import *
 
@@ -1613,7 +1616,8 @@ print("figures done (make_figures)")
 import os, sys
 import numpy as np, pandas as pd
 import matplotlib.dates as mdates
-P = "/home/user/AVD/work/pz3"; R = P + "/results"; F = P + "/figures"
+from pathlib import Path
+P = str(Path(__file__).resolve().parents[1]); R = P + "/results"; F = P + "/figures"
 sys.path.insert(0, P + "/code")
 from anomaly_rule import K_SEL
 from figstyle import *
@@ -1662,7 +1666,7 @@ save(fig, F + "/pz3_lift.png")
 dc = pd.read_csv(R + "/pz3_design_comparison.csv"); dc = dc[dc.combination == "return"].copy()
 lbl = {"MAD0=Q50|r|/0,6745": "MAD", "IQR(r)/1,349": "IQR", "Q90|r|/1,6449": "Q90", "Q99|r|/2,5758": "Q99"}
 dc["lab"] = [("7 діб, та сама година, Q90" if "same_hour" in v else f"{ {60: '60 хв', 1440: '24 год', 10080: '7 діб'}[b]}, {lbl.get(s, s)}") for v, b, s in zip(dc.variant, dc.baseline_min, dc.scale)]
-fig, ax = plt.subplots(2, 1, figsize=(W, H2 + 1.0)); y = np.arange(len(dc)); isel = [l == "7 діб, Q90" for l in dc.lab]
+fig, ax = plt.subplots(2, 1, figsize=(W, H2)); y = np.arange(len(dc)); isel = [l == "7 діб, Q90" for l in dc.lab]
 ax[0].bar(y, dc.lift_event_vs_2018plus, color=[C3 if s else C1 for s in isel]); ax[0].set_ylabel("lift днів подій"); ax[0].set_title("Варіанти правила за бюджету 0,10 % (2018+)"); ax[0].set_xticks(y); ax[0].set_xticklabels([])
 ax[1].bar(y, dc.rate_2012_2016_pct, color=[C3 if s else "gray" for s in isel]); ax[1].set_yscale("log"); ax[1].axhline(0.1, color=C4, ls=":", label="0,10 % (як 2018+)")
 ax[1].set_ylabel("частка 2012–2016, %"); ax[1].set_xticks(y); ax[1].set_xticklabels(dc.lab, rotation=40, ha="right", fontsize=9); ax[1].legend(fontsize=9)
@@ -1701,56 +1705,19 @@ save(fig, F + "/pz3_top50_direction.png")
 
 # 7. оцінка поза вибіркою (out-of-sample)
 loo = pd.read_csv(R + "/pz3_oos_loo.csv"); ts = pd.read_csv(R + "/pz3_oos_timesplit.csv")
-fig, ax = plt.subplots(2, 1, figsize=(W, H2 + .6))
+fig, ax = plt.subplots(2, 1, figsize=(W, H2))
 l1 = loo[loo.unit == "день"]; x = np.arange(len(l1)); w = .38
 ax[0].bar(x - w / 2, l1.insample_lift_chosen_all_5_days, w, color="gray", label="in-sample (усі 5 днів)"); ax[0].bar(x + w / 2, l1.heldout_lift_chosen, w, color=C3, label="пропущений день")
-ax[0].set_xticks(x); ax[0].set_xticklabels([f"{d[8:10]}.{d[5:7]}.{d[2:4]}" for d in l1.held_out]); ax[0].set_ylabel("lift"); ax[0].legend(fontsize=9); ax[0].set_title("Leave-one-event-out: lift обраного варіанта")
+ax[0].set_xticks(x); ax[0].set_xticklabels([f"{d[8:10]}.{d[5:7]}.{d[2:4]}" for d in l1.held_out]); ax[0].set_ylabel("lift"); ax[0].set_ylim(0, ax[0].get_ylim()[1] * 1.3); ax[0].legend(fontsize=9, ncol=2, loc="upper center", frameon=False); ax[0].set_title("Leave-one-event-out: lift обраного варіанта")
 t2 = ts.head(8); x = np.arange(len(t2))
 ax[1].bar(x - w / 2, t2.train_lift, w, color=C1, label="навчання 2013–2019"); ax[1].bar(x + w / 2, t2.test_lift_5_known_days, w, color=C3, label="тест 2020+ (5 днів)")
 ax[1].set_xticks(x); ax[1].set_xticklabels([v.replace("W7d_same_hour_Q90", "7д, та сама год.").replace("W10080_", "7д ").replace("zr_and_zv>", "z_ret∧z_vol>").replace("Q90|r|/1,6449", "Q90") for v in t2.variant], rotation=35, ha="right", fontsize=9)
-ax[1].set_ylabel("lift"); ax[1].legend(fontsize=9); ax[1].set_title("Часовий поділ: вибір на 2013–2019, оцінка на 2020+")
+ax[1].set_ylabel("lift"); ax[1].set_ylim(0, ax[1].get_ylim()[1] * 1.3); ax[1].legend(fontsize=9, ncol=2, loc="upper center", frameon=False); ax[1].set_title("Часовий поділ: вибір на 2013–2019, оцінка на 2020+")
 save(fig, F + "/pz3_oos_eval.png")
 print("figures done (anomaly)")
 ```
 
-## А.16 Файл figstyle.py – спільний стиль рисунків
-
-```python
-# -*- coding: utf-8 -*-
-"""Спільний стиль рисунків ПЗ3: розмір для друку 6,3×3,4 дюйма (два рядки панелей 6,3×4,7), шрифти ≥ 9 pt
-(тіки 9, підписи й легенда 10, заголовок 11), dpi 200, десяткова кома на осях. Якщо є work/tools_report/plotstyle.py – застосовується він,
-далі локальні значення (вони діють як мінімальні)."""
-import sys
-import matplotlib; matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from matplotlib.ticker import FuncFormatter
-sys.path.insert(0, "/home/user/AVD/work/tools_report")
-try:
-    import plotstyle  # noqa: F401  (спільний хелпер координатора, якщо вже доданий)
-except Exception:
-    pass
-plt.rcParams.update({"font.size": 10, "axes.titlesize": 11, "axes.labelsize": 10, "xtick.labelsize": 9, "ytick.labelsize": 9, "legend.fontsize": 10,
-                     "axes.grid": True, "grid.alpha": .3, "axes.spines.top": False, "axes.spines.right": False, "savefig.dpi": 200, "figure.dpi": 100,
-                     "axes.unicode_minus": False})
-W, H1, H2 = 6.3, 3.4, 4.7
-C1, C2, C3, C4, C5 = "#1f77b4", "#d62728", "#2ca02c", "#ff7f0e", "#9467bd"
-dec = lambda x, n=2: f"{x:.{n}f}".replace(".", ",")
-COMMA = FuncFormatter(lambda x, _: f"{x:g}".replace(".", ","))
-
-
-def commaize(*axes, axis="both"):
-    for a in axes:
-        if axis in ("both", "x"):
-            a.xaxis.set_major_formatter(COMMA)
-        if axis in ("both", "y"):
-            a.yaxis.set_major_formatter(COMMA)
-
-
-def save(fig, path):
-    fig.tight_layout(); fig.savefig(path, dpi=200); plt.close(fig)
-```
-
-## А.17 Файл env_versions.py – версії програмного забезпечення і конфігурація машини
+## А.16 Файл env_versions.py – версії програмного забезпечення і конфігурація машини
 
 ```python
 # -*- coding: utf-8 -*-
@@ -1777,135 +1744,7 @@ pd.DataFrame(rows, columns=["component", "value"]).to_csv(os.path.join(R, "env_v
 print(pd.DataFrame(rows).to_string(index=False))
 ```
 
-## А.18 Файл ui_shot_run.py – знімки Spark UI під час прогону
-
-```python
-# -*- coding: utf-8 -*-
-"""Знімки Spark UI під час роботи ПОВНОГО конвеєра (7 запитів): Structured Streaming (таблиця активних запитів),
-сторінка віконного запиту, сторінка запиту anomaly, Jobs, Executors. Viewport 1280x800, масштаб 2, кадр обмежено вмістом.
-Використання: ui_shot_run.py OUT_DIR http://localhost:PORT [window_query_name]"""
-import sys, json
-from playwright.sync_api import sync_playwright
-out, base = sys.argv[1], sys.argv[2].rstrip("/")
-winq = sys.argv[3] if len(sys.argv) > 3 else "sink_win1h"
-EXE = "/opt/pw-browsers/chromium-1243/chrome-linux64/chrome"
-
-
-def clip_of(pg, js_selector_fn, pad=8, maxh=2600):
-    """Обмежувальний прямокутник вмісту (в CSS-пікселях сторінки) для кадрування."""
-    box = pg.evaluate(js_selector_fn)
-    x, y, w, h = box
-    return {"x": max(x - pad, 0), "y": max(y - pad, 0), "width": min(w + 2 * pad, 1280), "height": min(h + 2 * pad, maxh)}
-
-
-with sync_playwright() as p:
-    b = p.chromium.launch(executable_path=EXE, args=["--no-sandbox"])
-    pg = b.new_page(viewport={"width": 1280, "height": 800}, device_scale_factor=2)
-    info = {}
-
-    def snap(name, clip):
-        pg.screenshot(path=f"{out}/{name}.png", full_page=True, clip=clip)
-        info[name] = clip
-        print("saved", name, clip, flush=True)
-
-    # 1. Structured Streaming: заголовок + таблиця активних запитів
-    pg.goto(base + "/StreamingQuery/", wait_until="load"); pg.wait_for_selector("table tbody tr", timeout=30000); pg.wait_for_timeout(1500)
-    n_act = pg.evaluate("()=>document.querySelectorAll('table')[0].querySelectorAll('tbody tr').length")
-    print("активних запитів у таблиці:", n_act, flush=True)
-    snap("ui_streaming_tab", clip_of(pg, """()=>{
-        const t=document.querySelectorAll('table')[0]; let h=t.previousElementSibling; while(h && !/Active Streaming Queries/.test(h.textContent)) h=h.previousElementSibling;
-        const r1=(h||t).getBoundingClientRect(), r2=t.getBoundingClientRect();
-        return [Math.min(r1.x,r2.x)+window.scrollX, r1.y+window.scrollY, Math.max(r1.width,r2.width), r2.bottom-r1.top]}"""))
-    links = pg.eval_on_selector_all("table tbody tr", "e=>e.map(r=>[r.querySelector('td').textContent.trim(),(r.querySelector('a[href*=\\'StreamingQuery/statistics\\']')||{}).href])")
-    print(links, flush=True)
-    info["queries"] = [l[0] for l in links]
-    # 2. сторінки запитів (статистика: input rate, process rate, batch duration, state)
-    for nm, href in links:
-        if nm in (winq, "anomaly"):
-            pg.goto(href, wait_until="load"); pg.wait_for_timeout(5000)
-            snap("ui_query_" + nm, clip_of(pg, """()=>{
-                const e=document.querySelector('body > .container-fluid')||document.body; const r=e.getBoundingClientRect();
-                return [r.x+window.scrollX, r.y+window.scrollY, r.width, r.height]}""", maxh=2600))
-    # 3. Jobs (активні/завершені завдання)
-    pg.goto(base + "/jobs/", wait_until="load"); pg.wait_for_timeout(2000)
-    snap("ui_jobs", clip_of(pg, """()=>{
-        const e=document.querySelector('body > .container-fluid')||document.body; const r=e.getBoundingClientRect();
-        return [r.x+window.scrollX, r.y+window.scrollY, r.width, r.height]}""", maxh=1500))
-    # 4. Executors: таблиця Summary + Executors; якщо колонки не вміщуються, розширюємо viewport
-    pg.goto(base + "/executors/", wait_until="load"); pg.wait_for_selector("#active-executors-table tbody tr", timeout=30000); pg.wait_for_timeout(1500)
-    sw = pg.evaluate("()=>Math.max(document.documentElement.scrollWidth, document.querySelector('#active-executors-table').scrollWidth)")
-    print("scrollWidth executors:", sw, flush=True)
-    pg.set_viewport_size({"width": max(1280, sw + 80), "height": 800}); pg.wait_for_timeout(1000)
-    sw2 = pg.evaluate("()=>Math.max(document.documentElement.scrollWidth, document.querySelector('#active-executors-table').scrollWidth)")
-    wv = pg.evaluate("()=>window.innerWidth")
-    print("viewport", wv, "scrollWidth after", sw2, flush=True)
-    c = clip_of(pg, """()=>{
-        const e=document.querySelector('body > .container-fluid')||document.body; const r=e.getBoundingClientRect();
-        return [r.x+window.scrollX, r.y+window.scrollY, r.width, r.height]}""", maxh=1100)
-    c["width"] = min(wv, max(c["width"], sw2) + 16)
-    c["height"] = min(c["height"], 560)
-    snap("ui_executors", c)
-    info["executors_viewport_width"] = wv
-    json.dump(info, open(f"{out}/ui_shot_run.json", "w"), indent=1)
-    b.close()
-```
-
-## А.19 Файл term_shot.py – рендер виводу команди терміналу у PNG
-
-```python
-# -*- coding: utf-8 -*-
-"""Рендер реального виводу команди у PNG (темний термінал, рядок '$ команда' та фактичний вивід).
-Використання: term_shot.py OUT.png --cmd "команда" [--from-file лог] [--head N] [--tail N] [--width 120]
-  --from-file: показати збережений вивід (лог раніше виконаної команди) під рядком '$ cmd'."""
-import argparse, subprocess, textwrap, os, sys
-from PIL import Image, ImageDraw, ImageFont
-ap = argparse.ArgumentParser()
-ap.add_argument("out"); ap.add_argument("--cmd", required=True); ap.add_argument("--from-file", default="")
-ap.add_argument("--head", type=int, default=0); ap.add_argument("--tail", type=int, default=0)
-ap.add_argument("--grep", default=""); ap.add_argument("--width", type=int, default=125)
-ap.add_argument("--comment", default="")
-ap.add_argument("--save", default="", help="зберегти сирий вивід команди у файл")
-ap.add_argument("--run", action="store_true", help="виконати --cmd у shell і зняти вивід")
-a = ap.parse_args()
-if a.from_file:
-    txt = open(a.from_file, errors="replace").read()
-else:
-    env = dict(os.environ); env.pop("JAVA_TOOL_OPTIONS", None)
-    txt = subprocess.run(a.cmd, shell=True, capture_output=True, text=True, env=env, timeout=120, executable="/bin/bash")
-    txt = txt.stdout + txt.stderr
-if a.save:
-    open(a.save, "w").write(txt)
-lines = txt.replace("\t", "    ").splitlines()
-if a.grep:
-    import re
-    lines = [l for l in lines if re.search(a.grep, l)]
-if a.head: lines = lines[:a.head]
-if a.tail: lines = lines[-a.tail:]
-# Рендер: спільний хелпер координатора (правило 2a: 90 колонок на всю ширину 1600 px, <= 35 рядків, перенос довгих рядків маркером)
-sys.path.insert(0, "/home/user/AVD/work/tools_report")
-from term_png import render_terminal_png
-if a.save:
-    open(a.save + ".cmd", "w").write(a.cmd)
-size = render_terminal_png(a.cmd, "\n".join(lines), a.out, note=a.comment or None)
-print("saved", a.out, size)
-```
-
-## А.20 Файл show_csv.py – компактний друк CSV для знімків терміналу
-
-```python
-# -*- coding: utf-8 -*-
-"""Компактний друк CSV у термінал для скріншотів: show_csv.py FILE [--T] [--cols a,b,c] [--round N]"""
-import argparse, pandas as pd
-ap = argparse.ArgumentParser(); ap.add_argument("f"); ap.add_argument("--T", action="store_true"); ap.add_argument("--cols", default=""); ap.add_argument("--round", type=int, default=3)
-a = ap.parse_args()
-d = pd.read_csv(a.f)
-if a.cols: d = d[a.cols.split(",")]
-d = d.round(a.round)
-pd.set_option("display.width", 200)
-print((d.T if a.T else d).to_string(header=not a.T) if a.T else d.to_string(index=False))
-```
-
-## А.21 Файл run_pipeline.sh – оркестрація прогону: брокер, тема, Spark, producer, споживачі
+## А.17 Файл run_pipeline.sh – оркестрація прогону: брокер, тема, Spark, producer, споживачі
 
 ```bash
 #!/usr/bin/env bash
@@ -1914,7 +1753,7 @@ print((d.T if a.T else d).to_string(header=not a.T) if a.T else d.to_string(inde
 # -> консольний споживач/групи -> знімки Spark UI (під час роботи, після >= 22 мікробатчів) -> перевірочний споживач -> run_post.sh.
 # Вихід: results/ (CSV), screenshots/, логи run/logs/.
 set -u
-W=/home/user/AVD/work; P=$W/pz3; L=$P/run/logs; R=$P/results; SC=$P/screenshots
+P=$(cd "$(dirname "$0")/.." && pwd); W=$(dirname "$P"); L=$P/run/logs; R=$P/results; SC=$P/screenshots
 mkdir -p $L $R $SC $R/stream; rm -rf $L/* $P/run/ckpt $R/stream/* $P/run/done.json
 export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 KAFKA_HOME=$W/tools/kafka_2.13-3.7.0
 export PATH=$JAVA_HOME/bin:$KAFKA_HOME/bin:$PATH
@@ -1984,7 +1823,7 @@ stage spark_job $s_spark $(ts)
 tail -3 $L/spark_job.log | cut -c1-300
 # ---- 7. скріншоти: producer-лог, console sink, foreachBatch
 shot term_03_producer_log "sed -n '1,5p;\$p' run/logs/producer.log | cut -c1-300"
-shot term_07_spark_console_batch "grep -a -A 13 -m1 '^Batch: 12\$' run/logs/spark_job.log"
+shot term_07_spark_console_batch "grep -a -A 7 -m1 '^Batch: 12\$' run/logs/spark_job.log"
 shot term_08_spark_anomaly_foreachbatch "grep -a -E '\[anomaly\]' run/logs/spark_job.log | sed -n '1,4p;20,23p;48,50p'"
 # ---- 8. перевірочний споживач (повне перечитування) та групи
 KN timeout 120 kafka-console-consumer.sh --bootstrap-server $BS --topic $TOPIC --group pz3-verify --from-beginning --timeout-ms 15000 \
@@ -2000,14 +1839,14 @@ echo "PIPELINE_DONE"
 echo "далі: bash code/run_post.sh"
 ```
 
-## А.22 Файл run_post.sh – обробка результатів прогону: перевірки, аналіз, рисунки
+## А.18 Файл run_post.sh – обробка результатів прогону: перевірки, аналіз, рисунки
 
 ```bash
 #!/usr/bin/env bash
 # Обробка результатів ОДНОГО прогону run_pipeline.sh: перевірки, метрики, watermark, аномалії (офлайн, потік проти офлайн, незалежна перевірка,
 # out-of-sample), закономірності, рисунки, скріншоти терміналу. Запускати після PIPELINE_DONE (Kafka має працювати).
 set -u
-W=/home/user/AVD/work; P=$W/pz3; L=$P/run/logs; R=$P/results; SC=$P/screenshots
+P=$(cd "$(dirname "$0")/.." && pwd); W=$(dirname "$P");  export P; L=$P/run/logs; R=$P/results; SC=$P/screenshots
 export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 KAFKA_HOME=$W/tools/kafka_2.13-3.7.0
 export PATH=$JAVA_HOME/bin:$KAFKA_HOME/bin:$PATH
 cd $P
@@ -2037,31 +1876,11 @@ shot term_14_watermark "python3 code/show_csv.py results/pz3_watermark_disorder.
 # час
 python3 - <<'PY'
 import pandas as pd, json
-R = "/home/user/AVD/work/pz3/results"
+import os; R = os.environ["P"] + "/results"
 st = pd.read_csv(R + "/timings_stages.csv"); of = pd.read_csv(R + "/offline_timing.csv")
 t = pd.concat([st[["stage", "seconds"]], pd.DataFrame({"stage": ["offline_score_full_history_%d_rows" % of.rows[0]], "seconds": [of.seconds[0]]}),
                pd.DataFrame({"stage": ["producer_send_loop_s"], "seconds": [json.load(open(R + "/producer_stats.json"))["seconds"]]})])
 t.to_csv(R + "/timings.csv", index=False); print(t)
 PY
 echo POST_DONE
-```
-
-## А.23 Файл crop_ui_streaming.py – фрагмент таблиці Spark UI для рисунка 3
-
-```python
-"""Фрагмент таблиці Spark UI (ПЗ3, рис. 3): вирізає з оригінального знімка колонки ID, Run ID і Start Time
-і склеює решту (Name, Status, Duration, Avg Input, Avg Process, Latest Batch) без зміни значень.
-Використання: crop_ui_streaming.py SRC_PNG OUT_PNG"""
-import sys
-from PIL import Image
-
-src, out = sys.argv[1], sys.argv[2]
-im = Image.open(src).convert("RGB")
-w, h = im.size
-x1, x2 = 358, 1637  # межі колонок ID..Start Time (піксели оригіналу 2494 px)
-a, b = im.crop((0, 0, x1, h)), im.crop((x2, 0, w, h))
-res = Image.new("RGB", (a.width + b.width, h), "white")
-res.paste(a, (0, 0)); res.paste(b, (a.width, 0))
-res.save(out)
-print(out, res.size)
 ```

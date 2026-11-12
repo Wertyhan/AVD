@@ -3,7 +3,8 @@
 import os, sys
 import numpy as np, pandas as pd
 import matplotlib.dates as mdates
-P = "/home/user/AVD/work/pz3"; R = P + "/results"; F = P + "/figures"
+from pathlib import Path
+P = str(Path(__file__).resolve().parents[1]); R = P + "/results"; F = P + "/figures"
 os.makedirs(F, exist_ok=True); sys.path.insert(0, P + "/code")
 from figstyle import *
 

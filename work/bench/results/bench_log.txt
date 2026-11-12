@@ -13,3 +13,8 @@
 {'poll': 12, 'time': '09:38:30', 'load1': 1.8837890625, 'other_procs': 3, 'streak': 0}
 {'poll': 13, 'time': '09:39:30', 'load1': 1.79931640625, 'other_procs': 3, 'streak': 0}
 {'poll': 14, 'time': '09:40:30', 'load1': 1.50439453125, 'other_procs': 3, 'streak': 0}
+{'poll': 15, 'time': '09:41:30', 'load1': 1.18359375, 'other_procs': 3, 'streak': 0}
+{'poll': 16, 'time': '09:42:30', 'load1': 1.90869140625, 'other_procs': 3, 'streak': 0}
+{'poll': 17, 'time': '09:43:30', 'load1': 1.51123046875, 'other_procs': 3, 'streak': 0}
+{'poll': 18, 'time': '09:44:30', 'load1': 1.64111328125, 'other_procs': 3, 'streak': 0}
+{'poll': 19, 'time': '09:45:30', 'load1': 1.923828125, 'other_procs': 3, 'streak': 0}

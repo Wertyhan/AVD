@@ -3,7 +3,7 @@
 # лише запит anomaly (foreachBatch), прогрів 7-денної бази з parquet, потім порівняння з офлайн (фаза 2).
 # Віконні результати першого прогону (results/stream/) не змінюються.
 set -u
-W=/home/user/AVD/work; P=$W/pz3; L=$P/run/logs_v2; O=$P/results/stream_anomaly_v2; mkdir -p $L
+P=$(cd "$(dirname "$0")/.." && pwd); W=$(dirname "$P"); L=$P/run/logs_v2; O=$P/results/stream_anomaly_v2; mkdir -p $L
 export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 KAFKA_HOME=$W/tools/kafka_2.13-3.7.0
 export PATH=$JAVA_HOME/bin:$KAFKA_HOME/bin:$PATH
 BS=localhost:9092; TOPIC=bigdata-topic-v2

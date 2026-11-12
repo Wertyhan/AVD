@@ -253,8 +253,9 @@ def figure_caption(doc, text):
 
 
 IMG_CACHE = None  # set in main(): build cache dir for cropped copies
-MAX_IMG_H_CHART = 8.5   # cm
+MAX_IMG_H_CHART = 11.5  # cm
 MIN_IMG_H_CHART = 6.0   # cm, floor for the pre-pass shrink
+MIN_CHART_W = 14.0      # cm, floor width for charts in the pre-pass shrink
 IMG_SCALE = {}          # basename -> shrink factor (pre-pass)
 FIG_LOG = []            # (basename, kind) of figures in document order
 MAX_IMG_H_SHOT = 12.0   # cm, terminal / web UI screenshots
@@ -313,7 +314,7 @@ def figure(doc, path, mdir):
     FIG_LOG.append((os.path.basename(full), kind))
     if kind == "chart" and IMG_SCALE.get(os.path.basename(full), 1.0) < 1.0:
         k = IMG_SCALE[os.path.basename(full)]
-        hn = max(MIN_IMG_H_CHART, hc * k)
+        hn = max(hc * MIN_CHART_W / wc, hc * k)  # never narrower than MIN_CHART_W
         if hn < hc: wc *= hn / hc; hc = hn
     if est: print(f"  {os.path.basename(full)}: terminal text ~{est:.1f} pt at full width; placed {wc:.1f}x{hc:.1f} cm")
     p = doc.add_paragraph(); pf(p, AL.CENTER, left=0, first=0, line=1.0, kwn=True)
@@ -527,8 +528,8 @@ def shrink_pass(pdf, gap_cm=5.0, caption_cm=1.3):
         ys = [b[3] for b in prev.get_text("blocks") if b[1] > top] + [x["bbox"][3] for x in prev.get_image_info()]
         blank = (bottom - max(ys, default=top)) / pt
         h = (d["bbox"][3] - d["bbox"][1]) / pt
-        if blank <= gap_cm or h <= MIN_IMG_H_CHART + 0.05: continue
-        k = max(0.75, MIN_IMG_H_CHART / h, min(1.0, (blank - caption_cm) / h))
+        if blank <= gap_cm or h <= 0.5: continue
+        k = max(MIN_CHART_W / IMG_W, min(1.0, (blank - caption_cm) / h))
         if blank - caption_cm < h * k: continue  # still would not fit
         IMG_SCALE[name] = IMG_SCALE.get(name, 1.0) * k; changed = True
     return changed

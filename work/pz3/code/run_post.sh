@@ -2,7 +2,7 @@
 # Обробка результатів ОДНОГО прогону run_pipeline.sh: перевірки, метрики, watermark, аномалії (офлайн, потік проти офлайн, незалежна перевірка,
 # out-of-sample), закономірності, рисунки, скріншоти терміналу. Запускати після PIPELINE_DONE (Kafka має працювати).
 set -u
-W=/home/user/AVD/work; P=$W/pz3; L=$P/run/logs; R=$P/results; SC=$P/screenshots
+P=$(cd "$(dirname "$0")/.." && pwd); W=$(dirname "$P");  export P; L=$P/run/logs; R=$P/results; SC=$P/screenshots
 export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 KAFKA_HOME=$W/tools/kafka_2.13-3.7.0
 export PATH=$JAVA_HOME/bin:$KAFKA_HOME/bin:$PATH
 cd $P
@@ -32,7 +32,7 @@ shot term_14_watermark "python3 code/show_csv.py results/pz3_watermark_disorder.
 # час
 python3 - <<'PY'
 import pandas as pd, json
-R = "/home/user/AVD/work/pz3/results"
+import os; R = os.environ["P"] + "/results"
 st = pd.read_csv(R + "/timings_stages.csv"); of = pd.read_csv(R + "/offline_timing.csv")
 t = pd.concat([st[["stage", "seconds"]], pd.DataFrame({"stage": ["offline_score_full_history_%d_rows" % of.rows[0]], "seconds": [of.seconds[0]]}),
                pd.DataFrame({"stage": ["producer_send_loop_s"], "seconds": [json.load(open(R + "/producer_stats.json"))["seconds"]]})])

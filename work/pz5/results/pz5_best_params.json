@@ -1,0 +1,16 @@
+{
+ "LR": {
+  "regParam": 0.001,
+  "elasticNetParam": 0.0
+ },
+ "RF": {
+  "numTrees": 100,
+  "maxDepth": 8,
+  "minInstancesPerNode": 20
+ },
+ "GBT": {
+  "maxIter": 100,
+  "maxDepth": 3,
+  "stepSize": 0.1
+ }
+}

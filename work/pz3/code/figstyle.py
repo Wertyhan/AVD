@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
 """Спільний стиль рисунків ПЗ3: розмір для друку 6,3×3,4 дюйма (два рядки панелей 6,3×4,7), шрифти ≥ 9 pt
-(тіки 9, підписи й легенда 10, заголовок 11), dpi 200, десяткова кома на осях. Якщо є work/tools_report/plotstyle.py – застосовується він,
-далі локальні значення (вони діють як мінімальні)."""
+(тіки 9, підписи й легенда 10, заголовок 11), dpi 200, десяткова кома на осях."""
 import sys
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
-sys.path.insert(0, "/home/user/AVD/work/tools_report")
-try:
-    import plotstyle  # noqa: F401  (спільний хелпер координатора, якщо вже доданий)
-except Exception:
-    pass
 plt.rcParams.update({"font.size": 10, "axes.titlesize": 11, "axes.labelsize": 10, "xtick.labelsize": 9, "ytick.labelsize": 9, "legend.fontsize": 10,
                      "axes.grid": True, "grid.alpha": .3, "axes.spines.top": False, "axes.spines.right": False, "savefig.dpi": 200, "figure.dpi": 100,
                      "axes.unicode_minus": False})
