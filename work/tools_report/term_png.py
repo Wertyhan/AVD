@@ -62,7 +62,8 @@ def render_terminal_png(cmd, text, path, note=None, max_lines=MAX_LINES, tail=10
         keep_h = max_lines - 1 - keep_t
         cut = len(body) - keep_h - keep_t
         body = body[:keep_h] + [f'… ({cut + extra_skipped} рядків пропущено)'] + body[len(body) - keep_t:]
-    nl = len(head) + (1 if note else 0) + len(body)
+    nlines = wrap('# фрагмент виводу: ' + note) if note else []
+    nl = len(head) + len(nlines) + len(body)
     bar, gap = 34, 12
     H = bar + PAD + nl * lh + gap + PAD
     img = Image.new('RGB', (WIDTH, H), BG)
@@ -76,7 +77,8 @@ def render_terminal_png(cmd, text, path, note=None, max_lines=MAX_LINES, tail=10
             d.text((PAD, y), '$', font=fb, fill=PROMPT)
         d.text((PAD + 2 * adv, y), ln, font=fb, fill=CMD); y += lh
     if note:
-        d.text((PAD, y), ('# фрагмент виводу: ' + note)[:COLS], font=f, fill=DIM); y += lh
+        for ln in nlines:
+            d.text((PAD, y), ln, font=f, fill=DIM); y += lh
     for ln in body:
         d.text((PAD, y), ln, font=f, fill=DIM if ln.startswith('… (') else TXT); y += lh
     img.save(path)
