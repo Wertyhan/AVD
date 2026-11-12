@@ -23,7 +23,7 @@ def out(n):
     import textwrap
     for ax in fig.axes:
         t = ax.get_title()
-        if t: ax.set_title("\n".join(textwrap.wrap(t, 62)), fontsize=11)
+        if t and "\n" not in t: ax.set_title("\n".join(textwrap.wrap(t, 62)), fontsize=11)
     plt.tight_layout(); plt.savefig(f"{FG}/{n}.png", dpi=200); plt.close()
 def cm(x, d=2): return f"{x:.{d}f}".replace(".", ",")
 daily = pd.read_parquet(f"{R}/pz2_daily_features.parquet"); hourly = pd.read_parquet(f"{R}/pz2_hourly_features.parquet")
@@ -39,18 +39,19 @@ out("fig01_close_log")
 # 2. Розподіл дохідностей vs нормальний (лог. вісь Y)
 from math import erf
 h = pd.read_csv(f"{R}/pz2_hist_ret_1m_active.csv"); mk = pd.read_csv(f"{R}/pz2_skew_kurtosis.csv")
-fig, ax = plt.subplots(2, 2, figsize=(6.3, 4.7)); ax = ax.ravel(); ax[3].axis("off")
-def panel(a, x, bw, title, xlab, lim):
+fig, ax = plt.subplots(1, 3, figsize=(6.3, 3.4))
+def panel(a, x, bw, title, xlab, lim, first=False):
     x = x[np.isfinite(x)]; mu, sd = x.mean(), x.std()
     bins = np.arange(-lim, lim + bw, bw); cnt, e = np.histogram(x, bins=bins); ce = (e[1:] + e[:-1]) / 2
     dens = cnt / (len(x) * bw); ok = cnt > 0
     a.semilogy(ce[ok], dens[ok], ".", color=C[0], ms=3, label="емпіричний")
-    g = np.linspace(-lim, lim, 400); a.semilogy(g, np.exp(-(g - mu) ** 2 / (2 * sd ** 2)) / (sd * np.sqrt(2 * np.pi)), color=C[1], label=f"нормальний (σ вибірки = {cm(sd,4)})")
-    a.set_title(title); a.set_xlabel(xlab); a.set_ylabel("Щільність (лог. шкала)"); a.legend(); a.set_ylim(bottom=1e-3)
+    g = np.linspace(-lim, lim, 400); a.semilogy(g, np.exp(-(g - mu) ** 2 / (2 * sd ** 2)) / (sd * np.sqrt(2 * np.pi)), color=C[1], label="нормальний")
+    a.set_title(f"{title}\nσ = {cm(sd,4)}", fontsize=10); a.set_xlabel(xlab); a.set_ylim(bottom=1e-3)
+    if first: a.set_ylabel("Щільність (лог. шкала)"); a.legend(loc="lower center")
 x1 = np.repeat(h.bin_center.values, h["count"].values)
-panel(ax[0], x1, 1e-4, "1 хвилина (свічки з торгами, обрізана вибірка |r|<0,01)", "Логарифмічна дохідність", 0.01)
-panel(ax[1], hourly.ret_1h.dropna().values, 0.002, "1 година", "Логарифмічна дохідність", 0.1)
-panel(ax[2], daily.ret_1d.dropna().values, 0.01, "1 доба", "Логарифмічна дохідність", 0.4)
+panel(ax[0], x1, 1e-4, "1 хв (з торгами, |r|<0,01)", "Лог. дохідність", 0.01, True)
+panel(ax[1], hourly.ret_1h.dropna().values, 0.002, "1 година", "Лог. дохідність", 0.1)
+panel(ax[2], daily.ret_1d.dropna().values, 0.01, "1 доба", "Лог. дохідність", 0.4)
 out("fig02_returns_vs_normal")
 
 # 3. Обсяг за годиною доби
@@ -106,7 +107,7 @@ fig, ax = plt.subplots(2, 1, figsize=(6.3, 4.7))
 u = c[c["mode"] == "without_cache"].seconds.values; cc_ = c[(c["mode"] == "with_cache") & (~c.run.str.startswith("materialize"))].seconds.values
 mat = c[c.run.str.startswith("materialize")].seconds.values
 ax[0].bar(np.arange(3) - .2, u, .4, color=C[0], label="без cache()"); ax[0].bar(np.arange(3) + .2, cc_, .4, color=C[1], label="з cache()")
-ax[0].set_xticks(range(3)); ax[0].set_xticklabels(["раунд 1", "раунд 2", "раунд 3"]); ax[0].set_ylabel("Час двох запитів, с"); ax[0].legend()
+ax[0].set_xticks(range(3)); ax[0].set_xticklabels(["раунд 1", "раунд 2", "раунд 3"]); ax[0].set_ylabel("Час двох запитів, с"); ax[0].set_ylim(0, max(u) * 1.3); ax[0].legend(loc="upper right", ncol=2)
 ax[0].set_title(f"Запит без кешу та з кешем (медіани: {cm(np.median(u),1)} с і {cm(np.median(cc_),1)} с)")
 ax[1].bar(range(3), mat, color=C[2]); ax[1].set_xticks(range(3)); ax[1].set_xticklabels(["раунд 1", "раунд 2", "раунд 3"]); ax[1].set_ylabel("Час, с")
 ax[1].set_title(f"Матеріалізація кешу (медіана {cm(np.median(mat),1)} с)"); out("fig09_cache")

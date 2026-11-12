@@ -53,9 +53,9 @@ ax.xaxis.set_major_locator(mdates.HourLocator(interval=8)); ax.yaxis.set_major_f
 save(fig, F + "/pz3_window_volume.png")
 
 # 4. watermark: event time max і watermark за мікробатчами (sink_win15m) та розрив час обробки – watermark за запитами
-g = pg[(pg["query"] == "sink_win15m") & pg["watermark"].notna() & (pg["watermark"] > "1971-01-01")].sort_values("batch_id")
+g = pg[(pg["query"] == "sink_win15m") & pg["watermark"].notna() & (pg["watermark"] > "1971-01-01") & pg["event_time_max"].notna()].sort_values("batch_id")
 fig, ax = plt.subplots(2, 1, figsize=(W, H2), sharex=True)
-ax[0].plot(g["batch_id"], pd.to_datetime(g["event_time_max"]), color=C1, label="max event time у мікробатчі")
+ax[0].plot(g["batch_id"], pd.to_datetime(g["event_time_max"], utc=True), color=C1, label="max event time у мікробатчі")
 ax[0].plot(g["batch_id"], g["watermark"], color=C2, label="watermark (max event time – 10 хв)")
 ax[0].yaxis.set_major_formatter(mdates.DateFormatter("%d.%m.%Y")); ax[0].legend(fontsize=9); ax[0].set_title("Watermark запиту sink_win15m"); ax[0].set_ylabel("час події (UTC)")
 for q, col in (("sink_win15m", C1), ("sink_win1h", C3), ("mem_daily", C5), ("console_1h", C4)):

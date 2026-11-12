@@ -1,0 +1,17 @@
+collection,index,bytes,MiB,MB
+candles_1m,_id_,86224896,82.23,86.22
+candles_1m,volume_-1,112631808,107.41,112.63
+candles_1m,ts_1,94818304,90.43,94.82
+candles_1m_ts,meta_1_ts_1,466944,0.45,0.47
+candles_1h,_id_,1302528,1.24,1.3
+candles_1h,ts_1,1552384,1.48,1.55
+candles_1d,_id_,69632,0.07,0.07
+candles_1d,year_1_volume_-1,114688,0.11,0.11
+candles_1d,date_1,81920,0.08,0.08
+candles_1d_buckets,_id_,69632,0.07,0.07
+candles_1d_buckets,date_1,81920,0.08,0.08
+spark_daily_features,_id_,81920,0.08,0.08
+spark_daily_features,date_1,81920,0.08,0.08
+anomalies,_id_,69632,0.07,0.07
+anomalies,date_1_score_-1,147456,0.14,0.15
+anomalies,year_1,40960,0.04,0.04

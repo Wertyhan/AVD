@@ -1,11 +1,4 @@
-$ mongosh --quiet --eval 'printjson(db.candles_1m.findOne())' bigdata_db
-{
-  _id: ObjectId('6af475ae426db41c0efb3ed1'),
-  ts: ISODate('2012-01-01T00:01:00.000Z'),
-  unix: Long('1325376060'),
-  open: 4.58,
-  high: 4.58,
-  low: 4.58,
-  close: 4.58,
-  volume: 0
-}
+$ mongosh --quiet --eval 'const P=(d)=>print(JSON.stringify(d)); P(db.candles_1m.findOne({}, {_id:0})); P(db.candles_1m_ts.findOne({}, {_id:0})); P(db.candles_1d_buckets.aggregate([{$limit:1},{$project:{_id:0,date:1,n_hours:1,hours:{$slice:["$hours",1]}}}]).toArray()[0])' bigdata_db
+{"ts":"2012-01-01T00:01:00.000Z","unix":{"high":0,"low":1325376060,"unsigned":false},"open":4.58,"high":4.58,"low":4.58,"close":4.58,"volume":0}
+{"ts":"2012-01-01T00:01:00.000Z","meta":{"symbol":"BTCUSD"},"volume":0,"high":4.58,"unix":{"high":0,"low":1325376060,"unsigned":false},"low":4.58,"close":4.58,"open":4.58}
+{"date":"2012-01-01T00:00:00.000Z","n_hours":24,"hours":[{"hour":0,"open":4.58,"high":4.58,"low":4.58,"close":4.58,"volume":0}]}

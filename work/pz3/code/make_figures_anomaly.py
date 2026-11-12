@@ -44,7 +44,7 @@ for i, (lvl, nm, col) in enumerate((("minute", "хвилини", C2), ("15m_wind
     d = lf[lf.level == lvl].set_index("group").reindex(groups); ax.bar(x + (i - 1) * w, d["lift"], w, color=col, label=nm)
 ax.axhline(1, color="k", lw=.8, ls=":"); ax.set_xticks(x)
 lab = {"усі 5 днів подій": "5 днів", "2020-03-12": "12.03.20", "2020-03-13": "13.03.20", "2021-05-19": "19.05.21", "2022-11-08": "08.11.22", "2022-11-09": "09.11.22"}
-ax.set_xticklabels([lab.get(g, "період\n" + g.split(" ")[1]) for g in groups], fontsize=9)
+ax.set_xticklabels([lab[g] if g in lab else "період\n" + g.split(" ")[1] for g in groups], fontsize=9)
 ax.set_ylabel("lift"); ax.set_title(f"Концентрація аномалій у днях подій (k = {K_SEL})"); ax.legend(fontsize=9); commaize(ax, axis="y")
 save(fig, F + "/pz3_lift.png")
 

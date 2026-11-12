@@ -10,7 +10,7 @@ R = sys.argv[1]
 spark = (SparkSession.builder.appName("PZ3-watermark-backlog").master("local[2]").config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.13:4.3.0")
          .config("spark.sql.shuffle.partitions", "4").config("spark.sql.session.timezone", "UTC").config("spark.ui.enabled", "false").getOrCreate())
 spark.sparkContext.setLogLevel("ERROR")
-pol = spark.conf.get("spark.sql.streaming.multipleWatermarkPolicy", "min (за замовчуванням)")
+pol = spark.conf.get("spark.sql.streaming.multipleWatermarkPolicy")
 schema = T.StructType([T.StructField("ts", T.LongType()), T.StructField("open", T.DoubleType()), T.StructField("high", T.DoubleType()),
                        T.StructField("low", T.DoubleType()), T.StructField("close", T.DoubleType()), T.StructField("volume", T.DoubleType())])
 res = []
