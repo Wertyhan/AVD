@@ -5,3 +5,5 @@
 {'poll': 4, 'time': '09:30:30', 'load1': 1.4189453125, 'other_procs': 3, 'streak': 0}
 {'poll': 5, 'time': '09:31:30', 'load1': 1.65283203125, 'other_procs': 3, 'streak': 0}
 {'poll': 6, 'time': '09:32:30', 'load1': 2.02587890625, 'other_procs': 3, 'streak': 0}
+{'poll': 7, 'time': '09:33:30', 'load1': 1.79443359375, 'other_procs': 3, 'streak': 0}
+{'poll': 8, 'time': '09:34:30', 'load1': 2.04833984375, 'other_procs': 3, 'streak': 0}
