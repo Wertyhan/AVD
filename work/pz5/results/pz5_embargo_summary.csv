@@ -1,0 +1,6 @@
+parameter,value
+n_rows,77666
+lags_1_720_with_abs_acf_above_bound,675
+label_horizon_h(min_embargo),1
+embargo_used_h,24
+train_labels_using_test_hours_if_no_embargo,1

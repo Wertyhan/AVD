@@ -1,0 +1,4 @@
+transition,n,error_rate,model,threshold
+decay (1->0),1221,0.7870597870597871,GBT,0.33
+onset (0->1),1237,0.7631366208569119,GBT,0.33
+persist,13076,0.030360966656469868,GBT,0.33

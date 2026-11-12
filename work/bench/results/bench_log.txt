@@ -19,3 +19,115 @@
 {'poll': 18, 'time': '09:44:30', 'load1': 1.64111328125, 'other_procs': 3, 'streak': 0}
 {'poll': 19, 'time': '09:45:30', 'load1': 1.923828125, 'other_procs': 3, 'streak': 0}
 {'poll': 20, 'time': '09:46:30', 'load1': 1.3369140625, 'other_procs': 3, 'streak': 0}
+{'poll': 21, 'time': '09:47:30', 'load1': 1.50830078125, 'other_procs': 3, 'streak': 0}
+{'poll': 22, 'time': '09:48:30', 'load1': 1.1435546875, 'other_procs': 0, 'streak': 1}
+{'poll': 23, 'time': '09:49:30', 'load1': 0.970703125, 'other_procs': 0, 'streak': 2}
+{'poll': 24, 'time': '09:50:30', 'load1': 1.49462890625, 'other_procs': 1, 'streak': 0}
+{'poll': 25, 'time': '09:51:30', 'load1': 1.47314453125, 'other_procs': 3, 'streak': 0}
+{'poll': 26, 'time': '09:52:30', 'load1': 1.7626953125, 'other_procs': 3, 'streak': 0}
+{'poll': 27, 'time': '09:53:30', 'load1': 1.34130859375, 'other_procs': 3, 'streak': 0}
+{'poll': 28, 'time': '09:54:30', 'load1': 1.67236328125, 'other_procs': 3, 'streak': 0}
+{'poll': 29, 'time': '09:55:30', 'load1': 1.35009765625, 'other_procs': 3, 'streak': 0}
+{'poll': 30, 'time': '09:56:30', 'load1': 1.17529296875, 'other_procs': 3, 'streak': 0}
+{'poll': 31, 'time': '09:57:30', 'load1': 1.20361328125, 'other_procs': 3, 'streak': 0}
+{'poll': 32, 'time': '09:58:30', 'load1': 1.07958984375, 'other_procs': 3, 'streak': 0}
+{'poll': 33, 'time': '09:59:30', 'load1': 1.556640625, 'other_procs': 3, 'streak': 0}
+{'poll': 34, 'time': '10:00:30', 'load1': 1.3662109375, 'other_procs': 3, 'streak': 0}
+{'poll': 35, 'time': '10:01:30', 'load1': 1.85595703125, 'other_procs': 3, 'streak': 0}
+{'poll': 36, 'time': '10:02:30', 'load1': 1.2685546875, 'other_procs': 3, 'streak': 0}
+{'poll': 37, 'time': '10:03:30', 'load1': 1.2353515625, 'other_procs': 3, 'streak': 0}
+{'poll': 38, 'time': '10:04:30', 'load1': 1.119140625, 'other_procs': 3, 'streak': 0}
+{'poll': 39, 'time': '10:05:30', 'load1': 1.0908203125, 'other_procs': 3, 'streak': 0}
+{'poll': 40, 'time': '10:06:30', 'load1': 1.07275390625, 'other_procs': 3, 'streak': 0}
+{'poll': 41, 'time': '10:07:30', 'load1': 1.07763671875, 'other_procs': 3, 'streak': 0}
+{'poll': 42, 'time': '10:08:30', 'load1': 1.42529296875, 'other_procs': 3, 'streak': 0}
+{'poll': 43, 'time': '10:09:30', 'load1': 1.31494140625, 'other_procs': 3, 'streak': 0}
+{'poll': 44, 'time': '10:10:30', 'load1': 1.1484375, 'other_procs': 3, 'streak': 0}
+{'poll': 45, 'time': '10:11:30', 'load1': 1.16162109375, 'other_procs': 3, 'streak': 0}
+{'poll': 46, 'time': '10:12:30', 'load1': 1.37255859375, 'other_procs': 3, 'streak': 0}
+{'poll': 47, 'time': '10:13:30', 'load1': 1.43603515625, 'other_procs': 3, 'streak': 0}
+{'poll': 48, 'time': '10:14:30', 'load1': 1.3017578125, 'other_procs': 3, 'streak': 0}
+{'poll': 49, 'time': '10:15:30', 'load1': 1.044921875, 'other_procs': 0, 'streak': 1}
+{'poll': 50, 'time': '10:16:30', 'load1': 0.86083984375, 'other_procs': 0, 'streak': 2}
+{'poll': 51, 'time': '10:17:30', 'load1': 0.31396484375, 'other_procs': 0, 'streak': 3}
+{'round': 0, 'warmup': True, 'engine': 'pandas', 'task': 'T1', 'seconds': 7.611, 'load1_before': 1.275390625, 'load1_after': 1.232421875, 'mem_available_gb': 10.66, 'timestamp': '2026-11-12 10:18:11', 'check': 'reference'}
+{'round': 0, 'warmup': True, 'engine': 'pandas', 'task': 'T2', 'seconds': 9.415, 'load1_before': 1.232421875, 'load1_after': 1.1962890625, 'mem_available_gb': 10.86, 'timestamp': '2026-11-12 10:18:19', 'check': 'reference'}
+{'round': 0, 'warmup': True, 'engine': 'hadoop', 'task': 'T1', 'seconds': 30.675, 'load1_before': 1.1962890625, 'load1_after': 2.013671875, 'mem_available_gb': 11.05, 'timestamp': '2026-11-12 10:18:30', 'check': 'ok'}
+{'round': 0, 'warmup': True, 'engine': 'hadoop', 'task': 'T2', 'seconds': 25.101, 'load1_before': 2.1728515625, 'load1_after': 2.720703125, 'mem_available_gb': 10.67, 'timestamp': '2026-11-12 10:19:04', 'check': 'ok'}
+{'round': 0, 'warmup': True, 'engine': 'hive', 'task': 'T1', 'seconds': 35.695, 'load1_before': 2.58251953125, 'load1_after': 2.77783203125, 'mem_available_gb': 10.63, 'timestamp': '2026-11-12 10:19:33', 'check': 'ok'}
+{'round': 0, 'warmup': True, 'engine': 'hive', 'task': 'T2', 'seconds': 44.091, 'load1_before': 2.63525390625, 'load1_after': 2.36962890625, 'mem_available_gb': 10.61, 'timestamp': '2026-11-12 10:20:12', 'check': 'ok'}
+{'round': 0, 'warmup': True, 'engine': 'spark', 'task': 'T1', 'seconds': 12.219, 'load1_before': 2.36962890625, 'load1_after': 2.3994140625, 'mem_available_gb': 10.68, 'timestamp': '2026-11-12 10:20:58', 'check': 'ok'}
+{'round': 0, 'warmup': True, 'engine': 'spark', 'task': 'T2', 'seconds': 15.842, 'load1_before': 2.3994140625, 'load1_after': 2.625, 'mem_available_gb': 11.02, 'timestamp': '2026-11-12 10:21:10', 'check': 'ok'}
+{'round': 0, 'warmup': True, 'engine': 'hadoop', 'task': 'start', 'seconds': 14.68, 'load1_before': 2.49462890625, 'load1_after': 2.71142578125, 'mem_available_gb': 10.92, 'timestamp': '2026-11-12 10:21:30', 'check': 'rc=0'}
+{'round': 0, 'warmup': True, 'engine': 'hive', 'task': 'start', 'seconds': 11.926, 'load1_before': 2.71142578125, 'load1_after': 2.3994140625, 'mem_available_gb': 10.47, 'timestamp': '2026-11-12 10:21:46', 'check': 'rc=0'}
+{'round': 0, 'warmup': True, 'engine': 'pandas', 'task': 'start', 'seconds': 0.429, 'load1_before': 2.3994140625, 'load1_after': 2.3994140625, 'mem_available_gb': 11.15, 'timestamp': '2026-11-12 10:21:58', 'check': 'rc=0'}
+{'round': 0, 'warmup': True, 'engine': 'spark', 'task': 'start', 'seconds': 6.722, 'load1_before': 2.3994140625, 'load1_after': 2.52783203125, 'mem_available_gb': 11.15, 'timestamp': '2026-11-12 10:21:58', 'check': 'rc=0'}
+{'round': 1, 'warmup': False, 'engine': 'pandas', 'task': 'T2', 'seconds': 8.499, 'load1_before': 2.52783203125, 'load1_after': 2.29248046875, 'mem_available_gb': 11.13, 'timestamp': '2026-11-12 10:22:05', 'check': 'ok'}
+{'round': 1, 'warmup': False, 'engine': 'hadoop', 'task': 'T1', 'seconds': 26.453, 'load1_before': 2.29248046875, 'load1_after': 2.52392578125, 'mem_available_gb': 10.94, 'timestamp': '2026-11-12 10:22:15', 'check': 'ok'}
+{'round': 1, 'warmup': False, 'engine': 'hadoop', 'task': 'T2', 'seconds': 24.084, 'load1_before': 2.52392578125, 'load1_after': 2.82275390625, 'mem_available_gb': 10.65, 'timestamp': '2026-11-12 10:22:45', 'check': 'ok'}
+{'round': 1, 'warmup': False, 'engine': 'hive', 'task': 'T1', 'seconds': 35.474, 'load1_before': 2.6767578125, 'load1_after': 2.4033203125, 'mem_available_gb': 10.66, 'timestamp': '2026-11-12 10:23:13', 'check': 'ok'}
+{'round': 1, 'warmup': False, 'engine': 'hive', 'task': 'T2', 'seconds': 43.376, 'load1_before': 2.37060546875, 'load1_after': 2.80908203125, 'mem_available_gb': 10.55, 'timestamp': '2026-11-12 10:23:52', 'check': 'ok'}
+{'round': 1, 'warmup': False, 'engine': 'spark', 'task': 'T1', 'seconds': 13.252, 'load1_before': 2.6640625, 'load1_after': 3.03662109375, 'mem_available_gb': 10.64, 'timestamp': '2026-11-12 10:24:37', 'check': 'ok'}
+{'round': 1, 'warmup': False, 'engine': 'spark', 'task': 'T2', 'seconds': 13.79, 'load1_before': 3.03662109375, 'load1_after': 3.041015625, 'mem_available_gb': 10.94, 'timestamp': '2026-11-12 10:24:50', 'check': 'ok'}
+{'round': 1, 'warmup': False, 'engine': 'hadoop', 'task': 'start', 'seconds': 13.792, 'load1_before': 2.87744140625, 'load1_after': 2.97705078125, 'mem_available_gb': 10.74, 'timestamp': '2026-11-12 10:25:07', 'check': 'rc=0'}
+{'round': 1, 'warmup': False, 'engine': 'hive', 'task': 'start', 'seconds': 11.881, 'load1_before': 2.97900390625, 'load1_after': 2.748046875, 'mem_available_gb': 10.58, 'timestamp': '2026-11-12 10:25:23', 'check': 'rc=0'}
+{'round': 1, 'warmup': False, 'engine': 'pandas', 'task': 'start', 'seconds': 0.48, 'load1_before': 2.748046875, 'load1_after': 2.748046875, 'mem_available_gb': 11.11, 'timestamp': '2026-11-12 10:25:34', 'check': 'rc=0'}
+{'round': 1, 'warmup': False, 'engine': 'spark', 'task': 'start', 'seconds': 6.319, 'load1_before': 2.748046875, 'load1_after': 2.8486328125, 'mem_available_gb': 11.06, 'timestamp': '2026-11-12 10:25:35', 'check': 'rc=0'}
+{'round': 1, 'warmup': False, 'engine': 'pandas', 'task': 'T1', 'seconds': 8.535, 'load1_before': 2.8486328125, 'load1_after': 2.78515625, 'mem_available_gb': 11.01, 'timestamp': '2026-11-12 10:25:41', 'check': 'ok'}
+{'round': 2, 'warmup': False, 'engine': 'hadoop', 'task': 'T1', 'seconds': 28.176, 'load1_before': 2.64208984375, 'load1_after': 3.14404296875, 'mem_available_gb': 10.93, 'timestamp': '2026-11-12 10:25:52', 'check': 'ok'}
+{'round': 2, 'warmup': False, 'engine': 'hadoop', 'task': 'T2', 'seconds': 25.47, 'load1_before': 2.89208984375, 'load1_after': 3.22802734375, 'mem_available_gb': 10.6, 'timestamp': '2026-11-12 10:26:23', 'check': 'ok'}
+{'round': 2, 'warmup': False, 'engine': 'hive', 'task': 'T1', 'seconds': 36.681, 'load1_before': 3.04931640625, 'load1_after': 2.8076171875, 'mem_available_gb': 10.61, 'timestamp': '2026-11-12 10:26:52', 'check': 'ok'}
+{'round': 2, 'warmup': False, 'engine': 'hive', 'task': 'T2', 'seconds': 45.183, 'load1_before': 2.66259765625, 'load1_after': 2.1787109375, 'mem_available_gb': 10.46, 'timestamp': '2026-11-12 10:27:32', 'check': 'ok'}
+{'round': 2, 'warmup': False, 'engine': 'spark', 'task': 'T1', 'seconds': 14.29, 'load1_before': 2.1787109375, 'load1_after': 2.5263671875, 'mem_available_gb': 10.62, 'timestamp': '2026-11-12 10:28:19', 'check': 'ok'}
+{'round': 2, 'warmup': False, 'engine': 'spark', 'task': 'T2', 'seconds': 14.667, 'load1_before': 2.5263671875, 'load1_after': 2.6376953125, 'mem_available_gb': 10.92, 'timestamp': '2026-11-12 10:28:34', 'check': 'ok'}
+{'round': 2, 'warmup': False, 'engine': 'hadoop', 'task': 'start', 'seconds': 16.2, 'load1_before': 2.50634765625, 'load1_after': 2.2216796875, 'mem_available_gb': 10.83, 'timestamp': '2026-11-12 10:28:52', 'check': 'rc=0'}
+{'round': 2, 'warmup': False, 'engine': 'hive', 'task': 'start', 'seconds': 12.109, 'load1_before': 2.2216796875, 'load1_after': 2.16650390625, 'mem_available_gb': 10.53, 'timestamp': '2026-11-12 10:29:10', 'check': 'rc=0'}
+{'round': 2, 'warmup': False, 'engine': 'pandas', 'task': 'start', 'seconds': 0.468, 'load1_before': 2.16650390625, 'load1_after': 2.16650390625, 'mem_available_gb': 11.08, 'timestamp': '2026-11-12 10:29:22', 'check': 'rc=0'}
+{'round': 2, 'warmup': False, 'engine': 'spark', 'task': 'start', 'seconds': 6.294, 'load1_before': 2.16650390625, 'load1_after': 2.15283203125, 'mem_available_gb': 11.07, 'timestamp': '2026-11-12 10:29:22', 'check': 'rc=0'}
+{'round': 2, 'warmup': False, 'engine': 'pandas', 'task': 'T1', 'seconds': 9.639, 'load1_before': 2.15283203125, 'load1_after': 1.97509765625, 'mem_available_gb': 11.02, 'timestamp': '2026-11-12 10:29:29', 'check': 'ok'}
+{'round': 2, 'warmup': False, 'engine': 'pandas', 'task': 'T2', 'seconds': 10.182, 'load1_before': 1.97509765625, 'load1_after': 1.82470703125, 'mem_available_gb': 10.92, 'timestamp': '2026-11-12 10:29:38', 'check': 'ok'}
+{'round': 3, 'warmup': False, 'engine': 'hadoop', 'task': 'T2', 'seconds': 25.352, 'load1_before': 1.82470703125, 'load1_after': 2.51025390625, 'mem_available_gb': 10.89, 'timestamp': '2026-11-12 10:29:51', 'check': 'ok'}
+{'round': 3, 'warmup': False, 'engine': 'hive', 'task': 'T1', 'seconds': 35.191, 'load1_before': 2.46923828125, 'load1_after': 2.6416015625, 'mem_available_gb': 10.51, 'timestamp': '2026-11-12 10:30:19', 'check': 'ok'}
+{'round': 3, 'warmup': False, 'engine': 'hive', 'task': 'T2', 'seconds': 43.279, 'load1_before': 2.83056640625, 'load1_after': 2.365234375, 'mem_available_gb': 10.56, 'timestamp': '2026-11-12 10:30:58', 'check': 'ok'}
+{'round': 3, 'warmup': False, 'engine': 'spark', 'task': 'T1', 'seconds': 12.876, 'load1_before': 2.255859375, 'load1_after': 2.2841796875, 'mem_available_gb': 10.56, 'timestamp': '2026-11-12 10:31:43', 'check': 'ok'}
+{'round': 3, 'warmup': False, 'engine': 'spark', 'task': 'T2', 'seconds': 14.856, 'load1_before': 2.2841796875, 'load1_after': 2.37548828125, 'mem_available_gb': 10.87, 'timestamp': '2026-11-12 10:31:56', 'check': 'ok'}
+{'round': 3, 'warmup': False, 'engine': 'hadoop', 'task': 'start', 'seconds': 15.469, 'load1_before': 2.34521484375, 'load1_after': 2.90283203125, 'mem_available_gb': 10.78, 'timestamp': '2026-11-12 10:32:15', 'check': 'rc=0'}
+{'round': 3, 'warmup': False, 'engine': 'hive', 'task': 'start', 'seconds': 11.302, 'load1_before': 2.669921875, 'load1_after': 2.4130859375, 'mem_available_gb': 10.55, 'timestamp': '2026-11-12 10:32:32', 'check': 'rc=0'}
+{'round': 3, 'warmup': False, 'engine': 'pandas', 'task': 'start', 'seconds': 0.433, 'load1_before': 2.4130859375, 'load1_after': 2.4130859375, 'mem_available_gb': 11.1, 'timestamp': '2026-11-12 10:32:43', 'check': 'rc=0'}
+{'round': 3, 'warmup': False, 'engine': 'spark', 'task': 'start', 'seconds': 6.132, 'load1_before': 2.4130859375, 'load1_after': 2.3798828125, 'mem_available_gb': 11.11, 'timestamp': '2026-11-12 10:32:44', 'check': 'rc=0'}
+{'round': 3, 'warmup': False, 'engine': 'pandas', 'task': 'T1', 'seconds': 8.462, 'load1_before': 2.3798828125, 'load1_after': 2.1669921875, 'mem_available_gb': 11.01, 'timestamp': '2026-11-12 10:32:50', 'check': 'ok'}
+{'round': 3, 'warmup': False, 'engine': 'pandas', 'task': 'T2', 'seconds': 9.209, 'load1_before': 2.1669921875, 'load1_after': 1.98681640625, 'mem_available_gb': 10.87, 'timestamp': '2026-11-12 10:32:58', 'check': 'ok'}
+{'round': 3, 'warmup': False, 'engine': 'hadoop', 'task': 'T1', 'seconds': 27.197, 'load1_before': 1.98681640625, 'load1_after': 2.140625, 'mem_available_gb': 10.89, 'timestamp': '2026-11-12 10:33:09', 'check': 'ok'}
+{'round': 4, 'warmup': False, 'engine': 'hive', 'task': 'T1', 'seconds': 34.646, 'load1_before': 2.28955078125, 'load1_after': 2.302734375, 'mem_available_gb': 10.6, 'timestamp': '2026-11-12 10:33:40', 'check': 'ok'}
+{'round': 4, 'warmup': False, 'engine': 'hive', 'task': 'T2', 'seconds': 43.657, 'load1_before': 2.43896484375, 'load1_after': 2.21826171875, 'mem_available_gb': 10.7, 'timestamp': '2026-11-12 10:34:18', 'check': 'ok'}
+{'round': 4, 'warmup': False, 'engine': 'spark', 'task': 'T1', 'seconds': 12.814, 'load1_before': 2.12060546875, 'load1_after': 2.1083984375, 'mem_available_gb': 10.57, 'timestamp': '2026-11-12 10:35:03', 'check': 'ok'}
+{'round': 4, 'warmup': False, 'engine': 'spark', 'task': 'T2', 'seconds': 14.041, 'load1_before': 2.1083984375, 'load1_after': 2.25048828125, 'mem_available_gb': 10.98, 'timestamp': '2026-11-12 10:35:16', 'check': 'ok'}
+{'round': 4, 'warmup': False, 'engine': 'hadoop', 'task': 'start', 'seconds': 16.661, 'load1_before': 2.06982421875, 'load1_after': 1.75830078125, 'mem_available_gb': 11.01, 'timestamp': '2026-11-12 10:35:34', 'check': 'rc=0'}
+{'round': 4, 'warmup': False, 'engine': 'hive', 'task': 'start', 'seconds': 12.008, 'load1_before': 1.697265625, 'load1_after': 1.66357421875, 'mem_available_gb': 10.68, 'timestamp': '2026-11-12 10:35:52', 'check': 'rc=0'}
+{'round': 4, 'warmup': False, 'engine': 'pandas', 'task': 'start', 'seconds': 0.426, 'load1_before': 1.66357421875, 'load1_after': 1.66357421875, 'mem_available_gb': 11.11, 'timestamp': '2026-11-12 10:36:04', 'check': 'rc=0'}
+{'round': 4, 'warmup': False, 'engine': 'spark', 'task': 'start', 'seconds': 6.313, 'load1_before': 1.66357421875, 'load1_after': 1.6103515625, 'mem_available_gb': 11.12, 'timestamp': '2026-11-12 10:36:05', 'check': 'rc=0'}
+{'round': 4, 'warmup': False, 'engine': 'pandas', 'task': 'T1', 'seconds': 8.325, 'load1_before': 1.6103515625, 'load1_after': 1.515625, 'mem_available_gb': 11.02, 'timestamp': '2026-11-12 10:36:11', 'check': 'ok'}
+{'round': 4, 'warmup': False, 'engine': 'pandas', 'task': 'T2', 'seconds': 10.021, 'load1_before': 1.515625, 'load1_after': 1.43603515625, 'mem_available_gb': 10.89, 'timestamp': '2026-11-12 10:36:19', 'check': 'ok'}
+{'round': 4, 'warmup': False, 'engine': 'hadoop', 'task': 'T1', 'seconds': 27.422, 'load1_before': 1.43603515625, 'load1_after': 1.8447265625, 'mem_available_gb': 10.98, 'timestamp': '2026-11-12 10:36:31', 'check': 'ok'}
+{'round': 4, 'warmup': False, 'engine': 'hadoop', 'task': 'T2', 'seconds': 23.612, 'load1_before': 1.69677734375, 'load1_after': 2.94921875, 'mem_available_gb': 10.71, 'timestamp': '2026-11-12 10:37:02', 'check': 'ok'}
+{'round': 5, 'warmup': False, 'engine': 'hive', 'task': 'T2', 'seconds': 42.946, 'load1_before': 2.95361328125, 'load1_after': 2.37890625, 'mem_available_gb': 10.63, 'timestamp': '2026-11-12 10:37:29', 'check': 'ok'}
+{'round': 5, 'warmup': False, 'engine': 'spark', 'task': 'T1', 'seconds': 12.572, 'load1_before': 2.37890625, 'load1_after': 2.86865234375, 'mem_available_gb': 10.51, 'timestamp': '2026-11-12 10:38:14', 'check': 'ok'}
+{'round': 5, 'warmup': False, 'engine': 'spark', 'task': 'T2', 'seconds': 13.58, 'load1_before': 2.86865234375, 'load1_after': 2.84228515625, 'mem_available_gb': 10.98, 'timestamp': '2026-11-12 10:38:26', 'check': 'ok'}
+{'round': 5, 'warmup': False, 'engine': 'hadoop', 'task': 'start', 'seconds': 14.882, 'load1_before': 2.85498046875, 'load1_after': 3.21875, 'mem_available_gb': 10.88, 'timestamp': '2026-11-12 10:38:43', 'check': 'rc=0'}
+{'round': 5, 'warmup': False, 'engine': 'hive', 'task': 'start', 'seconds': 10.885, 'load1_before': 3.21875, 'load1_after': 2.87744140625, 'mem_available_gb': 10.58, 'timestamp': '2026-11-12 10:38:59', 'check': 'rc=0'}
+{'round': 5, 'warmup': False, 'engine': 'pandas', 'task': 'start', 'seconds': 0.383, 'load1_before': 2.87744140625, 'load1_after': 2.87744140625, 'mem_available_gb': 11.12, 'timestamp': '2026-11-12 10:39:10', 'check': 'rc=0'}
+{'round': 5, 'warmup': False, 'engine': 'spark', 'task': 'start', 'seconds': 6.05, 'load1_before': 2.87744140625, 'load1_after': 2.80712890625, 'mem_available_gb': 11.11, 'timestamp': '2026-11-12 10:39:11', 'check': 'rc=0'}
+{'round': 5, 'warmup': False, 'engine': 'pandas', 'task': 'T1', 'seconds': 8.14, 'load1_before': 2.80712890625, 'load1_after': 2.52880859375, 'mem_available_gb': 11.04, 'timestamp': '2026-11-12 10:39:17', 'check': 'ok'}
+{'round': 5, 'warmup': False, 'engine': 'pandas', 'task': 'T2', 'seconds': 8.651, 'load1_before': 2.52880859375, 'load1_after': 2.29345703125, 'mem_available_gb': 11.09, 'timestamp': '2026-11-12 10:39:25', 'check': 'ok'}
+{'round': 5, 'warmup': False, 'engine': 'hadoop', 'task': 'T1', 'seconds': 25.542, 'load1_before': 2.29345703125, 'load1_after': 3.09033203125, 'mem_available_gb': 10.92, 'timestamp': '2026-11-12 10:39:35', 'check': 'ok'}
+{'round': 5, 'warmup': False, 'engine': 'hadoop', 'task': 'T2', 'seconds': 22.42, 'load1_before': 2.9228515625, 'load1_after': 2.93310546875, 'mem_available_gb': 10.59, 'timestamp': '2026-11-12 10:40:04', 'check': 'ok'}
+{'round': 5, 'warmup': False, 'engine': 'hive', 'task': 'T1', 'seconds': 34.231, 'load1_before': 2.9384765625, 'load1_after': 2.58740234375, 'mem_available_gb': 10.52, 'timestamp': '2026-11-12 10:40:30', 'check': 'ok'}
+engine task  median_total_s  median_startup_s  median_processing_s   min   max  iqr  n  min_processing_s  max_processing_s  all_checks_ok
+pandas   T2            9.21              0.43                 8.78  8.50 10.18 1.37  5              8.07              9.75           True
+hadoop   T1           27.20             15.47                11.73 25.54 28.18 0.97  5             10.07             12.71           True
+hadoop   T2           24.08             15.47                 8.62 22.42 25.47 1.74  5              6.95             10.00           True
+  hive   T1           35.19             11.88                23.31 34.23 36.68 0.83  5             22.35             24.80           True
+  hive   T2           43.38             11.88                31.49 42.95 45.18 0.38  5             31.06             33.30           True
+ spark   T1           12.88              6.29                 6.58 12.57 14.29 0.44  5              6.28              8.00           True
+ spark   T2           14.04              6.29                 7.75 13.58 14.86 0.88  5              7.29              8.56           True
+pandas   T1            8.46              0.43                 8.03  8.14  9.64 0.21  5              7.71              9.21           True

@@ -1,0 +1,6 @@
+parameter,value
+best_model_selected_by,"mean CV PR-AUC (3 expanding folds), test not used"
+best_model,GBT
+cv_pr_auc_LR,0.7455790000370648
+cv_pr_auc_RF,0.7241423314583663
+cv_pr_auc_GBT,0.7467128317458823

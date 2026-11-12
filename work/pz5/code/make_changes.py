@@ -83,7 +83,6 @@ add(S, "test_rows", ospl["test_rows"], nspl["test_rows"], 0)
 add(S, "ембарго, год", ospl["embargo_rows"], nspl["embargo_rows"], 0)
 for k in ("train_start", "train_end", "embargo_end_nominal_train_boundary", "test_start", "test_end"):
     add(S, k, ospl[k], nspl[k], 0)
-ob, nb = pd.Series(dtype=float), pd.Series(dtype=float)
 # частка класу 1 train/test – зі скріншота 04_split
 def share(path):
     for l in open(path, encoding="utf-8"):
@@ -99,8 +98,6 @@ for m in ("LR", "RF", "GBT"):
     add(S, f"{m}: найкраща конфігурація", ", ".join(f"{k}={o[k]:g}" for k in keys), ", ".join(f"{k}={n[k]:g}" for k in keys), 0)
 lr_o = otun[(otun.model == "LR") & (otun.regParam == 0.1)].cv_pr_auc.max(); lr_n = ntun[(ntun.model == "LR") & (ntun.regParam == 0.1)].cv_pr_auc.max()
 add(S, "LR regParam 0,1: CV PR-AUC", lr_o, lr_n)
-for nm, tb in (("o", otun), ("n", ntun)):
-    pass
 def rf(t, d): return t[(t.model == "RF") & (t.maxDepth == d) & (t.numTrees == 200)].cv_pr_auc.max()
 add(S, "RF глибина 8 / 4 (200 дерев): CV PR-AUC", f"{fm(rf(otun, 8))} / {fm(rf(otun, 4))}", f"{fm(rf(ntun, 8))} / {fm(rf(ntun, 4))}", 0)
 def gspread(t): s = t[t.model == "GBT"].sort_values("cv_pr_auc", ascending=False).head(3).cv_pr_auc; return s.max() - s.min()
@@ -122,11 +119,6 @@ add(S, "джоби / етапи Spark UI", "11 364 / 20 036", jn.replace("jobs="
 # ---- Розділ 6/7, табл. 6 ----
 def mrow(t, name): return t[t.model == name].iloc[0]
 NAMES = ["Мажоритарний клас (завжди 0)", "Персистентність (rv_t > порогу)", "Ранжування за log(rv_t/поріг), поріг 0"]
-for m in ("LR", "RF", "GBT"): NAMES += [f"{m} (поріг 0,5)", None]
-for nme in NAMES:
-    on = nme
-    if nme is None:
-        m = NAMES[NAMES.index(None) - 1].split()[0] if False else None
 tuned = {m: (f"{m} (поріг {othr[m]:.2f}, з валідації)", f"{m} (поріг {nthr[m]:.2f}, з валідації)") for m in ("LR", "RF", "GBT")}
 pairs = [(n, n) for n in NAMES[:3]] + [item for m in ("LR", "RF", "GBT") for item in ((f"{m} (поріг 0,5)", f"{m} (поріг 0,5)"), tuned[m])]
 for o_name, n_name in pairs:

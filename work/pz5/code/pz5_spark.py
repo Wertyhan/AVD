@@ -327,7 +327,8 @@ save(res, "pz5_metrics_test")
 def short(n): return (n.replace("Мажоритарний клас (завжди 0)", "Мажоритарний").replace("Персистентність (rv_t > порогу)", "Персистентність")
                        .replace("Ранжування за log(rv_t/поріг), поріг 0", "log(rv/поріг)").replace(", з валідації", "").replace("(поріг ", "@").replace(")", "").replace(",", "."))
 with cap("08_metrics", "метрики на тесті: базові лінії та моделі (поріг 0,5 і поріг з валідації)"):
-    print(f"Частка класу 1 у test: {lab['test'][0]:.4f}; n={n_te}; пороги з валідації: {chosen_thr}")
+    print(f"Частка класу 1 у test: {lab['test'][0]:.4f}; n={n_te}")
+    print("Пороги з валідації: " + ", ".join(f"{k} {v:.2f}" for k, v in chosen_thr.items()))
     q = res.drop(columns=["kind", "n", "balanced_accuracy", "tn", "fp", "fn", "tp"]).copy(); q["model"] = q.model.map(short)
     q = q.rename(columns={"model": "модель", "threshold": "thr", "accuracy": "acc", "precision": "prec", "recall": "rec", "roc_auc": "ROC", "pr_auc": "PR"})
     print(q.round(3).to_string(index=False))
@@ -450,13 +451,15 @@ try:
     with sync_playwright() as p:
         b = p.chromium.launch(executable_path="/opt/pw-browsers/chromium-1243/chrome-linux64/chrome", args=["--no-sandbox"])
         pg = b.new_page(viewport={"width": 1280, "height": 800}, device_scale_factor=2)
-        pages = {"jobs": ("jobs/", "#completedJob-table"), "stages": ("stages/", "#completedStage-table"),
-                 "storage": ("storage/", "#storage-by-rdd-table"), "sql": ("SQL/", "table:has(th:has-text('Description'))"),
-                 "executors": ("executors/", "#summary-execs-table"), "environment": ("environment/", "#runtime-table")}
-        for k, (u, sel_) in pages.items():
+        pages = {"jobs": ("jobs/", "#completedJob-table", [6]), "stages": ("stages/", "#completedStage-table", [6, 7, 8, 9]),
+                 "storage": ("storage/", "#storage-by-rdd-table", []), "sql": ("SQL/", "table:has(th:has-text('Description'))", []),
+                 "executors": ("executors/", "#summary-execs-table", []), "environment": ("environment/", "#runtime-table", [])}
+        for k, (u, sel_, hid) in pages.items():
             try:
                 pg.goto(f"{sc.uiWebUrl}/{u}", wait_until="load"); pg.wait_for_timeout(2500)
-                hide_fixed(pg); pg.evaluate("document.body.style.zoom = 1.5"); pg.wait_for_timeout(500)
+                hide_fixed(pg)
+                # приховано найширші стовпці (смуга прогресу завдань, Input/Output/Shuffle), щоб таблиця влізла у 1280 px при збільшенні 1,5
+                pg.evaluate("(a)=>{const [sel,h]=a;h.forEach(n=>document.querySelectorAll(sel+' tr > :nth-child('+n+')').forEach(e=>e.style.display='none'));document.body.style.zoom=1.5}", [sel_, hid]); pg.wait_for_timeout(500)
                 snap(pg, sel_, f"{SHOTS}/spark_ui_{k}.png")
             except Exception as e:
                 print(f"Spark UI {k} failed:", e)
@@ -464,8 +467,9 @@ try:
 except Exception as e:
     print("Spark UI screenshots failed:", e)
 try:
-    ui_jobs = len(json.loads(sh(f"curl -s {sc.uiWebUrl}/api/v1/applications/{sc.applicationId}/jobs?length=100000")) or [])
-    ui_stages = len(json.loads(sh(f"curl -s {sc.uiWebUrl}/api/v1/applications/{sc.applicationId}/stages?length=100000")) or [])
+    # Spark UI зберігає лише ~1000 останніх завдань/етапів, тому загальна кількість = максимальний id + 1
+    ui_jobs = max(j["jobId"] for j in json.loads(sh(f"curl -s {sc.uiWebUrl}/api/v1/applications/{sc.applicationId}/jobs"))) + 1
+    ui_stages = max(j["stageId"] for j in json.loads(sh(f"curl -s {sc.uiWebUrl}/api/v1/applications/{sc.applicationId}/stages?length=100000"))) + 1
     rec("spark_ui_totals", 0.0, f"jobs={ui_jobs} stages={ui_stages}")
 except Exception as e:
     print("Spark UI REST failed:", e)

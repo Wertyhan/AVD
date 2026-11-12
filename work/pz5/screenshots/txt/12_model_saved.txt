@@ -1,0 +1,7 @@
+$ python code/pz5_spark.py
+# model.write().save('results/model/best_pipeline_GBT'); PipelineModel.load(...)
+модель обрано за CV PR-AUC: GBT
+збережено: results/model/best_pipeline_GBT
+metadata
+stages
+етапи: ['SQLTransformer', 'ImputerModel', 'StringIndexerModel', 'OneHotEncoderModel', 'VectorAssembler', 'SQLTransformer', 'GBTClassificationModel']

@@ -1,0 +1,6 @@
+parameter,value
+C_test_rows,15746.0
+C_test_rows_>=test_start,3180.0
+share_C_test_with_both_neighbours_in_random_train,0.6372412041153309
+share_C*_test_with_both_neighbours_in_random_train,0.639937106918239
+share_A_test_with_both_neighbours_in_train,0.0

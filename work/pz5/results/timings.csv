@@ -1,0 +1,16 @@
+step,seconds,note
+load_parquet_pz2,3.255,130276 годинних рядків
+feature_engineering,41.642,77666 рядків моделювання
+hyperparameter_tuning_all,1038.573,"3 моделі, 3 фолди, ембарго 24 год"
+fit_LR,4.08,train 62108 рядків
+inference_LR,0.693,test 15534 рядків
+fit_RF,23.448,train 62108 рядків
+inference_RF,1.228,test 15534 рядків
+fit_GBT,23.602,train 62108 рядків
+inference_GBT,0.572,test 15534 рядків
+save_best_pipeline,1.912,GBT
+load_best_pipeline,2.338,max p1=0.9859
+total_script_before_ui,1406.882,
+spark_ui_totals,0.0,jobs=12663 stages=48483
+total_script,1429.708,
+pz5_stats_seconds,72.19,"bootstrap 1000, block 168 h"

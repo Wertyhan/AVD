@@ -1,0 +1,2 @@
+start_time,quiet_reached,polls,load1_start,load5_start,nproc,mem_available_gb,kafka_running,mongod_running,pandas,pyspark,python,hadoop,hive,jdk_hadoop_hive,jdk_spark,spark_cfg,hadoop_cfg
+2026-11-12 10:18:11,True,52,1.275390625,1.10595703125,4,10.66,True,True,3.0.5,4.3.0,3.13.18,3.3.6,3.1.3 (MR),8u472,21,"local[*], driver 3g, shuffle.partitions 8, UI off","1 reducer, 1 node YARN/HDFS (pseudo-distributed)"

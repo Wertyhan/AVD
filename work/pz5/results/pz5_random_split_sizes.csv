@@ -1,0 +1,9 @@
+parameter,value
+A_chrono_train_rows,62108
+A_chrono_test_rows,15534
+B_random_pretest_train_rows,49550
+B_test_rows,15534
+C_random_train_rows,61920
+C_random_test_rows,15746
+C_star_test_rows(>=test_start),3180
+test_start,2025-02-01 20:00:00

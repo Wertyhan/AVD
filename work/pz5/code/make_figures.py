@@ -115,7 +115,7 @@ for df_, nm in ((ey, "year"), (eh, "hour"), (er, "current_regime"), (et, "transi
     df_.assign(model=best, threshold=thr[best]).to_csv(f"{R}/pz5_errors_by_{nm}.csv", index=False)
 fig, ax = plt.subplots(2, 1, figsize=TWO_PANEL)
 ax[0].bar(ey.year.astype(str), ey.error_rate, color="C0"); ax[0].set_title(f"Частка помилок за роками (test, {best})"); ax[0].set_ylabel("Частка помилок"); yc(ax[0])
-for i, e in enumerate(ey.error_rate): ax[0].text(i, e, dec(e, 2), ha="center", va="bottom", fontsize=9)
+for i, e in enumerate(ey.error_rate): ax[0].text(i, e, dec(e, 3), ha="center", va="bottom", fontsize=9)
 ax[0].set_ylim(0, ey.error_rate.max() * 1.18)
 ax[1].bar(eh.hour, eh.error_rate, color="C1", label="частка помилок"); ax[1].plot(eh.hour, eh.pos_share, "k.-", lw=.8, label="частка класу 1"); ax[1].legend(loc="upper left", fontsize=9, ncol=2)
 ax[1].set_title("За годиною доби (UTC)"); ax[1].set_xlabel("Година"); ax[1].set_xticks(range(0, 24, 3)); yc(ax[1]); ax[1].set_ylim(0, max(eh.error_rate.max(), eh.pos_share.max()) * 1.25)
@@ -134,7 +134,7 @@ for x, met, t in zip(ax, ("pr_auc", "roc_auc"), ("PR-AUC", "ROC-AUC")):
             yp = -j + (1 - k) * .22
             x.errorbar(r.estimate, yp, xerr=[[r.estimate - r.ci_lo], [r.ci_hi - r.estimate]], fmt="o", ms=4, color=C[nm], capsize=2, lw=1.2, label=nm if j == 0 else None)
     x.set_xlabel(t); xc(x); x.set_title(t)
-ax[0].set_yticks([-j for j in range(len(VAR))], [f"{l}\nn={thin(rv[(rv.variant == v)].n.iloc[0])}" for v, l in VAR]); ax[0].legend(loc="lower left", fontsize=9)
+ax[0].set_yticks([-j for j in range(len(VAR))], [f"{l}\nn={thin(rv[(rv.variant == v)].n.iloc[0])}" for v, l in VAR]); ax[1].legend(loc="lower right", fontsize=9)
 fig_save("fig07_random_vs_chrono")
 
 # 8. Порівняння моделей: оцінки з 95 % ДІ + час виконання
