@@ -51,7 +51,7 @@ if __name__ == '__main__':
     # YARN Applications: стовпці Name … FinalStatus (стовпець ID, x < 366 px, обрізано)
     ya = Image.open(SRC / 'yarn_apps.png').convert('RGB')
     ya.crop((366, 0, ya.width, ya.height)).save(FIG / 'ui_yarn_apps.png')
-    jc = Image.open(SRC / 'jh_counters.png').convert('RGB')   # без порожнього рядка File System Counters (y < 119 px)
-    jc.crop((0, 119, jc.width, jc.height)).save(FIG / 'ui_jh_counters.png')
+    # JobHistory counters: захват jh_counters.png обрізано праворуч (без межі Total) -> реальні рядки з повного скриншоту 43
+    exec(compile(open(Path(__file__).with_name('jh_counters_from_full.py')).read(),'jh','exec'),{'FIG':FIG})
     shutil.copy(BENCH_FIG, FIG / 'fig_bench.png')
     print('ok')
