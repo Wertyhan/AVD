@@ -35,6 +35,42 @@ def set_font(run, name=TNR, size=None, bold=None, italic=None):
     if italic is not None: run.font.italic = italic
 
 
+GAP = 21.0   # pt: one 1.5-spaced 14 pt line (ДСТУ 3008:2015 empty line)
+ROLES = []   # (element, role) in document order; consumed by apply_gaps()
+
+
+def tag(obj, role):
+    ROLES.append((getattr(obj, "_p", None) if getattr(obj, "_p", None) is not None else obj._tbl, role)); return obj
+
+
+def apply_gaps(doc):
+    from docx.text.paragraph import Paragraph
+    for e, r in ROLES:
+        if r == "SPACER" and e.getparent() is not None: e.getparent().remove(e)
+    rl = {}
+    for e, r in ROLES: rl.setdefault(e, r)
+    rl.update({e: r for e, r in ROLES if r == "CODE_LAST"})
+    keep = [(e, rl.get(e, "OTHER")) for e in doc.element.body if e.tag.endswith(("}p", "}tbl"))]
+    def setgap(e, which):
+        if e.tag.endswith("}tbl"): return False
+        p = Paragraph(e, None); f = p.paragraph_format
+        if which == "before": f.space_before = Pt(max(f.space_before.pt if f.space_before is not None else 0, GAP))
+        else: f.space_after = Pt(max(f.space_after.pt if f.space_after is not None else 0, GAP))
+        return True
+    def gap(prev, nxt):
+        if prev is None: return
+        pe, pr = prev; ne, nr = nxt
+        if pr == "BLANK": return
+        if not setgap(ne, "before"): setgap(pe, "after")
+    for k, (e, r) in enumerate(keep):
+        prev = keep[k - 1] if k else None
+        if prev is None: continue
+        pr = prev[1]
+        if (r in ("H", "FIG", "TCAP", "CODE_FIRST") or pr in ("H", "FCAP", "TBL", "CODE_LAST")):
+            gap(prev, (e, r))
+    ROLES.clear()
+
+
 def pf(p, align=None, left=None, first=None, before=0, after=0, line=1.5, kwn=False, kt=False, pbb=False):
     f = p.paragraph_format
     if align is not None: f.alignment = align
@@ -204,7 +240,7 @@ def heading(doc, text, level, appendix_sub=False, appendix_title=False, first_co
     else:
         pf(p, AL.LEFT, left=1.25, first=0, kwn=True)
         add_inline(p, text, 14)
-    return p
+    tag(p, "H"); return p
 
 
 def body(doc, text, first_content=False):
@@ -235,21 +271,23 @@ def code_block(doc, lines):
     size = 9.5 if fits(9.5) else 9.0
     for i, ln in enumerate(lines):
         p = doc.add_paragraph()
-        pf(p, AL.LEFT, left=1.0, first=-0.5, line=1.0, before=6 if i == 0 else 0, after=6 if i == n - 1 else 0)
+        pf(p, AL.LEFT, left=1.0, first=-0.5, line=1.0, before=0, after=0)
         p.paragraph_format.widow_control = False
+        tag(p, "CODE_FIRST" if i == 0 else "CODE_LAST" if i == n - 1 else "CODE")
+        if n == 1: ROLES.append((p._p, "CODE_LAST"))
         r = p.add_run(ln); set_font(r, COUR, size)
         ppr = p._p.get_or_add_pPr(); rpr = OxmlElement("w:rPr")
         sz = OxmlElement("w:sz"); sz.set(qn("w:val"), str(int(size * 2))); rpr.append(sz); ppr.append(rpr)
 
 
 def table_caption(doc, text):
-    p = doc.add_paragraph(); pf(p, AL.LEFT, left=0, first=0, before=6, line=1.0, kwn=True)
-    add_inline(p, text, 14); return p
+    p = doc.add_paragraph(); pf(p, AL.LEFT, left=0, first=0, before=0, line=1.0, kwn=True)
+    add_inline(p, text, 14); tag(p, "TCAP"); return p
 
 
 def figure_caption(doc, text):
-    p = doc.add_paragraph(); pf(p, AL.CENTER, left=0, first=0, before=5, after=6, line=1.0, kt=True)
-    add_inline(p, text, 13); return p
+    p = doc.add_paragraph(); pf(p, AL.CENTER, left=0, first=0, before=5, after=0, line=1.0, kt=True)
+    add_inline(p, text, 13); tag(p, "FCAP"); return p
 
 
 IMG_CACHE = None  # set in main(): build cache dir for cropped copies
@@ -321,6 +359,7 @@ def figure(doc, path, mdir):
     shp = p.add_run().add_picture(full, width=Cm(wc), height=Cm(hc))
     for a in ("distT", "distB", "distL", "distR"):  # LibreOffice defaults to 0.32 cm side gaps otherwise
         shp._inline.set(a, "0")
+    tag(p, "FIG")
 
 
 def placeholder(doc, text):
@@ -332,6 +371,7 @@ def placeholder(doc, text):
     c = row.cells[0]; c.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
     p = c.paragraphs[0]; pf(p, AL.CENTER, left=0, first=0, line=1.0, kwn=True)
     set_font(p.add_run(text), TNR, 14)
+    tag(t, "FIG")
 
 
 def split_row(line):
@@ -405,7 +445,7 @@ def pipe_table(doc, rows):
         ws = [m + spare * x / tw_ for m, x in zip(mins, wish)]
     # in sizes below 11 keep font; hyphen-protect in header/body unless hyph_ok
     t = doc.add_table(rows=len(allr), cols=n); t.alignment = WD_TABLE_ALIGNMENT.CENTER
-    grid_borders(t); fix_layout(t, ws)
+    grid_borders(t); fix_layout(t, ws); tag(t, "TBL")
     N = len(allr)
     for i, r in enumerate(allr):
         row = t.rows[i]
@@ -433,6 +473,7 @@ def work_title(doc, md_text, theme):
     p = doc.add_paragraph(); pf(p, AL.CENTER, left=1.25, first=0, pbb=True, kwn=True)
     set_font(p.add_run(theme), TNR, 14)
     e = doc.add_paragraph(); pf(e, AL.CENTER, left=1.25, first=0); set_font(e.add_run(""), TNR, 14)
+    tag(p, "BLANK0"); tag(e, "BLANK")
     return True
 
 
@@ -485,7 +526,7 @@ def convert(md_text, mdir, doc, pz, theme):
             if len(rows) >= 2 and all(re.match(r"^:?-{2,}:?$", c.replace(" ", "")) for c in rows[1]):
                 pipe_table(doc, rows)
                 # spacer after table: small gap
-                sp = doc.add_paragraph(); pf(sp, AL.LEFT, left=0, first=0, line=1.0)
+                sp = doc.add_paragraph(); pf(sp, AL.LEFT, left=0, first=0, line=1.0); tag(sp, "SPACER")
                 set_font(sp.add_run(""), TNR, 6)
                 sp.paragraph_format.line_spacing = Pt(8); sp.paragraph_format.line_spacing_rule = WD_LINE_SPACING.EXACTLY
             else:
@@ -499,6 +540,7 @@ def convert(md_text, mdir, doc, pz, theme):
             flush(); bullet(doc, m.group(1)); first = False; i += 1; continue
         para.append(s); i += 1
     flush()
+    apply_gaps(doc)
 
 
 def to_pdf(docx_path):
@@ -540,14 +582,18 @@ def main():
     ap.add_argument("--md", required=True); ap.add_argument("--pz", required=True)
     ap.add_argument("--theme", required=True); ap.add_argument("--out", required=True, help="output path without extension")
     ap.add_argument("--no-pdf", action="store_true")
+    ap.add_argument("--no-appendix", action="store_true", help="drop everything from the first '# Додаток' heading")
     a = ap.parse_args()
     out = re.sub(r"\.(docx|pdf)$", "", a.out)
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
     global IMG_CACHE
     IMG_CACHE = os.path.join(os.path.dirname(os.path.abspath(out)), "imgcache")
     with open(a.md, encoding="utf-8") as f: txt = f.read()
+    if a.no_appendix:
+        mm = re.search(r"^#[ \t]+Додаток", txt, re.M)
+        if mm: txt = txt[:mm.start()].rstrip() + "\n"
     def build():
-        FIG_LOG.clear()
+        FIG_LOG.clear(); ROLES.clear()
         doc = Document(); setup(doc)
         for p in list(doc.paragraphs):
             if not p.text and not p._p.xpath(".//w:drawing"): p._p.getparent().remove(p._p)
