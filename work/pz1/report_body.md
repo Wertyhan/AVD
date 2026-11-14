@@ -4,7 +4,7 @@
 
 # Короткі теоретичні відомості
 
-HDFS ділить файл на блоки (типово 128 МБ) і зберігає їх на DataNode в кількох репліках; NameNode тримає лише метадані, а дані клієнт читає безпосередньо з DataNode. YARN виділяє контейнери (пам'ять і vCPU): ResourceManager приймає задачі, NodeManager запускає контейнери, для кожної задачі стартує ApplicationMaster, а JobHistoryServer зберігає лічильники завершених задач.
+HDFS ділить файл на блоки (типово 128 МБ) і зберігає їх на DataNode в кількох репліках; NameNode тримає лише метадані. YARN виділяє контейнери (пам'ять і vCPU): ResourceManager приймає задачі, NodeManager запускає контейнери, ApplicationMaster керує однією задачею, JobHistoryServer зберігає лічильники.
 
 У MapReduce map обробляє один split (зазвичай блок HDFS) і видає пари «ключ – значення», фреймворк сортує і групує їх за ключем (shuffle), а reduce отримує всі значення одного ключа. Combiner частково агрегує дані на боці map і коректний лише для асоціативних і комутативних операцій з однаковим форматом входу і виходу. Hadoop Streaming дозволяє писати map і reduce на Python через stdin/stdout. Для BTC/USD річні агрегати – суми за ключем часу, а добові Open і Close залежать від порядку свічок за Timestamp, тому combiner для них непридатний.
 
@@ -71,12 +71,12 @@ hdfs fsck /user/root/btc/raw -files -blocks -locations
 
 ### 4.1 WordCount як перевірка кластера
 
-Приклад `wordcount` над `LICENSE.txt` і `NOTICE.txt` прочитав 304 рядки, combiner скоротив 1 879 пар до 798, на виході 748 різних слів («the» – 107, «of» – 68), рисунок 3. Слова розділено лише пробілами, тож «"License"» і «"License");» – різні ключі.
+Приклад `wordcount` над `LICENSE.txt` і `NOTICE.txt` прочитав 304 рядки, combiner скоротив 1 879 пар до 798, на виході 748 різних слів («the» – 107, «of» – 68), рисунок 3.
 
 ![Рисунок 3 – Результат WordCount у HDFS (part-r-00000)](figures/term_wordcount.png)
 ### 4.2 Кількість свічок і обсяг торгів за роками
 
-Mapper `mapper_year.py` відкидає заголовок і неповні рядки і видає `рік \t 1 \t Volume` (рік UTC через `time.gmtime`). Reducer `reducer_year.py` сумує кількість і обсяг; його вхід і вихід мають однаковий формат, тому він же є combiner:
+Mapper `mapper_year.py` відкидає заголовок і неповні рядки і видає `рік \t 1 \t Volume` (рік UTC); reducer `reducer_year.py` сумує кількість і обсяг і через однаковий формат входу і виходу є й combiner:
 
 ```bash
 hadoop jar hadoop-streaming-3.3.6.jar -D mapreduce.job.reduces=1 \
@@ -108,7 +108,7 @@ for day, grp in groupby(parse(sys.stdin), key=itemgetter(0)):
 
 ### 4.4 Лічильники задач
 
-Лічильники обох задач (з журналів, файл `mr_counters_extended.csv`) зведено в таблицю 3.
+Лічильники обох задач з журналів зведено в таблицю 3.
 
 Таблиця 3 – Лічильники Streaming-задач над повним CSV
 
@@ -132,7 +132,7 @@ Shuffled Maps = 3 і Data-local map tasks = 3: кожна з трьох map-за
 
 ### 5.1 Зовнішня таблиця
 
-Hive підключено до Hadoop через `HADOOP_HOME`, метасховище Derby створено командою `schematool -dbType derby -initSchema`. Зовнішню таблицю `btc.candles` над каталогом із CSV створено скриптом `hive_01_create_table.hql` з властивістю `"skip.header.line.count"="1"`; усі HQL-скрипти виконано командою `hive -S -f`. Опис таблиці наведено на рисунку 6.
+Hive підключено до Hadoop через `HADOOP_HOME`, метасховище створено командою `schematool -dbType derby -initSchema`. Зовнішню таблицю `btc.candles` над каталогом із CSV створено скриптом `hive_01_create_table.hql` з властивістю `"skip.header.line.count"="1"`; усі HQL-скрипти виконано командою `hive -S -f`. Опис таблиці наведено на рисунку 6.
 
 ![Рисунок 6 – Опис зовнішньої таблиці candles (DESCRIBE FORMATTED)](figures/term_hive_describe.png)
 
